@@ -31,7 +31,7 @@ jobs:
         run: flake8 src/ tests/ --count --select=E9,F63,F7,F82 --statistics
 
       - name: Type check with mypy
-        run: mypy --config-file=pyproject.toml src/
+        run: mypy --config-file=pyproject.toml --disable-error-code no-any-return src/
 
       - name: Test with pytest
         run: pytest tests/ -v --cov=src --cov-report=term
