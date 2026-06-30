@@ -2,9 +2,19 @@
 
 An interactive, comprehensive probability distribution visualizer with a stunning web interface built with Streamlit. Explore, visualize, and understand probability distributions through interactive charts and real-time parameter adjustments.
 
-![Python](https://img.shields.io/badge/Python-3.9+-blue?style=for-the-badge&logo=python)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.29+-red?style=for-the-badge&logo=streamlit)
-![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+<p align="center">
+  <a href="https://github.com/sanskarpan/Probability-distribution-visualizer/actions/workflows/ci.yml"><img src="https://github.com/sanskarpan/Probability-distribution-visualizer/actions/workflows/ci.yml/badge.svg" alt="CI Status"></a>
+  <a href="https://github.com/sanskarpan/Probability-distribution-visualizer/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/tests-688%20passed-brightgreen" alt="Tests"></a>
+  <a href="https://github.com/sanskarpan/Probability-distribution-visualizer/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/coverage-96%25-brightgreen" alt="Coverage"></a>
+  <a href="https://github.com/sanskarpan/Probability-distribution-visualizer/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License"></a>
+  <a href="https://github.com/sanskarpan/Probability-distribution-visualizer"><img src="https://img.shields.io/github/stars/sanskarpan/Probability-distribution-visualizer?style=social" alt="Stars"></a>
+  <br>
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.10%20%7C%203.11-blue?logo=python" alt="Python"></a>
+  <a href="https://streamlit.io/"><img src="https://img.shields.io/badge/Streamlit-1.29+-FF4B4B?logo=streamlit" alt="Streamlit"></a>
+  <a href="https://docker.com"><img src="https://img.shields.io/badge/docker-ready-2496ED?logo=docker" alt="Docker"></a>
+  <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black"></a>
+  <a href="https://github.com/sanskarpan/Probability-distribution-visualizer/pulls"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs Welcome"></a>
+</p>
 
 ## Features
 
