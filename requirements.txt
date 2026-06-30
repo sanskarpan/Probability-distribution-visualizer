@@ -15,7 +15,7 @@ plotly>=5.18.0
 streamlit>=1.29.0
 
 # Statistical computing
-statsmodels>=0.14.0
+statsmodels>=0.14.6
 
 # Testing
 pytest>=7.4.0
