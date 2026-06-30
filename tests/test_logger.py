@@ -55,7 +55,7 @@ class TestCorrelationId:
 
 class TestSetupLogger:
     def teardown_method(self):
-        import src.utils.logger as logger_mod
+        import utils.logger as logger_mod
         logger_mod._loggers_initialized.clear()
 
     def test_setup_console(self):
@@ -76,7 +76,7 @@ class TestSetupLogger:
         assert logger2.level == logging.INFO
 
     def test_get_logger_creates(self):
-        import src.utils.logger as logger_mod
+        import utils.logger as logger_mod
         logger_mod._loggers_initialized.clear()
         logger = get_logger("test_get_create")
         assert logger.propagate is False

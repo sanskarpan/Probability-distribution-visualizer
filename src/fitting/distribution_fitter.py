@@ -428,12 +428,23 @@ class GoodnessOfFit:
         Returns:
             Dictionary with test results
         """
-        result = stats.anderson(data, dist=dist, method='interpolate')
+        import scipy
+        scipy_major = int(scipy.__version__.split('.')[0])
+        scipy_minor = int(scipy.__version__.split('.')[1])
 
-        return {
-            'statistic': result.statistic,
-            'pvalue': result.pvalue,
-        }
+        if scipy_major > 1 or (scipy_major == 1 and scipy_minor >= 17):
+            result = stats.anderson(data, dist=dist, method='interpolate')
+            return {
+                'statistic': result.statistic,
+                'pvalue': result.pvalue,
+            }
+        else:
+            result = stats.anderson(data, dist=dist)
+            return {
+                'statistic': result.statistic,
+                'critical_values': result.critical_values,
+                'significance_levels': result.significance_level,
+            }
 
     @staticmethod
     def shapiro_wilk_test(data: np.ndarray) -> Tuple[float, float]:

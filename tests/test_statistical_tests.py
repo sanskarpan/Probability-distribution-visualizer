@@ -784,7 +784,7 @@ class TestFriedmanTest:
         np.random.seed(42)
         g1 = np.random.normal(5, 1, 50)
         g2 = np.random.normal(8, 1, 50)
-        with pytest.raises(ValueError, match="At least 3 samples"):
+        with pytest.raises(ValueError, match="At least 3"):
             friedman_test(g1, g2)
 
     def test_friedman_unequal_lengths_error(self):
