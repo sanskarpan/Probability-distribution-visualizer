@@ -2,10 +2,14 @@
 
 import io
 import logging
+import sys
+import os
 import time
 import uuid
 
-from src.utils.logger import (
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+
+from utils.logger import (
     get_correlation_id,
     set_correlation_id,
     setup_logger,
@@ -13,6 +17,7 @@ from src.utils.logger import (
     log_error,
     log_execution_time,
 )
+import utils.logger as logger_mod
 
 
 def _capture_handler_output(logger, fn):
@@ -154,8 +159,7 @@ class TestLogExecutionTime:
 
 class TestStructuredFormatter:
     def test_formats_json(self):
-        from src.utils.logger import _StructuredFormatter
-        fmt = _StructuredFormatter()
+        fmt = logger_mod._StructuredFormatter()
         record = logging.LogRecord(
             "test", logging.INFO, "path.py", 10, "hello world", (), None
         )
@@ -167,9 +171,8 @@ class TestStructuredFormatter:
         assert "timestamp" in parsed
 
     def test_formatter_includes_corr_id(self):
-        from src.utils.logger import _StructuredFormatter
         set_correlation_id("abc-123-xyz")
-        fmt = _StructuredFormatter()
+        fmt = logger_mod._StructuredFormatter()
         record = logging.LogRecord("test", logging.INFO, "path.py", 10, "msg", (), None)
         output = fmt.format(record)
         import json
@@ -179,8 +182,7 @@ class TestStructuredFormatter:
 
 class TestConsoleFormatter:
     def test_console_formatter(self):
-        from src.utils.logger import _ConsoleFormatter
-        fmt = _ConsoleFormatter()
+        fmt = logger_mod._ConsoleFormatter()
         record = logging.LogRecord("test", logging.WARNING, "m.py", 5, "watch out", (), None)
         output = fmt.format(record)
         assert "WARNING" in output
