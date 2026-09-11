@@ -5,7 +5,7 @@ This package provides the public visualization API. The heavy lifting lives in
 both ``src.visualizers`` and ``src.utils.plotting`` import paths work.
 """
 
-from typing import List, Optional, Tuple
+from typing import Any, List, Optional, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -19,7 +19,7 @@ from src.utils.plotting import (
 )
 
 
-def _infer_grid(distribution, x, num_points: int) -> np.ndarray:
+def _infer_grid(distribution: Any, x: Any, num_points: int) -> np.ndarray:
     """Build an evaluation grid, preferring the distribution's own support."""
     if x is not None:
         return np.asarray(x)
@@ -53,7 +53,7 @@ __all__ = [
 
 
 def plot_pdf(
-    distribution,
+    distribution: Any,
     x: Optional[np.ndarray] = None,
     num_points: int = 500,
     ax: Optional[plt.Axes] = None,
@@ -83,7 +83,7 @@ def plot_pdf(
 
 
 def plot_cdf(
-    distribution,
+    distribution: Any,
     x: Optional[np.ndarray] = None,
     num_points: int = 500,
     ax: Optional[plt.Axes] = None,
