@@ -19,8 +19,8 @@ FROM python:${PYTHON_VERSION}-slim AS runtime
 
 LABEL org.opencontainers.image.title="Probability Distribution Visualizer" \
       org.opencontainers.image.description="Interactive probability distribution visualizer with Streamlit" \
-      org.opencontainers.image.url="https://github.com/yourusername/probability-distribution-visualizer" \
-      org.opencontainers.image.source="https://github.com/yourusername/probability-distribution-visualizer" \
+      org.opencontainers.image.url="https://github.com/sanskarpan/Probability-distribution-visualizer" \
+      org.opencontainers.image.source="https://github.com/sanskarpan/Probability-distribution-visualizer" \
       org.opencontainers.image.licenses="MIT"
 
 ENV PYTHONUNBUFFERED=1 \
@@ -51,3 +51,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:8501/_stcore/health || exit 1
 
 ENTRYPOINT ["streamlit", "run", "web/app.py"]
+CMD ["--server.port=8501", "--server.address=0.0.0.0"]
