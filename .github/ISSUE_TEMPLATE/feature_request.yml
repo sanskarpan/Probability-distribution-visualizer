@@ -1,0 +1,26 @@
+---
+name: Feature request
+description: Suggest an enhancement
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: What use case is currently painful or impossible?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: API sketch, examples, alternatives considered.
+    validations:
+      required: true
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope checklist
+      options:
+        - label: I can add tests for this feature
+        - label: I can update docs (README/docs/CHANGELOG)
