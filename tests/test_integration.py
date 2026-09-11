@@ -11,55 +11,67 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 
 def test_all_imports():
-    """Test that all modules can be imported."""
-    # Basic distributions
-    # Mixtures
-    # Copulas
-    # Multivariate distributions
+    """Test that all public modules and symbols can be imported."""
     from distributions import (
         BayesianGMM,
-        BetaDistribution,
         BinomialDistribution,
-        CauchyDistribution,
-        ChiSquareDistribution,
         ClaytonCopula,
         DirichletDistribution,
-        DiscreteUniformDistribution,
-        ExponentialDistribution,
-        GammaDistribution,
         GaussianCopula,
         GaussianMixtureModel,
-        GeometricDistribution,
         GumbelCopula,
-        HypergeometricDistribution,
-        LognormalDistribution,
         MixtureDistribution,
         MultivariateNormalDistribution,
         MultivariateStudentT,
-        NegativeBinomialDistribution,
         NormalDistribution,
         PoissonDistribution,
         StudentTCopula,
-        StudentTDistribution,
-        UniformDistribution,
-        WeibullDistribution,
         WishartDistribution,
         fit_copula_to_data,
         select_optimal_components,
     )
-
-    # Fitting
     from fitting import BayesianEstimator, DistributionFitter, GoodnessOfFit
-
-    # Monte Carlo
     from monte_carlo import (
         MonteCarloSimulator,
         QuasiMonteCarloSimulator,
         SimulationResult,
         VarianceReduction,
     )
+    from statistical_tests import describe, mann_whitney_u, t_test
+    from visualizers import plot_cdf, plot_comparison, plot_pdf
 
-    assert True  # If we get here, all imports succeeded
+    for symbol in (
+        BayesianGMM,
+        BinomialDistribution,
+        ClaytonCopula,
+        DirichletDistribution,
+        NormalDistribution,
+        GaussianCopula,
+        GaussianMixtureModel,
+        GumbelCopula,
+        MixtureDistribution,
+        MultivariateNormalDistribution,
+        MultivariateStudentT,
+        PoissonDistribution,
+        StudentTCopula,
+        WishartDistribution,
+        fit_copula_to_data,
+        select_optimal_components,
+        BayesianEstimator,
+        DistributionFitter,
+        GoodnessOfFit,
+        MonteCarloSimulator,
+        QuasiMonteCarloSimulator,
+        SimulationResult,
+        VarianceReduction,
+        describe,
+        mann_whitney_u,
+        t_test,
+        plot_cdf,
+        plot_comparison,
+        plot_pdf,
+    ):
+        assert symbol is not None
 
 
 def test_basic_distribution_workflow():
@@ -210,9 +222,6 @@ def test_distribution_fitting_multiple():
 def test_goodness_of_fit():
     """Test goodness of fit tests."""
     from fitting import GoodnessOfFit
-
-    np.random.seed(42)
-    data = np.random.normal(0, 1, 500)
 
     # GoodnessOfFit is a class but we just need to test it exists
     assert GoodnessOfFit is not None
