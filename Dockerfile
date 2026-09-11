@@ -19,8 +19,8 @@ FROM python:${PYTHON_VERSION}-slim AS runtime
 
 LABEL org.opencontainers.image.title="Probability Distribution Visualizer" \
       org.opencontainers.image.description="Interactive probability distribution visualizer with Streamlit" \
-      org.opencontainers.image.url="https://github.com/sanskarpan/Probability-distribution-visualizer" \
-      org.opencontainers.image.source="https://github.com/sanskarpan/Probability-distribution-visualizer" \
+      org.opencontainers.image.url="https://github.com/sanskarpan/probviz" \
+      org.opencontainers.image.source="https://github.com/sanskarpan/probviz" \
       org.opencontainers.image.licenses="MIT"
 
 ENV PYTHONUNBUFFERED=1 \
