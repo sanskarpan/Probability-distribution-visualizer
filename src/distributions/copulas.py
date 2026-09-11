@@ -1,11 +1,10 @@
 """Copulas for modeling dependencies between random variables."""
 
-from typing import Optional, Tuple
+from typing import Optional
 
 import numpy as np
 from scipy import stats
 from scipy.optimize import brentq
-from scipy.special import gamma
 
 
 class Copula:
@@ -84,8 +83,8 @@ class GaussianCopula(Copula):
 
         try:
             np.linalg.cholesky(corr)
-        except np.linalg.LinAlgError:
-            raise ValueError("correlation must be positive definite")
+        except np.linalg.LinAlgError as err:
+            raise ValueError("correlation must be positive definite") from err
 
         super().__init__("Gaussian", corr.shape[0])
         self.correlation = corr
@@ -312,27 +311,27 @@ class GumbelCopula(Copula):
         p = rng.uniform(0, 1, size)
         u2 = np.zeros(size)
 
+        def cond_cdf(v, u1_i, t, p_i):
+            if v <= 1e-15:
+                return 0.0 - p_i
+            if v >= 1 - 1e-15:
+                return 1.0 - p_i
+            s = -np.log(v)
+            a = (t**theta + s**theta) ** (1.0 / theta)
+            return np.exp(-a) / u1_i * (t / a) ** (theta - 1) - p_i
+
         for i in range(size):
             u1_i = max(u1[i], 1e-15)
             t = -np.log(u1_i)
             p_i = p[i]
 
-            def cond_cdf(v):
-                if v <= 1e-15:
-                    return 0.0
-                if v >= 1 - 1e-15:
-                    return 1.0
-                s = -np.log(v)
-                A = (t**theta + s**theta) ** (1.0 / theta)
-                return np.exp(-A) / u1_i * (t / A) ** (theta - 1)
-
             try:
-                u2[i] = brentq(lambda v: cond_cdf(v) - p_i, 1e-15, 1 - 1e-15)
+                u2[i] = brentq(cond_cdf, 1e-15, 1 - 1e-15, args=(u1_i, t, p_i))
             except ValueError:
                 # Fall back to the median of the conditional distribution only
                 # when the root bracket is degenerate; otherwise surface the error.
-                bracket_lo = cond_cdf(1e-15) - p_i
-                bracket_hi = cond_cdf(1 - 1e-15) - p_i
+                bracket_lo = cond_cdf(1e-15, u1_i, t, p_i)
+                bracket_hi = cond_cdf(1 - 1e-15, u1_i, t, p_i)
                 if bracket_lo * bracket_hi > 0:
                     raise ValueError(
                         "Gumbel conditional CDF root-finding failed to bracket a root"
@@ -378,8 +377,8 @@ class StudentTCopula(Copula):
 
         try:
             np.linalg.cholesky(corr)
-        except np.linalg.LinAlgError:
-            raise ValueError("correlation must be positive definite")
+        except np.linalg.LinAlgError as err:
+            raise ValueError("correlation must be positive definite") from err
 
         super().__init__("Student-t", corr.shape[0])
         self.correlation = corr
