@@ -460,9 +460,7 @@ class GoodnessOfFit:
             Tuple of (w_statistic, p_value)
         """
         if len(data) > 5000:
-            warnings.warn(
-                "Shapiro-Wilk test may be unreliable for large samples", stacklevel=2
-            )
+            warnings.warn("Shapiro-Wilk test may be unreliable for large samples", stacklevel=2)
 
         w_stat, p_value = stats.shapiro(data)
 
