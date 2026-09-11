@@ -95,6 +95,9 @@ def plot_qq(
     Returns:
         Matplotlib figure
     """
+    data = np.asarray(data)
+    if data.size == 0:
+        raise ValueError("data must not be empty")
     distribution = getattr(stats, dist)
 
     if params is None:
@@ -146,6 +149,9 @@ def plot_histogram_with_fit(
     Returns:
         Matplotlib figure
     """
+    data = np.asarray(data)
+    if data.size == 0:
+        raise ValueError("data must not be empty")
     distribution = getattr(stats, dist)
 
     if params is None:
