@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+title: Probability Distribution Visualizer
+message: If you use this software, please cite it as below.
+type: software
+authors:
+  - given-names: Sanskar
+    family-names: Pan
+    email: sanskarpandey2004@gmail.com
+repository-code: https://github.com/sanskarpan/Probability-distribution-visualizer
+url: https://sanskarpan.github.io/Probability-distribution-visualizer/
+license: MIT
+version: 1.0.0
+date-released: "2026-09-07"
+keywords:
+  - statistics
+  - probability-distributions
+  - visualization
+  - streamlit
+  - monte-carlo

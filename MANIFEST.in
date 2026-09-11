@@ -1,0 +1,5 @@
+include README.md QUICKSTART.md CHANGELOG.md LICENSE CITATION.cff
+include requirements*.txt
+recursive-include examples *.py
+recursive-include docs *.md *.yml
+global-exclude __pycache__ *.py[cod]
