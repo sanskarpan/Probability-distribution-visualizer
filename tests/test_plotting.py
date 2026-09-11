@@ -6,7 +6,6 @@ matplotlib.use("Agg")
 
 import os
 import sys
-import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -561,7 +560,7 @@ class TestEdgeCases:
 
     def test_qq_empty_data_raises(self):
         data = np.array([])
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError):
             plot_qq(data)
 
     def test_qq_single_data_point(self):
@@ -572,7 +571,7 @@ class TestEdgeCases:
 
     def test_histogram_empty_data_raises(self):
         data = np.array([])
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError):
             plot_histogram_with_fit(data)
 
     def test_histogram_single_data_point(self):
@@ -607,7 +606,7 @@ class TestEdgeCases:
 
     def test_correlation_heatmap_empty_2d_data_raises(self):
         data = np.empty((0, 3))
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError, match="must not be empty"):
             plot_correlation_heatmap(data)
 
     def test_correlation_heatmap_single_row_2d(self):
@@ -620,19 +619,19 @@ class TestEdgeCases:
     def test_correlation_heatmap_1d_data_raises(self):
         np.random.seed(42)
         data = np.random.normal(0, 1, 100)
-        with pytest.raises(Exception):
+        with pytest.raises(TypeError):
             plot_correlation_heatmap(data)
 
     def test_correlation_heatmap_single_column_2d_raises(self):
         np.random.seed(42)
         data = np.random.normal(0, 1, (100, 1))
-        with pytest.raises(Exception):
+        with pytest.raises(TypeError):
             plot_correlation_heatmap(data)
 
     def test_correlation_heatmap_1d_list_input_raises(self):
         np.random.seed(42)
         data = np.random.normal(0, 1, 50).tolist()
-        with pytest.raises(Exception):
+        with pytest.raises(TypeError):
             plot_correlation_heatmap(data)
 
     def test_all_functions_return_figures(self):
