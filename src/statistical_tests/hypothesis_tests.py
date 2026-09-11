@@ -1,6 +1,6 @@
 """Hypothesis testing functions."""
 
-from typing import Dict, Optional, Tuple, Union
+from typing import Dict, Optional, Union
 
 import numpy as np
 from scipy import stats
