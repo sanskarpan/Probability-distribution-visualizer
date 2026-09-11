@@ -160,7 +160,7 @@ def validate_array(
         try:
             array = array.astype(dtype)
         except (ValueError, TypeError):
-            raise ValueError(f"{name} must have dtype {dtype}, got {array.dtype}")
+            raise ValueError(f"{name} must have dtype {dtype}, got {array.dtype}") from None
 
     if min_length is not None and array.shape[0] < min_length:
         raise ValueError(f"{name} must have at least {min_length} elements, got {array.shape[0]}")
