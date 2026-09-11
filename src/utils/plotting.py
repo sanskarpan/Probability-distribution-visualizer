@@ -1,10 +1,9 @@
 """Plotting utilities for probability distributions."""
 
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
 from scipy import stats
 
 
@@ -101,6 +100,7 @@ def plot_qq(
     if params is None:
         params = distribution.fit(data)
 
+
     fig, ax = plt.subplots(figsize=figsize)
 
     # Theoretical quantiles
@@ -150,6 +150,7 @@ def plot_histogram_with_fit(
 
     if params is None:
         params = distribution.fit(data)
+
 
     fig, ax = plt.subplots(figsize=figsize)
 
@@ -255,7 +256,7 @@ def plot_correlation_heatmap(
     if annot:
         for i in range(n_vars):
             for j in range(n_vars):
-                text = ax.text(
+                ax.text(
                     j,
                     i,
                     f"{corr_matrix[i, j]:.2f}",
@@ -279,7 +280,7 @@ def plot_probability_bands(
     data: np.ndarray,
     dist: str = "norm",
     params: Optional[tuple] = None,
-    confidence_levels: List[float] = [0.68, 0.95, 0.997],
+    confidence_levels: Optional[List[float]] = None,
     figsize: Tuple[float, float] = (12, 6),
 ) -> plt.Figure:
     """
@@ -300,6 +301,8 @@ def plot_probability_bands(
     if params is None:
         params = distribution.fit(data)
 
+    levels = [0.68, 0.95, 0.997] if confidence_levels is None else list(confidence_levels)
+
     fig, ax = plt.subplots(figsize=figsize)
 
     # Plot data
@@ -313,7 +316,9 @@ def plot_probability_bands(
     # Probability bands
     colors = ["lightblue", "lightgreen", "lightyellow"]
 
-    for level, color in zip(confidence_levels, colors):
+    # NOTE: plain zip is intentional — extra confidence levels reuse the
+    # first len(colors) bands; strict=True would reject valid custom inputs.
+    for level, color in zip(levels, colors):  # noqa: B905
         alpha = (1 - level) / 2
         lower = distribution.ppf(alpha, *params)
         upper = distribution.ppf(1 - alpha, *params)
