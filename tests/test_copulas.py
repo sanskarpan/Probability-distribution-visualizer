@@ -1,17 +1,18 @@
 """Tests for copula functions."""
 
-import pytest
-import numpy as np
-import sys
 import os
+import sys
+
+import numpy as np
+import pytest
 
 # Add src to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from distributions.copulas import (
+    ClaytonCopula,
     Copula,
     GaussianCopula,
-    ClaytonCopula,
     GumbelCopula,
     StudentTCopula,
     fit_copula_to_data,
@@ -241,10 +242,11 @@ def test_fit_copula_to_data():
 
     # Transform to uniform margins
     from scipy.stats import norm
+
     u_data = norm.cdf(data)
 
     # Fit Gaussian copula
-    fitted_copula = fit_copula_to_data(u_data, 'gaussian')
+    fitted_copula = fit_copula_to_data(u_data, "gaussian")
     assert isinstance(fitted_copula, GaussianCopula)
 
     # Fitted correlation should be close to original
@@ -252,12 +254,12 @@ def test_fit_copula_to_data():
     assert abs(fitted_corr - 0.7) < 0.2
 
     # Fit Clayton copula
-    fitted_clayton = fit_copula_to_data(u_data, 'clayton')
+    fitted_clayton = fit_copula_to_data(u_data, "clayton")
     assert isinstance(fitted_clayton, ClaytonCopula)
     assert fitted_clayton.theta > 0
 
     # Fit Gumbel copula
-    fitted_gumbel = fit_copula_to_data(u_data, 'gumbel')
+    fitted_gumbel = fit_copula_to_data(u_data, "gumbel")
     assert isinstance(fitted_gumbel, GumbelCopula)
     assert fitted_gumbel.theta >= 1
 
@@ -271,14 +273,16 @@ def test_copula_transforms():
 
     # Test uniformity using Kolmogorov-Smirnov test
     from scipy.stats import kstest
+
     for i in range(2):
-        _, p_value = kstest(samples[:, i], 'uniform')
+        _, p_value = kstest(samples[:, i], "uniform")
         assert p_value > 0.01  # Should not reject uniformity
 
 
 # ===========================================================================
 # CDF tests for copulas
 # ===========================================================================
+
 
 class TestCopulaCDF:
     def test_gaussian_copula_cdf(self):
@@ -340,6 +344,7 @@ class TestCopulaCDF:
 # ===========================================================================
 # Error path and edge case tests
 # ===========================================================================
+
 
 class TestCopulaErrorPaths:
     def test_clayton_pdf_not_implemented_beyond_bivariate(self):
@@ -422,13 +427,15 @@ class TestCopulaErrorPaths:
         data = np.random.multivariate_normal([0, 0], [[1, 0.5], [0.5, 1]], 500)
         with pytest.raises(ValueError, match="Unsupported copula type"):
             from distributions.copulas import fit_copula_to_data
-            fit_copula_to_data(data, copula_type='unsupported_type')
+
+            fit_copula_to_data(data, copula_type="unsupported_type")
 
     def test_fit_t_copula(self):
         np.random.seed(42)
         data = np.random.multivariate_normal([0, 0], [[1, 0.5], [0.5, 1]], 500)
         from distributions.copulas import fit_copula_to_data
-        result = fit_copula_to_data(data, copula_type='t')
+
+        result = fit_copula_to_data(data, copula_type="t")
         assert isinstance(result, StudentTCopula)
         assert result.df == 4
 
