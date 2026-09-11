@@ -5,7 +5,6 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
-from scipy import stats
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +49,7 @@ class Distribution(ABC):
         pass
 
     @abstractmethod
-    def set_parameters(self, **params):
+    def set_parameters(self, **params: Any):
         """
         Set distribution parameters.
 
@@ -324,7 +323,7 @@ class Distribution(ABC):
             return stats_dict
         except Exception as e:
             logger.error("Error calculating statistics for '%s': %s", self.name, e)
-            raise ValueError(f"Error calculating statistics: {e}")
+            raise ValueError(f"Error calculating statistics: {e}") from e
 
     def __repr__(self) -> str:
         """String representation of the distribution."""
