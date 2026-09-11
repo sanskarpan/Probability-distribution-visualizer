@@ -1,8 +1,10 @@
 """Continuous probability distributions."""
 
-from typing import Dict, Any, Tuple
+from typing import Any, Dict, Tuple
+
 import numpy as np
 from scipy import stats
+
 from .base import Distribution
 
 
@@ -24,7 +26,7 @@ class NormalDistribution(Distribution):
 
     def _create_distribution(self, **params):
         """Create scipy normal distribution."""
-        return stats.norm(loc=params['mu'], scale=params['sigma'])
+        return stats.norm(loc=params["mu"], scale=params["sigma"])
 
     def get_parameters(self) -> Dict[str, Any]:
         """Get current parameters."""
@@ -32,8 +34,8 @@ class NormalDistribution(Distribution):
 
     def set_parameters(self, **params):
         """Set distribution parameters."""
-        self.mu = params.get('mu', self.mu)
-        self.sigma = params.get('sigma', self.sigma)
+        self.mu = params.get("mu", self.mu)
+        self.sigma = params.get("sigma", self.sigma)
 
         if self.sigma <= 0:
             raise ValueError("sigma must be positive")
@@ -64,7 +66,7 @@ class ExponentialDistribution(Distribution):
 
     def _create_distribution(self, **params):
         """Create scipy exponential distribution."""
-        return stats.expon(scale=1.0 / params['lambda_param'])
+        return stats.expon(scale=1.0 / params["lambda_param"])
 
     def get_parameters(self) -> Dict[str, Any]:
         """Get current parameters."""
@@ -72,7 +74,7 @@ class ExponentialDistribution(Distribution):
 
     def set_parameters(self, **params):
         """Set distribution parameters."""
-        self.lambda_param = params.get('lambda_param', params.get('lambda', self.lambda_param))
+        self.lambda_param = params.get("lambda_param", params.get("lambda", self.lambda_param))
 
         if self.lambda_param <= 0:
             raise ValueError("lambda must be positive")
@@ -102,7 +104,7 @@ class UniformDistribution(Distribution):
 
     def _create_distribution(self, **params):
         """Create scipy uniform distribution."""
-        return stats.uniform(loc=params['a'], scale=params['b'] - params['a'])
+        return stats.uniform(loc=params["a"], scale=params["b"] - params["a"])
 
     def get_parameters(self) -> Dict[str, Any]:
         """Get current parameters."""
@@ -110,8 +112,8 @@ class UniformDistribution(Distribution):
 
     def set_parameters(self, **params):
         """Set distribution parameters."""
-        self.a = params.get('a', self.a)
-        self.b = params.get('b', self.b)
+        self.a = params.get("a", self.a)
+        self.b = params.get("b", self.b)
 
         if self.a >= self.b:
             raise ValueError("a must be less than b")
@@ -144,7 +146,7 @@ class BetaDistribution(Distribution):
 
     def _create_distribution(self, **params):
         """Create scipy beta distribution."""
-        return stats.beta(a=params['alpha'], b=params['beta'])
+        return stats.beta(a=params["alpha"], b=params["beta"])
 
     def get_parameters(self) -> Dict[str, Any]:
         """Get current parameters."""
@@ -152,8 +154,8 @@ class BetaDistribution(Distribution):
 
     def set_parameters(self, **params):
         """Set distribution parameters."""
-        self.alpha = params.get('alpha', self.alpha)
-        self.beta_param = params.get('beta', self.beta_param)
+        self.alpha = params.get("alpha", self.alpha)
+        self.beta_param = params.get("beta", self.beta_param)
 
         if self.alpha <= 0 or self.beta_param <= 0:
             raise ValueError("alpha and beta must be positive")
@@ -186,7 +188,7 @@ class GammaDistribution(Distribution):
 
     def _create_distribution(self, **params):
         """Create scipy gamma distribution."""
-        return stats.gamma(a=params['shape'], scale=params['scale'])
+        return stats.gamma(a=params["shape"], scale=params["scale"])
 
     def get_parameters(self) -> Dict[str, Any]:
         """Get current parameters."""
@@ -194,8 +196,8 @@ class GammaDistribution(Distribution):
 
     def set_parameters(self, **params):
         """Set distribution parameters."""
-        self.shape = params.get('shape', self.shape)
-        self.scale = params.get('scale', self.scale)
+        self.shape = params.get("shape", self.shape)
+        self.scale = params.get("scale", self.scale)
 
         if self.shape <= 0 or self.scale <= 0:
             raise ValueError("shape and scale must be positive")
@@ -226,7 +228,7 @@ class ChiSquareDistribution(Distribution):
 
     def _create_distribution(self, **params):
         """Create scipy chi-square distribution."""
-        return stats.chi2(df=params['df'])
+        return stats.chi2(df=params["df"])
 
     def get_parameters(self) -> Dict[str, Any]:
         """Get current parameters."""
@@ -234,7 +236,7 @@ class ChiSquareDistribution(Distribution):
 
     def set_parameters(self, **params):
         """Set distribution parameters."""
-        self.df = params.get('df', self.df)
+        self.df = params.get("df", self.df)
 
         if self.df <= 0:
             raise ValueError("df must be positive")
@@ -262,7 +264,7 @@ class StudentTDistribution(Distribution):
 
     def _create_distribution(self, **params):
         """Create scipy t distribution."""
-        return stats.t(df=params['df'])
+        return stats.t(df=params["df"])
 
     def get_parameters(self) -> Dict[str, Any]:
         """Get current parameters."""
@@ -270,7 +272,7 @@ class StudentTDistribution(Distribution):
 
     def set_parameters(self, **params):
         """Set distribution parameters."""
-        self.df = params.get('df', self.df)
+        self.df = params.get("df", self.df)
 
         if self.df <= 0:
             raise ValueError("df must be positive")
@@ -300,7 +302,7 @@ class WeibullDistribution(Distribution):
 
     def _create_distribution(self, **params):
         """Create scipy weibull distribution."""
-        return stats.weibull_min(c=params['shape'], scale=params['scale'])
+        return stats.weibull_min(c=params["shape"], scale=params["scale"])
 
     def get_parameters(self) -> Dict[str, Any]:
         """Get current parameters."""
@@ -308,8 +310,8 @@ class WeibullDistribution(Distribution):
 
     def set_parameters(self, **params):
         """Set distribution parameters."""
-        self.shape = params.get('shape', self.shape)
-        self.scale = params.get('scale', self.scale)
+        self.shape = params.get("shape", self.shape)
+        self.scale = params.get("scale", self.scale)
 
         if self.shape <= 0 or self.scale <= 0:
             raise ValueError("shape and scale must be positive")
@@ -342,7 +344,7 @@ class LognormalDistribution(Distribution):
 
     def _create_distribution(self, **params):
         """Create scipy lognormal distribution."""
-        return stats.lognorm(s=params['sigma'], scale=np.exp(params['mu']))
+        return stats.lognorm(s=params["sigma"], scale=np.exp(params["mu"]))
 
     def get_parameters(self) -> Dict[str, Any]:
         """Get current parameters."""
@@ -352,8 +354,8 @@ class LognormalDistribution(Distribution):
         """Set distribution parameters."""
         import numpy as np
 
-        self.mu = params.get('mu', self.mu)
-        self.sigma = params.get('sigma', self.sigma)
+        self.mu = params.get("mu", self.mu)
+        self.sigma = params.get("sigma", self.sigma)
 
         if self.sigma <= 0:
             raise ValueError("sigma must be positive")
@@ -386,7 +388,7 @@ class CauchyDistribution(Distribution):
 
     def _create_distribution(self, **params):
         """Create scipy cauchy distribution."""
-        return stats.cauchy(loc=params['x0'], scale=params['gamma'])
+        return stats.cauchy(loc=params["x0"], scale=params["gamma"])
 
     def get_parameters(self) -> Dict[str, Any]:
         """Get current parameters."""
@@ -394,8 +396,8 @@ class CauchyDistribution(Distribution):
 
     def set_parameters(self, **params):
         """Set distribution parameters."""
-        self.x0 = params.get('x0', self.x0)
-        self.gamma = params.get('gamma', self.gamma)
+        self.x0 = params.get("x0", self.x0)
+        self.gamma = params.get("gamma", self.gamma)
 
         if self.gamma <= 0:
             raise ValueError("gamma must be positive")
