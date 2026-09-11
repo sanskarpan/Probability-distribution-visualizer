@@ -1,9 +1,10 @@
 """Multivariate probability distributions."""
 
-from typing import Optional, Tuple
+from typing import Optional, Tuple, cast
 
 import matplotlib.pyplot as plt
 import numpy as np
+from mpl_toolkits.mplot3d.axes3d import Axes3D
 from scipy import stats
 
 
@@ -448,7 +449,7 @@ def plot_bivariate_normal(
     # Create figure with a 2-D panel and a 3-D panel side by side.
     fig = plt.figure(figsize=(14, 6))
     ax1 = fig.add_subplot(121)
-    ax2 = fig.add_subplot(122, projection="3d")
+    ax2 = cast(Axes3D, fig.add_subplot(122, projection="3d"))
 
     # Contour plot
     contour = ax1.contourf(X1, X2, Z, levels=num_contours, cmap="viridis")
@@ -494,7 +495,7 @@ def plot_dirichlet_simplex(
 
     # Create figure
     fig = plt.figure(figsize=(12, 10))
-    ax = fig.add_subplot(111, projection="3d")
+    ax = cast(Axes3D, fig.add_subplot(111, projection="3d"))
 
     # Plot samples
     scatter = ax.scatter(
