@@ -5,11 +5,18 @@
 - Python 3.10, 3.11, or 3.12 (CI-tested)
 - pip 23+
 
+## From PyPI
+
+```bash
+pip install probviz
+probviz app
+```
+
 ## From source (recommended for the web app)
 
 ```bash
-git clone https://github.com/sanskarpan/Probability-distribution-visualizer.git
-cd Probability-distribution-visualizer
+git clone https://github.com/sanskarpan/probviz.git
+cd probviz
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 streamlit run web/app.py
