@@ -1,19 +1,20 @@
 """Tests for mixture distributions."""
 
-import pytest
-import numpy as np
-import sys
 import os
+import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+import numpy as np
+import pytest
 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+
+from distributions.continuous import NormalDistribution
 from distributions.mixtures import (
-    MixtureDistribution,
-    GaussianMixtureModel,
     BayesianGMM,
+    GaussianMixtureModel,
+    MixtureDistribution,
     select_optimal_components,
 )
-from distributions.continuous import NormalDistribution
 
 
 class TestMixtureDistribution:
@@ -72,7 +73,7 @@ class TestMixtureDistribution:
         x = np.array([-5, 0, 2.5, 5, 10])
         cdf_vals = mixture.cdf(x)
 
-        assert all(cdf_vals[i] <= cdf_vals[i+1] for i in range(len(cdf_vals)-1))
+        assert all(cdf_vals[i] <= cdf_vals[i + 1] for i in range(len(cdf_vals) - 1))
         assert all(0 <= c <= 1 for c in cdf_vals)
 
     def test_random_samples(self):
@@ -124,10 +125,10 @@ class TestGaussianMixtureModel:
 
         assert gmm.fitted
         params = gmm.get_parameters()
-        assert len(params['means']) == 2
-        assert len(params['covariances']) == 2
-        assert len(params['weights']) == 2
-        assert abs(np.sum(params['weights']) - 1.0) < 0.01
+        assert len(params["means"]) == 2
+        assert len(params["covariances"]) == 2
+        assert len(params["weights"]) == 2
+        assert abs(np.sum(params["weights"]) - 1.0) < 0.01
 
     def test_predict(self):
         """Test cluster prediction."""
@@ -195,6 +196,7 @@ class TestBayesianGMM:
     def test_automatic_component_pruning(self):
         """Test that Bayesian GMM prunes unnecessary components."""
         import warnings
+
         np.random.seed(42)
         data1 = np.random.normal(0, 1, 500)
         data2 = np.random.normal(5, 1, 500)
@@ -218,16 +220,16 @@ def test_select_optimal_components():
 
     optimal_n, results = select_optimal_components(data, max_components=5)
 
-    assert 'optimal_components' in results
-    assert 'aic_scores' in results
-    assert 'bic_scores' in results
-    assert 'components_range' in results
+    assert "optimal_components" in results
+    assert "aic_scores" in results
+    assert "bic_scores" in results
+    assert "components_range" in results
 
     assert optimal_n in [2, 3]
-    assert results['optimal_components'] == optimal_n
+    assert results["optimal_components"] == optimal_n
 
-    assert len(results['aic_scores']) == 5
-    assert len(results['bic_scores']) == 5
+    assert len(results["aic_scores"]) == 5
+    assert len(results["bic_scores"]) == 5
 
 
 def test_mixture_fit_em():
@@ -241,9 +243,7 @@ def test_mixture_fit_em():
     comp2 = NormalDistribution(mu=5, sigma=1)
     mixture = MixtureDistribution([comp1, comp2], [0.5, 0.5])
 
-    responsibilities, components, weights = mixture.fit_em(
-        data, n_components=2, max_iter=100
-    )
+    responsibilities, components, weights = mixture.fit_em(data, n_components=2, max_iter=100)
 
     assert responsibilities.shape == (len(data), 2)
     assert len(components) == 2
@@ -259,6 +259,7 @@ def test_mixture_fit_em():
 # =============================================================================
 # Additional error path and edge-case tests
 # =============================================================================
+
 
 class TestMixtureErrorPaths:
     """Test MixtureDistribution error paths."""
