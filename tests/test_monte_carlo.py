@@ -5,7 +5,6 @@ import sys
 import warnings
 
 import numpy as np
-import pytest
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
@@ -233,7 +232,6 @@ class TestQuasiMonteCarloSimulator:
             qmc_result = qmc.integrate_qmc(func, bounds=[(0, 1)], num_points=1024)
         qmc_error = abs(qmc_result - 1 / 3)
 
-        mc = MonteCarloSimulator(random_seed=42)
         mc_samples = np.random.uniform(0, 1, (1000, 1))
         mc_values = np.array([func(s[0]) for s in mc_samples])
         mc_estimate = np.mean(mc_values)
@@ -295,7 +293,7 @@ def test_confidence_interval_coverage():
     coverage_count = 0
     true_mean = 10
 
-    for i in range(n_simulations):
+    for _ in range(n_simulations):
 
         def sampler():
             return np.random.normal(true_mean, 2)
