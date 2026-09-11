@@ -243,7 +243,9 @@ def test_mixture_fit_em():
     comp2 = NormalDistribution(mu=5, sigma=1)
     mixture = MixtureDistribution([comp1, comp2], [0.5, 0.5])
 
-    responsibilities, components, weights = mixture.fit_em(data, n_components=2, max_iter=100)
+    responsibilities, components, weights = mixture.fit_em(
+        data, n_components=2, max_iter=100, random_state=42
+    )
 
     assert responsibilities.shape == (len(data), 2)
     assert len(components) == 2
