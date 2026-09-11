@@ -588,7 +588,7 @@ def _main_impl():
                 quantile_values.append(float("nan"))
 
         quant_cols = st.columns(len(percentiles))
-        for i, (p, q) in enumerate(zip(percentiles, quantile_values)):
+        for i, (p, q) in enumerate(zip(percentiles, quantile_values, strict=True)):
             with quant_cols[i]:
                 if np.isnan(q):
                     st.metric(f"{p}th percentile", "N/A")
