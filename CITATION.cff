@@ -6,11 +6,11 @@ authors:
   - given-names: Sanskar
     family-names: Pan
     email: sanskarpandey2004@gmail.com
-repository-code: https://github.com/sanskarpan/Probability-distribution-visualizer
-url: https://sanskarpan.github.io/Probability-distribution-visualizer/
+repository-code: https://github.com/sanskarpan/probviz
+url: https://sanskarpan.github.io/probviz/
 license: MIT
-version: 1.0.0
-date-released: "2026-09-07"
+version: 1.0.1
+date-released: "2026-09-11"
 keywords:
   - statistics
   - probability-distributions

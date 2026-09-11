@@ -5,8 +5,8 @@ Get from zero to interactive plots in under five minutes.
 ## 1. Install
 
 ```bash
-git clone https://github.com/sanskarpan/Probability-distribution-visualizer.git
-cd Probability-distribution-visualizer
+git clone https://github.com/sanskarpan/probviz.git
+cd probviz
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 ```

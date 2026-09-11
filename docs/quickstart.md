@@ -1,8 +1,8 @@
 # Quickstart
 
 ```bash
-git clone https://github.com/sanskarpan/Probability-distribution-visualizer.git
-cd Probability-distribution-visualizer
+git clone https://github.com/sanskarpan/probviz.git
+cd probviz
 pip install -r requirements.txt
 streamlit run web/app.py
 ```

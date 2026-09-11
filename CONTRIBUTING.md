@@ -14,8 +14,8 @@ and reviews fast.
 ## Setup
 
 ```bash
-git clone https://github.com/sanskarpan/Probability-distribution-visualizer.git
-cd Probability-distribution-visualizer
+git clone https://github.com/sanskarpan/probviz.git
+cd probviz
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt
 pip install -e .

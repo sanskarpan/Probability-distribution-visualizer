@@ -1,8 +1,9 @@
 site_name: Probability Distribution Visualizer
 site_description: Interactive probability distribution visualizer with univariate, multivariate, copula, mixture, fitting, Monte Carlo, and statistical-test toolkits.
 site_author: Sanskar Pan and contributors
-repo_url: https://github.com/sanskarpan/Probability-distribution-visualizer
-repo_name: sanskarpan/Probability-distribution-visualizer
+site_url: https://sanskarpan.github.io/probviz/
+repo_url: https://github.com/sanskarpan/probviz
+repo_name: sanskarpan/probviz
 copyright: Copyright &copy; 2024-2026 Sanskar Pan and contributors (MIT)
 
 theme:

@@ -5,18 +5,18 @@ a typed Python API, and toolkits for fitting, Monte Carlo simulation, and
 statistical testing.
 
 <p align="center">
-  <a href="https://github.com/sanskarpan/Probability-distribution-visualizer/actions/workflows/ci.yml"><img src="https://github.com/sanskarpan/Probability-distribution-visualizer/actions/workflows/ci.yml/badge.svg" alt="CI Status"></a>
-  <a href="https://github.com/sanskarpan/Probability-distribution-visualizer/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/tests-688%20passed-brightgreen" alt="Tests"></a>
-  <a href="https://sanskarpan.github.io/Probability-distribution-visualizer/"><img src="https://img.shields.io/badge/docs-GitHub%20Pages-blue" alt="Docs"></a>
-  <a href="https://github.com/sanskarpan/Probability-distribution-visualizer/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License"></a>
+  <a href="https://github.com/sanskarpan/probviz/actions/workflows/ci.yml"><img src="https://github.com/sanskarpan/probviz/actions/workflows/ci.yml/badge.svg" alt="CI Status"></a>
+  <a href="https://github.com/sanskarpan/probviz/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/tests-688%20passed-brightgreen" alt="Tests"></a>
+  <a href="https://sanskarpan.github.io/probviz/"><img src="https://img.shields.io/badge/docs-GitHub%20Pages-blue" alt="Docs"></a>
+  <a href="https://github.com/sanskarpan/probviz/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License"></a>
   <br>
   <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue?logo=python" alt="Python"></a>
   <a href="https://streamlit.io/"><img src="https://img.shields.io/badge/Streamlit-1.29+-FF4B4B?logo=streamlit" alt="Streamlit"></a>
-  <a href="https://github.com/sanskarpan/Probability-distribution-visualizer/pkgs/container/probability-distribution-visualizer"><img src="https://img.shields.io/badge/docker-ghcr.io-2496ED?logo=docker" alt="Docker"></a>
-  <a href="https://github.com/sanskarpan/Probability-distribution-visualizer/pulls"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs Welcome"></a>
+  <a href="https://github.com/sanskarpan/probviz/pkgs/container/probviz"><img src="https://img.shields.io/badge/docker-ghcr.io-2496ED?logo=docker" alt="Docker"></a>
+  <a href="https://github.com/sanskarpan/probviz/pulls"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs Welcome"></a>
 </p>
 
-- **Docs (GitHub Pages):** <https://sanskarpan.github.io/Probability-distribution-visualizer/>
+- **Docs (GitHub Pages):** <https://sanskarpan.github.io/probviz/>
 - **16 univariate distributions** (10 continuous + 6 discrete) with PDF/PMF, CDF,
   quantiles, sampling, and full statistics — in the web app and the API.
 - **Advanced modules** (Python API): multivariate distributions, copulas,
@@ -41,14 +41,21 @@ statistical testing.
 ## Quick start
 
 ```bash
-git clone https://github.com/sanskarpan/Probability-distribution-visualizer.git
-cd Probability-distribution-visualizer
+pip install probviz
+probviz app
+```
+
+Or from source:
+
+```bash
+git clone https://github.com/sanskarpan/probviz.git
+cd probviz
 pip install -r requirements.txt
 streamlit run web/app.py
 ```
 
 Open `http://localhost:8501`. Full guide: [`QUICKSTART.md`](QUICKSTART.md) ·
-[docs quickstart](https://sanskarpan.github.io/Probability-distribution-visualizer/quickstart/).
+[docs quickstart](https://sanskarpan.github.io/probviz/quickstart/).
 
 ### Install as a package
 
@@ -148,7 +155,7 @@ MIT — see [`LICENSE`](LICENSE). If you use this in research or teaching:
   title  = {Probability Distribution Visualizer},
   author = {sanskarpan},
   year   = {2026},
-  url    = {https://github.com/sanskarpan/Probability-distribution-visualizer}
+  url    = {https://github.com/sanskarpan/probviz}
 }
 ```
 

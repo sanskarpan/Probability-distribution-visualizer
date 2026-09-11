@@ -180,7 +180,7 @@ class Distribution(ABC):
 ## Project Structure
 
 ```
-Probability-distribution-visualizer/
+probviz/
 ├── src/
 │   ├── distributions/
 │   │   ├── __init__.py         # Package exports
@@ -215,7 +215,7 @@ Probability-distribution-visualizer/
 ### Quick Start
 
 ```bash
-cd Probability-distribution-visualizer
+cd probviz
 ./run.sh
 # Choose option 1 for web interface
 ```
