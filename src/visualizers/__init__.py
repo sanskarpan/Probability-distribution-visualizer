@@ -5,7 +5,7 @@ This package provides the public visualization API. The heavy lifting lives in
 both ``src.visualizers`` and ``src.utils.plotting`` import paths work.
 """
 
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, cast
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -71,9 +71,13 @@ def plot_pdf(
     """
     x = _infer_grid(distribution, x, num_points)
     y = np.asarray(distribution.pdf(x))
-    fig, ax_out = (None, ax) if ax is not None else plt.subplots()
-    if fig is None:
-        fig = ax_out.figure
+    if ax is None:
+        fig, ax_out = plt.subplots()
+    else:
+        ax_out = ax
+        # An Axes handed in by the caller always belongs to a Figure;
+        # the stub type is wider (Figure | SubFigure | None).
+        fig = cast(plt.Figure, ax_out.figure)
     ax_out.plot(np.asarray(x), y)
     ax_out.set_xlabel("x")
     ax_out.set_ylabel("Density / Mass")
@@ -91,9 +95,13 @@ def plot_cdf(
     """Plot the CDF of a distribution (see :func:`plot_pdf` for args)."""
     x = _infer_grid(distribution, x, num_points)
     y = np.asarray(distribution.cdf(x))
-    fig, ax_out = (None, ax) if ax is not None else plt.subplots()
-    if fig is None:
-        fig = ax_out.figure
+    if ax is None:
+        fig, ax_out = plt.subplots()
+    else:
+        ax_out = ax
+        # An Axes handed in by the caller always belongs to a Figure;
+        # the stub type is wider (Figure | SubFigure | None).
+        fig = cast(plt.Figure, ax_out.figure)
     ax_out.plot(np.asarray(x), y)
     ax_out.set_xlabel("x")
     ax_out.set_ylabel("Cumulative probability")
