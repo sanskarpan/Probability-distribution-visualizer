@@ -4,24 +4,24 @@ Note: This module is named 'statistical_tests' to avoid collision
 with Python's built-in 'statistics' module.
 """
 
+from .descriptive import (
+    correlation_matrix,
+    describe,
+    outlier_detection,
+    quantile_summary,
+)
 from .hypothesis_tests import (
-    t_test,
-    chi_square_test,
     anova,
+    chi_square_test,
     correlation_test,
     normality_tests,
-)
-from .descriptive import (
-    describe,
-    quantile_summary,
-    outlier_detection,
-    correlation_matrix,
+    t_test,
 )
 from .nonparametric import (
+    friedman_test,
+    kruskal_wallis,
     mann_whitney_u,
     wilcoxon_signed_rank,
-    kruskal_wallis,
-    friedman_test,
 )
 
 __all__ = [

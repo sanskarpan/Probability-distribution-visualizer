@@ -2,9 +2,9 @@
 
 from .simulator import (
     MonteCarloSimulator,
+    QuasiMonteCarloSimulator,
     SimulationResult,
     VarianceReduction,
-    QuasiMonteCarloSimulator,
 )
 
 __all__ = [

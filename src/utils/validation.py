@@ -1,12 +1,12 @@
 """Input validation utilities."""
 
-from typing import Union, Tuple, Optional
+from typing import Optional, Tuple, Union
+
 import numpy as np
 
 
 def validate_probability(
-    p: Union[float, np.ndarray],
-    name: str = "probability"
+    p: Union[float, np.ndarray], name: str = "probability"
 ) -> Union[float, np.ndarray]:
     """
     Validate that value(s) are valid probabilities in [0, 1].
@@ -30,8 +30,7 @@ def validate_probability(
 
 
 def validate_positive(
-    value: Union[float, np.ndarray],
-    name: str = "value"
+    value: Union[float, np.ndarray], name: str = "value"
 ) -> Union[float, np.ndarray]:
     """
     Validate that value(s) are strictly positive.
@@ -55,8 +54,7 @@ def validate_positive(
 
 
 def validate_nonnegative(
-    value: Union[float, np.ndarray],
-    name: str = "value"
+    value: Union[float, np.ndarray], name: str = "value"
 ) -> Union[float, np.ndarray]:
     """
     Validate that value(s) are non-negative (>= 0).
@@ -84,7 +82,7 @@ def validate_in_range(
     lower: float,
     upper: float,
     name: str = "value",
-    inclusive: str = 'both'
+    inclusive: str = "both",
 ) -> Union[float, np.ndarray]:
     """
     Validate that value(s) are in specified range.
@@ -104,16 +102,16 @@ def validate_in_range(
     """
     value = np.asarray(value)
 
-    if inclusive == 'both':
+    if inclusive == "both":
         condition = (value >= lower) & (value <= upper)
         range_str = f"[{lower}, {upper}]"
-    elif inclusive == 'lower':
+    elif inclusive == "lower":
         condition = (value >= lower) & (value < upper)
         range_str = f"[{lower}, {upper})"
-    elif inclusive == 'upper':
+    elif inclusive == "upper":
         condition = (value > lower) & (value <= upper)
         range_str = f"({lower}, {upper}]"
-    elif inclusive == 'neither':
+    elif inclusive == "neither":
         condition = (value > lower) & (value < upper)
         range_str = f"({lower}, {upper})"
     else:
@@ -131,7 +129,7 @@ def validate_array(
     ndim: Optional[int] = None,
     dtype: Optional[type] = None,
     min_length: Optional[int] = None,
-    name: str = "array"
+    name: str = "array",
 ) -> np.ndarray:
     """
     Validate array properties.
@@ -162,7 +160,7 @@ def validate_array(
         try:
             array = array.astype(dtype)
         except (ValueError, TypeError):
-            raise ValueError(f"{name} must have dtype {dtype}, got {array.dtype}")
+            raise ValueError(f"{name} must have dtype {dtype}, got {array.dtype}") from None
 
     if min_length is not None and array.shape[0] < min_length:
         raise ValueError(f"{name} must have at least {min_length} elements, got {array.shape[0]}")
@@ -170,10 +168,7 @@ def validate_array(
     return array
 
 
-def validate_integer(
-    value: Union[int, float],
-    name: str = "value"
-) -> int:
+def validate_integer(value: Union[int, float], name: str = "value") -> int:
     """
     Validate that value is an integer.
 
@@ -195,10 +190,7 @@ def validate_integer(
     return int(value)
 
 
-def validate_covariance_matrix(
-    cov: np.ndarray,
-    name: str = "covariance"
-) -> np.ndarray:
+def validate_covariance_matrix(cov: np.ndarray, name: str = "covariance") -> np.ndarray:
     """
     Validate that matrix is a valid covariance matrix.
 
@@ -230,10 +222,7 @@ def validate_covariance_matrix(
     return cov
 
 
-def validate_correlation_matrix(
-    corr: np.ndarray,
-    name: str = "correlation"
-) -> np.ndarray:
+def validate_correlation_matrix(corr: np.ndarray, name: str = "correlation") -> np.ndarray:
     """
     Validate that matrix is a valid correlation matrix.
 

@@ -1,10 +1,10 @@
 """Base distribution class for all probability distributions."""
 
-from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional, Tuple
 import logging
+from abc import ABC, abstractmethod
+from typing import Any, Dict, Optional, Tuple
+
 import numpy as np
-from scipy import stats
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +49,7 @@ class Distribution(ABC):
         pass
 
     @abstractmethod
-    def set_parameters(self, **params):
+    def set_parameters(self, **params: Any):
         """
         Set distribution parameters.
 
@@ -230,7 +230,7 @@ class Distribution(ABC):
         if self._dist is None:
             raise ValueError("Distribution not initialized. Call set_parameters first.")
 
-        stats_result = self._dist.stats(moments='s')
+        stats_result = self._dist.stats(moments="s")
         return float(stats_result)
 
     def kurtosis(self) -> float:
@@ -243,7 +243,7 @@ class Distribution(ABC):
         if self._dist is None:
             raise ValueError("Distribution not initialized. Call set_parameters first.")
 
-        stats_result = self._dist.stats(moments='k')
+        stats_result = self._dist.stats(moments="k")
         return float(stats_result)
 
     def entropy(self) -> float:
@@ -323,7 +323,7 @@ class Distribution(ABC):
             return stats_dict
         except Exception as e:
             logger.error("Error calculating statistics for '%s': %s", self.name, e)
-            raise ValueError(f"Error calculating statistics: {e}")
+            raise ValueError(f"Error calculating statistics: {e}") from e
 
     def __repr__(self) -> str:
         """String representation of the distribution."""

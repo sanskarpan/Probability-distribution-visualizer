@@ -1,8 +1,8 @@
 """Distribution fitting and parameter estimation."""
 
 from .distribution_fitter import (
-    DistributionFitter,
     BayesianEstimator,
+    DistributionFitter,
     GoodnessOfFit,
 )
 

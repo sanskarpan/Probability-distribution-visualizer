@@ -1,6 +1,7 @@
 """Descriptive statistics utilities."""
 
-from typing import Dict, Optional, List, Tuple
+from typing import Dict, List, Optional
+
 import numpy as np
 from scipy import stats
 
@@ -51,36 +52,30 @@ def describe(data: np.ndarray, percentiles: Optional[List[float]] = None) -> Dic
     cv = (std / mean) * 100 if mean != 0 else np.inf
 
     # Percentiles
-    percentile_values = {
-        f'p{int(p)}': np.percentile(data, p)
-        for p in percentiles
-    }
+    percentile_values = {f"p{int(p)}": np.percentile(data, p) for p in percentiles}
 
     return {
-        'count': n,
-        'mean': float(mean),
-        'std': float(std),
-        'var': float(var),
-        'se': float(se),
-        'cv': float(cv),
-        'min': float(min_val),
-        'max': float(max_val),
-        'range': float(range_val),
-        'median': float(median),
-        'mad': float(mad),
-        'q1': float(q1),
-        'q3': float(q3),
-        'iqr': float(iqr),
-        'skewness': float(skewness),
-        'kurtosis': float(kurtosis),
-        **{k: float(v) for k, v in percentile_values.items()}
+        "count": n,
+        "mean": float(mean),
+        "std": float(std),
+        "var": float(var),
+        "se": float(se),
+        "cv": float(cv),
+        "min": float(min_val),
+        "max": float(max_val),
+        "range": float(range_val),
+        "median": float(median),
+        "mad": float(mad),
+        "q1": float(q1),
+        "q3": float(q3),
+        "iqr": float(iqr),
+        "skewness": float(skewness),
+        "kurtosis": float(kurtosis),
+        **{k: float(v) for k, v in percentile_values.items()},
     }
 
 
-def quantile_summary(
-    data: np.ndarray,
-    n_quantiles: int = 4
-) -> Dict[str, np.ndarray]:
+def quantile_summary(data: np.ndarray, n_quantiles: int = 4) -> Dict[str, np.ndarray]:
     """
     Compute quantile summary.
 
@@ -104,18 +99,16 @@ def quantile_summary(
     counts = np.bincount(quantile_labels, minlength=n_quantiles)
 
     return {
-        'n_quantiles': n_quantiles,
-        'boundaries': boundaries,
-        'labels': quantile_labels,
-        'counts': counts,
-        'proportions': counts / len(data)
+        "n_quantiles": n_quantiles,
+        "boundaries": boundaries,
+        "labels": quantile_labels,
+        "counts": counts,
+        "proportions": counts / len(data),
     }
 
 
 def outlier_detection(
-    data: np.ndarray,
-    method: str = 'iqr',
-    threshold: float = 1.5
+    data: np.ndarray, method: str = "iqr", threshold: float = 1.5
 ) -> Dict[str, np.ndarray]:
     """
     Detect outliers using various methods.
@@ -133,20 +126,20 @@ def outlier_detection(
     """
     data = np.asarray(data).flatten()
 
-    if method == 'iqr':
+    if method == "iqr":
         q1, q3 = np.percentile(data, [25, 75])
         iqr = q3 - q1
         lower_bound = q1 - threshold * iqr
         upper_bound = q3 + threshold * iqr
         outliers = (data < lower_bound) | (data > upper_bound)
 
-    elif method == 'zscore':
+    elif method == "zscore":
         z_scores = np.abs(stats.zscore(data))
         outliers = z_scores > threshold
         lower_bound = np.mean(data) - threshold * np.std(data)
         upper_bound = np.mean(data) + threshold * np.std(data)
 
-    elif method == 'mad':
+    elif method == "mad":
         median = np.median(data)
         mad = np.median(np.abs(data - median))
         modified_z_scores = 0.6745 * (data - median) / mad if mad != 0 else np.zeros_like(data)
@@ -161,22 +154,20 @@ def outlier_detection(
     outlier_values = data[outliers]
 
     return {
-        'method': method,
-        'threshold': threshold,
-        'n_outliers': int(np.sum(outliers)),
-        'outlier_proportion': float(np.mean(outliers)),
-        'outlier_indices': outlier_indices,
-        'outlier_values': outlier_values,
-        'lower_bound': float(lower_bound),
-        'upper_bound': float(upper_bound),
-        'is_outlier': outliers
+        "method": method,
+        "threshold": threshold,
+        "n_outliers": int(np.sum(outliers)),
+        "outlier_proportion": float(np.mean(outliers)),
+        "outlier_indices": outlier_indices,
+        "outlier_values": outlier_values,
+        "lower_bound": float(lower_bound),
+        "upper_bound": float(upper_bound),
+        "is_outlier": outliers,
     }
 
 
 def correlation_matrix(
-    data: np.ndarray,
-    method: str = 'pearson',
-    return_pvalues: bool = False
+    data: np.ndarray, method: str = "pearson", return_pvalues: bool = False
 ) -> Dict[str, np.ndarray]:
     """
     Compute correlation matrix.
@@ -204,11 +195,11 @@ def correlation_matrix(
                 if p_matrix is not None:
                     p_matrix[i, j] = 0.0
             else:
-                if method == 'pearson':
+                if method == "pearson":
                     corr, pval = stats.pearsonr(data[:, i], data[:, j])
-                elif method == 'spearman':
+                elif method == "spearman":
                     corr, pval = stats.spearmanr(data[:, i], data[:, j])
-                elif method == 'kendall':
+                elif method == "kendall":
                     corr, pval = stats.kendalltau(data[:, i], data[:, j])
                 else:
                     raise ValueError(f"Unknown method: {method}")
@@ -218,11 +209,11 @@ def correlation_matrix(
                     p_matrix[i, j] = pval
 
     result: Dict[str, np.ndarray] = {
-        'correlation_matrix': corr_matrix,
-        'method': method  # type: ignore[dict-item]
+        "correlation_matrix": corr_matrix,
+        "method": method,  # type: ignore[dict-item]
     }
 
     if p_matrix is not None:
-        result['p_values'] = p_matrix
+        result["p_values"] = p_matrix
 
     return result

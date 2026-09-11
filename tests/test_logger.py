@@ -2,22 +2,21 @@
 
 import io
 import logging
-import sys
 import os
-import time
+import sys
 import uuid
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
+import utils.logger as logger_mod
 from utils.logger import (
     get_correlation_id,
-    set_correlation_id,
-    setup_logger,
     get_logger,
     log_error,
     log_execution_time,
+    set_correlation_id,
+    setup_logger,
 )
-import utils.logger as logger_mod
 
 
 def _capture_handler_output(logger, fn):
@@ -56,6 +55,7 @@ class TestCorrelationId:
 class TestSetupLogger:
     def teardown_method(self):
         import utils.logger as logger_mod
+
         logger_mod._loggers_initialized.clear()
 
     def test_setup_console(self):
@@ -77,6 +77,7 @@ class TestSetupLogger:
 
     def test_get_logger_creates(self):
         import utils.logger as logger_mod
+
         logger_mod._loggers_initialized.clear()
         logger = get_logger("test_get_create")
         assert logger.propagate is False
@@ -90,9 +91,7 @@ class TestSetupLogger:
 class TestLogError:
     def test_log_error_no_exc(self):
         logger = setup_logger("test_log_err")
-        output = _capture_handler_output(
-            logger, lambda: log_error(logger, "something went wrong")
-        )
+        output = _capture_handler_output(logger, lambda: log_error(logger, "something went wrong"))
         assert "something went wrong" in output
 
     def test_log_error_with_exception(self):
@@ -132,7 +131,10 @@ class TestLogExecutionTime:
             raise RuntimeError("boom")
 
         output = _capture_handler_output(
-            logger, lambda: exec("try:\n broken_func()\nexcept RuntimeError:\n pass", {"broken_func": broken_func})
+            logger,
+            lambda: exec(
+                "try:\n broken_func()\nexcept RuntimeError:\n pass", {"broken_func": broken_func}
+            ),
         )
         assert "failed after" in output
 
@@ -160,11 +162,10 @@ class TestLogExecutionTime:
 class TestStructuredFormatter:
     def test_formats_json(self):
         fmt = logger_mod._StructuredFormatter()
-        record = logging.LogRecord(
-            "test", logging.INFO, "path.py", 10, "hello world", (), None
-        )
+        record = logging.LogRecord("test", logging.INFO, "path.py", 10, "hello world", (), None)
         output = fmt.format(record)
         import json
+
         parsed = json.loads(output)
         assert parsed["level"] == "INFO"
         assert parsed["message"] == "hello world"
@@ -176,6 +177,7 @@ class TestStructuredFormatter:
         record = logging.LogRecord("test", logging.INFO, "path.py", 10, "msg", (), None)
         output = fmt.format(record)
         import json
+
         parsed = json.loads(output)
         assert parsed["correlation_id"] == "abc-123-xyz"
 

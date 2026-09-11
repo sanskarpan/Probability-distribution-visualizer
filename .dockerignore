@@ -45,6 +45,7 @@ dist/
 Thumbs.db
 
 # Project artifacts
+*.gif
 *.png
 *.jpg
 *.pdf

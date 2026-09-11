@@ -1,9 +1,9 @@
 """Copulas for modeling dependencies between random variables."""
 
-from typing import Tuple, Optional
+from typing import Optional
+
 import numpy as np
 from scipy import stats
-from scipy.special import gamma
 from scipy.optimize import brentq
 
 
@@ -31,7 +31,7 @@ class Copula:
         Returns:
             Copula CDF values
         """
-        raise NotImplementedError
+        raise NotImplementedError("Subclasses must implement cdf()")
 
     def pdf(self, u: np.ndarray) -> np.ndarray:
         """
@@ -43,7 +43,7 @@ class Copula:
         Returns:
             Copula density values
         """
-        raise NotImplementedError
+        raise NotImplementedError("Subclasses must implement pdf()")
 
     def rvs(self, size: int = 1, random_state: Optional[int] = None) -> np.ndarray:
         """
@@ -56,11 +56,11 @@ class Copula:
         Returns:
             Uniform(0,1) samples (shape: size x d)
         """
-        raise NotImplementedError
+        raise NotImplementedError("Subclasses must implement rvs()")
 
     def kendall_tau(self) -> float:
         """Calculate Kendall's tau."""
-        raise NotImplementedError
+        raise NotImplementedError("Subclasses must implement kendall_tau()")
 
 
 class GaussianCopula(Copula):
@@ -83,17 +83,14 @@ class GaussianCopula(Copula):
 
         try:
             np.linalg.cholesky(corr)
-        except np.linalg.LinAlgError:
-            raise ValueError("correlation must be positive definite")
+        except np.linalg.LinAlgError as err:
+            raise ValueError("correlation must be positive definite") from err
 
         super().__init__("Gaussian", corr.shape[0])
         self.correlation = corr
 
         # Create multivariate normal for sampling
-        self._mvn = stats.multivariate_normal(
-            mean=np.zeros(self.dimension),
-            cov=corr
-        )
+        self._mvn = stats.multivariate_normal(mean=np.zeros(self.dimension), cov=corr)
 
     def cdf(self, u: np.ndarray) -> np.ndarray:
         """Gaussian copula CDF."""
@@ -111,6 +108,7 @@ class GaussianCopula(Copula):
     def pdf(self, u: np.ndarray) -> np.ndarray:
         """Gaussian copula density."""
         u = np.atleast_2d(u)
+        u = np.clip(u, 1e-12, 1.0 - 1e-12)
 
         # Transform to standard normals
         z = stats.norm.ppf(u)
@@ -135,11 +133,8 @@ class GaussianCopula(Copula):
 
     def rvs(self, size: int = 1, random_state: Optional[int] = None) -> np.ndarray:
         """Generate samples from Gaussian copula."""
-        if random_state is not None:
-            np.random.seed(random_state)
-
         # Sample from multivariate normal
-        z = self._mvn.rvs(size=size)
+        z = self._mvn.rvs(size=size, random_state=random_state)
         if size == 1:
             z = z.reshape(1, -1)
 
@@ -199,7 +194,9 @@ class ClaytonCopula(Copula):
     def pdf(self, u: np.ndarray) -> np.ndarray:
         """Clayton copula density (bivariate only)."""
         if self.dimension != 2:
-            raise NotImplementedError("PDF only implemented for bivariate")
+            raise NotImplementedError(
+                "Clayton copula PDF is currently implemented for the bivariate (dimension=2) case only"
+            )
 
         u = np.atleast_2d(u)
         u1, u2 = u[:, 0], u[:, 1]
@@ -207,9 +204,9 @@ class ClaytonCopula(Copula):
         # c(u1, u2) = (1 + θ) * (u1*u2)^(-1-θ) * (u1^(-θ) + u2^(-θ) - 1)^(-2-1/θ)
         theta = self.theta
 
-        term1 = (1 + theta)
+        term1 = 1 + theta
         term2 = (u1 * u2) ** (-1 - theta)
-        term3 = (u1 ** (-theta) + u2 ** (-theta) - 1) ** (-2 - 1/theta)
+        term3 = (u1 ** (-theta) + u2 ** (-theta) - 1) ** (-2 - 1 / theta)
 
         pdf_vals = term1 * term2 * term3
 
@@ -218,14 +215,15 @@ class ClaytonCopula(Copula):
     def rvs(self, size: int = 1, random_state: Optional[int] = None) -> np.ndarray:
         """Generate samples from Clayton copula (bivariate only)."""
         if self.dimension != 2:
-            raise NotImplementedError("Sampling only implemented for bivariate")
+            raise NotImplementedError(
+                "Clayton copula sampling is currently implemented for the bivariate (dimension=2) case only"
+            )
 
-        if random_state is not None:
-            np.random.seed(random_state)
+        rng = np.random.default_rng(random_state)
 
         # Algorithm: Use conditional distribution method
-        u1 = np.random.uniform(0, 1, size)
-        v = np.random.uniform(0, 1, size)
+        u1 = rng.uniform(0, 1, size)
+        v = rng.uniform(0, 1, size)
 
         # u2 = (u1^(-θ) * (v^(-θ/(1+θ)) - 1) + 1)^(-1/θ)
         theta = self.theta
@@ -277,7 +275,9 @@ class GumbelCopula(Copula):
     def pdf(self, u: np.ndarray) -> np.ndarray:
         """Gumbel copula density (bivariate only)."""
         if self.dimension != 2:
-            raise NotImplementedError("PDF only implemented for bivariate")
+            raise NotImplementedError(
+                "Clayton copula PDF is currently implemented for the bivariate (dimension=2) case only"
+            )
 
         u = np.atleast_2d(u)
         u1, u2 = u[:, 0], u[:, 1]
@@ -288,10 +288,10 @@ class GumbelCopula(Copula):
         log_u1 = -np.log(u1)
         log_u2 = -np.log(u2)
 
-        A = (log_u1 ** theta + log_u2 ** theta) ** (1/theta)
-        B = (log_u1 ** theta + log_u2 ** theta) ** (-2 + 2/theta)
+        A = (log_u1**theta + log_u2**theta) ** (1 / theta)
+        B = (log_u1**theta + log_u2**theta) ** (-2 + 2 / theta)
         C = (log_u1 * log_u2) ** (theta - 1)
-        D = 1 + (theta - 1) * (log_u1 ** theta + log_u2 ** theta) ** (-1/theta)
+        D = 1 + (theta - 1) * (log_u1**theta + log_u2**theta) ** (-1 / theta)
 
         pdf_vals = np.exp(-A) * B * C * D / (u1 * u2)
 
@@ -300,33 +300,42 @@ class GumbelCopula(Copula):
     def rvs(self, size: int = 1, random_state: Optional[int] = None) -> np.ndarray:
         """Generate samples from Gumbel copula (bivariate only)."""
         if self.dimension != 2:
-            raise NotImplementedError("Sampling only implemented for bivariate")
+            raise NotImplementedError(
+                "Clayton copula sampling is currently implemented for the bivariate (dimension=2) case only"
+            )
 
-        if random_state is not None:
-            np.random.seed(random_state)
+        rng = np.random.default_rng(random_state)
 
         theta = self.theta
-        u1 = np.random.uniform(0, 1, size)
-        p = np.random.uniform(0, 1, size)
+        u1 = rng.uniform(0, 1, size)
+        p = rng.uniform(0, 1, size)
         u2 = np.zeros(size)
+
+        def cond_cdf(v, u1_i, t, p_i):
+            if v <= 1e-15:
+                return 0.0 - p_i
+            if v >= 1 - 1e-15:
+                return 1.0 - p_i
+            s = -np.log(v)
+            a = (t**theta + s**theta) ** (1.0 / theta)
+            return np.exp(-a) / u1_i * (t / a) ** (theta - 1) - p_i
 
         for i in range(size):
             u1_i = max(u1[i], 1e-15)
             t = -np.log(u1_i)
             p_i = p[i]
 
-            def cond_cdf(v):
-                if v <= 1e-15:
-                    return 0.0
-                if v >= 1 - 1e-15:
-                    return 1.0
-                s = -np.log(v)
-                A = (t ** theta + s ** theta) ** (1.0 / theta)
-                return np.exp(-A) / u1_i * (t / A) ** (theta - 1)
-
             try:
-                u2[i] = brentq(lambda v: cond_cdf(v) - p_i, 1e-15, 1 - 1e-15)
-            except Exception:
+                u2[i] = brentq(cond_cdf, 1e-15, 1 - 1e-15, args=(u1_i, t, p_i))
+            except ValueError:
+                # Fall back to the median of the conditional distribution only
+                # when the root bracket is degenerate; otherwise surface the error.
+                bracket_lo = cond_cdf(1e-15, u1_i, t, p_i)
+                bracket_hi = cond_cdf(1 - 1e-15, u1_i, t, p_i)
+                if bracket_lo * bracket_hi > 0:
+                    raise ValueError(
+                        "Gumbel conditional CDF root-finding failed to bracket a root"
+                    ) from None
                 u2[i] = 0.5
 
         return np.column_stack([u1, u2])
@@ -363,24 +372,50 @@ class StudentTCopula(Copula):
         if df <= 0:
             raise ValueError("df must be positive")
 
+        if not np.allclose(np.diag(corr), 1.0):
+            raise ValueError("diagonal of correlation matrix must be 1")
+
+        try:
+            np.linalg.cholesky(corr)
+        except np.linalg.LinAlgError as err:
+            raise ValueError("correlation must be positive definite") from err
+
         super().__init__("Student-t", corr.shape[0])
         self.correlation = corr
         self.df = df
 
+    def cdf(self, u: np.ndarray) -> np.ndarray:
+        """Student-t copula CDF.
+
+        Note: closed-form evaluation requires multivariate-t integration and is
+        not implemented; use Monte Carlo estimation via :meth:`rvs` instead.
+        """
+        raise NotImplementedError(
+            "StudentTCopula.cdf is not implemented (requires multivariate-t "
+            "integration); estimate probabilities by Monte Carlo sampling with rvs()"
+        )
+
+    def pdf(self, u: np.ndarray) -> np.ndarray:
+        """Student-t copula density.
+
+        Note: the density is not implemented; use sampling-based inference via
+        :meth:`rvs` instead.
+        """
+        raise NotImplementedError(
+            "StudentTCopula.pdf is not implemented; use sampling-based inference with rvs()"
+        )
+
     def rvs(self, size: int = 1, random_state: Optional[int] = None) -> np.ndarray:
         """Generate samples from Student-t copula."""
-        if random_state is not None:
-            np.random.seed(random_state)
+        rng = np.random.default_rng(random_state)
 
         # Sample from multivariate t
         # Method: X = mu + Y * sqrt(df/S) where Y ~ N(0, Σ), S ~ chi2(df)
-        normal_samples = np.random.multivariate_normal(
-            np.zeros(self.dimension),
-            self.correlation,
-            size=size
+        normal_samples = rng.multivariate_normal(
+            np.zeros(self.dimension), self.correlation, size=size
         )
 
-        chi2_samples = np.random.chisquare(self.df, size=size)
+        chi2_samples = rng.chisquare(self.df, size=size)
 
         t_samples = normal_samples * np.sqrt(self.df / chi2_samples)[:, np.newaxis]
 
@@ -406,9 +441,9 @@ class StudentTCopula(Copula):
         return f"StudentTCopula(dimension={self.dimension}, df={self.df})"
 
 
-def fit_copula_to_data(data: np.ndarray,
-                      copula_type: str = 'gaussian',
-                      method: str = 'rank') -> Copula:
+def fit_copula_to_data(
+    data: np.ndarray, copula_type: str = "gaussian", method: str = "rank"
+) -> Copula:
     """
     Fit copula to multivariate data.
 
@@ -423,7 +458,7 @@ def fit_copula_to_data(data: np.ndarray,
     n, d = data.shape
 
     # Transform to pseudo-observations (uniform margins)
-    if method == 'rank':
+    if method == "rank":
         # Rank-based transformation
         u = np.zeros_like(data)
         for i in range(d):
@@ -436,27 +471,32 @@ def fit_copula_to_data(data: np.ndarray,
             u[:, i] = stats.rankdata(data[:, i]) / n
 
     # Estimate copula parameters
-    if copula_type == 'gaussian':
+    if copula_type == "gaussian":
         # Estimate correlation from Gaussian quantiles
         z = stats.norm.ppf(u)
         corr = np.corrcoef(z.T)
         return GaussianCopula(corr)
 
-    elif copula_type == 'clayton' and d == 2:
+    elif copula_type == "clayton" and d == 2:
         # Estimate theta using Kendall's tau
-        tau = stats.kendalltau(data[:, 0], data[:, 1])[0]
+        tau = float(stats.kendalltau(data[:, 0], data[:, 1])[0])
+        if not np.isfinite(tau) or tau <= 0 or tau >= 1:
+            raise ValueError(f"Clayton copula requires Kendall's tau in (0, 1); got {tau!r}")
         theta = 2 * tau / (1 - tau)
         return ClaytonCopula(theta, dimension=2)
 
-    elif copula_type == 'gumbel' and d == 2:
+    elif copula_type == "gumbel" and d == 2:
         # Estimate theta using Kendall's tau
-        tau = stats.kendalltau(data[:, 0], data[:, 1])[0]
+        tau = float(stats.kendalltau(data[:, 0], data[:, 1])[0])
+        if not np.isfinite(tau) or tau < 0 or tau >= 1:
+            raise ValueError(f"Gumbel copula requires Kendall's tau in [0, 1); got {tau!r}")
         theta = 1 / (1 - tau)
         return GumbelCopula(theta, dimension=2)
 
-    elif copula_type == 't':
-        # Estimate correlation
-        # For df, use MLE (simplified: use fixed df=4)
+    elif copula_type == "t":
+        # Estimate correlation. Degrees of freedom are fixed at df=4 as a
+        # documented simplification; full MLE over df is out of scope.
+        # See https://github.com/sanskarpan/Probability-distribution-visualizer/issues
         z = stats.t.ppf(u, df=4)
         corr = np.corrcoef(z.T)
         return StudentTCopula(corr, df=4)

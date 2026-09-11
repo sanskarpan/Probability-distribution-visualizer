@@ -1,37 +1,38 @@
 """Tests for probability distributions."""
 
 import math
-import pytest
-import numpy as np
-import sys
 import os
+import sys
+
+import numpy as np
+import pytest
 
 # Add src to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from distributions import (
-    NormalDistribution,
-    ExponentialDistribution,
-    UniformDistribution,
     BetaDistribution,
-    GammaDistribution,
-    ChiSquareDistribution,
-    StudentTDistribution,
-    WeibullDistribution,
-    LognormalDistribution,
-    CauchyDistribution,
     BinomialDistribution,
-    PoissonDistribution,
-    GeometricDistribution,
-    NegativeBinomialDistribution,
-    HypergeometricDistribution,
+    CauchyDistribution,
+    ChiSquareDistribution,
     DiscreteUniformDistribution,
+    ExponentialDistribution,
+    GammaDistribution,
+    GeometricDistribution,
+    HypergeometricDistribution,
+    LognormalDistribution,
+    NegativeBinomialDistribution,
+    NormalDistribution,
+    PoissonDistribution,
+    StudentTDistribution,
+    UniformDistribution,
+    WeibullDistribution,
 )
-
 
 # ---------------------------------------------------------------------------
 # Normal
 # ---------------------------------------------------------------------------
+
 
 class TestNormalDistribution:
     """Test Normal distribution."""
@@ -121,6 +122,7 @@ class TestNormalDistribution:
 # Exponential
 # ---------------------------------------------------------------------------
 
+
 class TestExponentialDistribution:
     """Test Exponential distribution."""
 
@@ -173,6 +175,7 @@ class TestExponentialDistribution:
 # Uniform
 # ---------------------------------------------------------------------------
 
+
 class TestUniformDistribution:
     """Test Uniform distribution."""
 
@@ -216,6 +219,7 @@ class TestUniformDistribution:
 # Beta
 # ---------------------------------------------------------------------------
 
+
 class TestBetaDistribution:
     """Test Beta distribution."""
 
@@ -256,6 +260,7 @@ class TestBetaDistribution:
 # Gamma
 # ---------------------------------------------------------------------------
 
+
 class TestGammaDistribution:
     """Test Gamma distribution."""
 
@@ -287,6 +292,7 @@ class TestGammaDistribution:
 # ---------------------------------------------------------------------------
 # Chi-Square
 # ---------------------------------------------------------------------------
+
 
 class TestChiSquareDistribution:
     """Test Chi-Square distribution."""
@@ -325,6 +331,7 @@ class TestChiSquareDistribution:
 # ---------------------------------------------------------------------------
 # Student-t
 # ---------------------------------------------------------------------------
+
 
 class TestStudentTDistribution:
     """Test Student-t distribution."""
@@ -379,6 +386,7 @@ class TestStudentTDistribution:
 # Weibull
 # ---------------------------------------------------------------------------
 
+
 class TestWeibullDistribution:
     """Test Weibull distribution."""
 
@@ -421,6 +429,7 @@ class TestWeibullDistribution:
 # ---------------------------------------------------------------------------
 # Lognormal
 # ---------------------------------------------------------------------------
+
 
 class TestLognormalDistribution:
     """Test Lognormal distribution."""
@@ -466,6 +475,7 @@ class TestLognormalDistribution:
 # ---------------------------------------------------------------------------
 # Cauchy
 # ---------------------------------------------------------------------------
+
 
 class TestCauchyDistribution:
     """Test Cauchy distribution."""
@@ -540,6 +550,7 @@ class TestCauchyDistribution:
 # Binomial
 # ---------------------------------------------------------------------------
 
+
 class TestBinomialDistribution:
     """Test Binomial distribution."""
 
@@ -589,6 +600,7 @@ class TestBinomialDistribution:
 # Poisson
 # ---------------------------------------------------------------------------
 
+
 class TestPoissonDistribution:
     """Test Poisson distribution."""
 
@@ -633,6 +645,7 @@ class TestPoissonDistribution:
 # Geometric
 # ---------------------------------------------------------------------------
 
+
 class TestGeometricDistribution:
     """Test Geometric distribution."""
 
@@ -666,6 +679,7 @@ class TestGeometricDistribution:
 # ---------------------------------------------------------------------------
 # Negative Binomial
 # ---------------------------------------------------------------------------
+
 
 class TestNegativeBinomialDistribution:
     """Test Negative Binomial distribution."""
@@ -715,6 +729,7 @@ class TestNegativeBinomialDistribution:
 # Hypergeometric
 # ---------------------------------------------------------------------------
 
+
 class TestHypergeometricDistribution:
     """Test Hypergeometric distribution."""
 
@@ -762,6 +777,7 @@ class TestHypergeometricDistribution:
 # ---------------------------------------------------------------------------
 # Discrete Uniform
 # ---------------------------------------------------------------------------
+
 
 class TestDiscreteUniformDistribution:
     """Test Discrete Uniform distribution."""
@@ -815,6 +831,7 @@ class TestDiscreteUniformDistribution:
 # Cross-cutting tests
 # ---------------------------------------------------------------------------
 
+
 def test_distribution_string_representation():
     """Test string representation."""
     dist = NormalDistribution(mu=5, sigma=2)
@@ -846,8 +863,16 @@ def test_get_statistics_comprehensive():
     dist = NormalDistribution(mu=5, sigma=2)
     stats = dist.get_statistics()
 
-    expected_keys = {"mean", "variance", "std_dev", "median",
-                     "mode", "skewness", "kurtosis", "entropy"}
+    expected_keys = {
+        "mean",
+        "variance",
+        "std_dev",
+        "median",
+        "mode",
+        "skewness",
+        "kurtosis",
+        "entropy",
+    }
     assert set(stats.keys()) == expected_keys
     assert abs(stats["mean"] - 5) < 0.001
     assert abs(stats["variance"] - 4) < 0.001
@@ -885,6 +910,7 @@ def test_all_16_distributions_can_be_created():
 # ===========================================================================
 # Tests for uninitialized distribution error paths (base.py coverage)
 # ===========================================================================
+
 
 class TestUninitializedDistributionErrors:
     """Test error paths when distribution is not initialized."""
@@ -1006,6 +1032,7 @@ class TestUninitializedDistributionErrors:
 # Tests for get_parameter_bounds on all continuous distributions
 # ===========================================================================
 
+
 class TestParameterBoundsContinuous:
     def test_exponential_bounds(self):
         dist = ExponentialDistribution()
@@ -1075,8 +1102,9 @@ class TestParameterBoundsContinuous:
 
 
 # ===========================================================================
-# Tests for mode() covering the inner exception catch path  
+# Tests for mode() covering the inner exception catch path
 # ===========================================================================
+
 
 class TestModeCoverage:
     """Test mode() for distributions where dist.mode() raises an exception."""
@@ -1116,6 +1144,7 @@ class TestModeCoverage:
 # ===========================================================================
 # Additional edge-case tests
 # ===========================================================================
+
 
 class TestAdditionalEdgeCases:
     def test_entropy_normal(self):

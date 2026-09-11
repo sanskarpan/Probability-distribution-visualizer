@@ -1,17 +1,26 @@
 """Mixture distributions - combinations of multiple distributions."""
 
-from typing import List, Tuple, Optional, Union
+from typing import List, Optional, Tuple, Union
+
 import numpy as np
 from scipy import stats
-from sklearn.mixture import GaussianMixture, BayesianGaussianMixture
+from sklearn.mixture import BayesianGaussianMixture, GaussianMixture
+
+
+def _as_2d(data: np.ndarray) -> np.ndarray:
+    """Reshape 1-D input to (n_samples, 1); pass through 2-D input."""
+    arr = np.asarray(data)
+    if arr.ndim == 1:
+        return arr.reshape(-1, 1)
+    if arr.ndim == 2:
+        return arr
+    raise ValueError("data must be 1- or 2-dimensional")
 
 
 class MixtureDistribution:
     """General mixture distribution."""
 
-    def __init__(self,
-                 components: List,
-                 weights: Union[List[float], np.ndarray]):
+    def __init__(self, components: List, weights: Union[List[float], np.ndarray]):
         """
         Initialize mixture distribution.
 
@@ -47,7 +56,7 @@ class MixtureDistribution:
         x = np.atleast_1d(x)
         pdf_vals = np.zeros_like(x, dtype=float)
 
-        for i, (component, weight) in enumerate(zip(self.components, self.weights)):
+        for _, (component, weight) in enumerate(zip(self.components, self.weights, strict=True)):
             pdf_vals += weight * component.pdf(x)
 
         return pdf_vals
@@ -65,7 +74,7 @@ class MixtureDistribution:
         x = np.atleast_1d(x)
         cdf_vals = np.zeros_like(x, dtype=float)
 
-        for i, (component, weight) in enumerate(zip(self.components, self.weights)):
+        for _, (component, weight) in enumerate(zip(self.components, self.weights, strict=True)):
             cdf_vals += weight * component.cdf(x)
 
         return cdf_vals
@@ -81,15 +90,10 @@ class MixtureDistribution:
         Returns:
             Random samples
         """
-        if random_state is not None:
-            np.random.seed(random_state)
+        rng = np.random.default_rng(random_state)
 
         # Sample component indices according to weights
-        component_indices = np.random.choice(
-            self.n_components,
-            size=size,
-            p=self.weights
-        )
+        component_indices = rng.choice(self.n_components, size=size, p=self.weights)
 
         # Sample from each selected component
         samples = np.zeros(size)
@@ -111,7 +115,7 @@ class MixtureDistribution:
             Mean value
         """
         mean = 0.0
-        for component, weight in zip(self.components, self.weights):
+        for component, weight in zip(self.components, self.weights, strict=True):
             mean += weight * component.mean()
 
         return mean
@@ -128,23 +132,26 @@ class MixtureDistribution:
 
         # E[Var(X|Z)]
         var_within = 0.0
-        for component, weight in zip(self.components, self.weights):
+        for component, weight in zip(self.components, self.weights, strict=True):
             var_within += weight * component.var()
 
         # Var(E[X|Z])
         mixture_mean = self.mean()
         var_between = 0.0
-        for component, weight in zip(self.components, self.weights):
+        for component, weight in zip(self.components, self.weights, strict=True):
             diff = component.mean() - mixture_mean
             var_between += weight * diff**2
 
         return var_within + var_between
 
-    def fit_em(self,
-              data: np.ndarray,
-              n_components: int,
-              max_iter: int = 100,
-              tol: float = 1e-4) -> Tuple[np.ndarray, List, List[float]]:
+    def fit_em(
+        self,
+        data: np.ndarray,
+        n_components: int,
+        max_iter: int = 100,
+        tol: float = 1e-4,
+        random_state: Optional[int] = None,
+    ) -> Tuple[np.ndarray, List, List[float]]:
         """
         Fit mixture model using Expectation-Maximization.
 
@@ -153,18 +160,32 @@ class MixtureDistribution:
             n_components: Number of mixture components
             max_iter: Maximum EM iterations
             tol: Convergence tolerance
+            random_state: Seed for the random component initialization.
+                Pass an int for reproducible fits; ``None`` (default) uses
+                non-deterministic entropy.
 
         Returns:
             Tuple of (responsibilities, components, weights)
         """
+        data = np.asarray(data, dtype=float).ravel()
         n = len(data)
+        if n == 0:
+            raise ValueError("data must not be empty")
+        if n_components < 1:
+            raise ValueError("n_components must be >= 1")
+        if n_components > n:
+            raise ValueError("n_components must not exceed number of data points")
 
         # Initialize parameters randomly
+        rng = np.random.default_rng(random_state)
         weights = np.ones(n_components) / n_components
-        means = np.random.choice(data, size=n_components, replace=False)
-        stds = np.ones(n_components) * np.std(data)
+        means = rng.choice(data, size=n_components, replace=False)
+        std = float(np.std(data))
+        stds = np.ones(n_components) * (std if std > 0 else 1.0)
 
-        for iteration in range(max_iter):
+        for _ in range(max_iter):
+            prev_means = means.copy()
+            prev_stds = stds.copy()
             # E-step: Calculate responsibilities
             responsibilities = np.zeros((n, n_components))
 
@@ -172,8 +193,10 @@ class MixtureDistribution:
                 component = stats.norm(loc=means[k], scale=stds[k])
                 responsibilities[:, k] = weights[k] * component.pdf(data)
 
-            # Normalize responsibilities
-            responsibilities /= responsibilities.sum(axis=1, keepdims=True)
+            # Normalize responsibilities (guard against zero total likelihood)
+            row_sums = responsibilities.sum(axis=1, keepdims=True)
+            row_sums[row_sums == 0] = 1.0
+            responsibilities /= row_sums
 
             # M-step: Update parameters
             nk = responsibilities.sum(axis=0)
@@ -183,21 +206,26 @@ class MixtureDistribution:
             new_stds = np.zeros(n_components)
 
             for k in range(n_components):
+                if nk[k] == 0:
+                    new_means[k] = means[k]
+                    new_stds[k] = stds[k]
+                    continue
                 new_means[k] = np.sum(responsibilities[:, k] * data) / nk[k]
-                diff_sq = (data - new_means[k])**2
+                diff_sq = (data - new_means[k]) ** 2
                 new_stds[k] = np.sqrt(np.sum(responsibilities[:, k] * diff_sq) / nk[k])
-
-            # Check convergence
-            if (np.max(np.abs(new_means - means)) < tol and
-                np.max(np.abs(new_stds - stds)) < tol):
-                break
+                if new_stds[k] == 0:
+                    new_stds[k] = 1e-6
 
             weights = new_weights
             means = new_means
             stds = new_stds
 
+            # Check convergence (after updating so results are never stale)
+            if np.max(np.abs(means - prev_means)) < tol and np.max(np.abs(stds - prev_stds)) < tol:
+                break
+
         # Create component distributions
-        components = [stats.norm(loc=m, scale=s) for m, s in zip(means, stds)]
+        components = [stats.norm(loc=m, scale=s) for m, s in zip(means, stds, strict=True)]
 
         return responsibilities, components, weights.tolist()
 
@@ -208,10 +236,7 @@ class MixtureDistribution:
 class GaussianMixtureModel:
     """Gaussian Mixture Model using sklearn."""
 
-    def __init__(self,
-                 n_components: int = 2,
-                 covariance_type: str = 'full',
-                 max_iter: int = 100):
+    def __init__(self, n_components: int = 2, covariance_type: str = "full", max_iter: int = 100):
         """
         Initialize Gaussian Mixture Model.
 
@@ -225,11 +250,11 @@ class GaussianMixtureModel:
             n_components=n_components,
             covariance_type=covariance_type,
             max_iter=max_iter,
-            random_state=42
+            random_state=42,
         )
         self.fitted = False
 
-    def fit(self, data: np.ndarray) -> 'GaussianMixtureModel':
+    def fit(self, data: np.ndarray) -> "GaussianMixtureModel":
         """
         Fit GMM to data.
 
@@ -239,9 +264,7 @@ class GaussianMixtureModel:
         Returns:
             Self
         """
-        data = np.atleast_2d(data)
-        if data.ndim == 1:
-            data = data.reshape(-1, 1)
+        data = _as_2d(data)
 
         self.gmm.fit(data)
         self.fitted = True
@@ -261,9 +284,7 @@ class GaussianMixtureModel:
         if not self.fitted:
             raise ValueError("Model must be fitted first")
 
-        data = np.atleast_2d(data)
-        if data.ndim == 1:
-            data = data.reshape(-1, 1)
+        data = _as_2d(data)
 
         return self.gmm.predict(data)
 
@@ -280,9 +301,7 @@ class GaussianMixtureModel:
         if not self.fitted:
             raise ValueError("Model must be fitted first")
 
-        data = np.atleast_2d(data)
-        if data.ndim == 1:
-            data = data.reshape(-1, 1)
+        data = _as_2d(data)
 
         return self.gmm.score_samples(data)
 
@@ -328,9 +347,7 @@ class GaussianMixtureModel:
         if not self.fitted:
             raise ValueError("Model must be fitted first")
 
-        data = np.atleast_2d(data)
-        if data.ndim == 1:
-            data = data.reshape(-1, 1)
+        data = _as_2d(data)
 
         return self.gmm.bic(data)
 
@@ -347,9 +364,7 @@ class GaussianMixtureModel:
         if not self.fitted:
             raise ValueError("Model must be fitted first")
 
-        data = np.atleast_2d(data)
-        if data.ndim == 1:
-            data = data.reshape(-1, 1)
+        data = _as_2d(data)
 
         return self.gmm.aic(data)
 
@@ -364,20 +379,22 @@ class GaussianMixtureModel:
             raise ValueError("Model must be fitted first")
 
         return {
-            'means': self.gmm.means_,
-            'covariances': self.gmm.covariances_,
-            'weights': self.gmm.weights_
+            "means": self.gmm.means_,
+            "covariances": self.gmm.covariances_,
+            "weights": self.gmm.weights_,
         }
 
 
 class BayesianGMM:
     """Bayesian Gaussian Mixture Model with automatic component selection."""
 
-    def __init__(self,
-                 max_components: int = 10,
-                 weight_concentration_prior: float = 1.0,
-                 max_iter: int = 200,
-                 tol: float = 1e-4):
+    def __init__(
+        self,
+        max_components: int = 10,
+        weight_concentration_prior: float = 1.0,
+        max_iter: int = 200,
+        tol: float = 1e-4,
+    ):
         """
         Initialize Bayesian GMM.
 
@@ -393,11 +410,11 @@ class BayesianGMM:
             weight_concentration_prior=weight_concentration_prior,
             max_iter=max_iter,
             tol=tol,
-            random_state=42
+            random_state=42,
         )
         self.fitted = False
 
-    def fit(self, data: np.ndarray) -> 'BayesianGMM':
+    def fit(self, data: np.ndarray) -> "BayesianGMM":
         """
         Fit Bayesian GMM to data.
 
@@ -407,9 +424,7 @@ class BayesianGMM:
         Returns:
             Self
         """
-        data = np.atleast_2d(data)
-        if data.ndim == 1:
-            data = data.reshape(-1, 1)
+        data = _as_2d(data)
 
         self.bgmm.fit(data)
         self.fitted = True
@@ -421,9 +436,7 @@ class BayesianGMM:
         if not self.fitted:
             raise ValueError("Model must be fitted first")
 
-        data = np.atleast_2d(data)
-        if data.ndim == 1:
-            data = data.reshape(-1, 1)
+        data = _as_2d(data)
 
         return self.bgmm.predict(data)
 
@@ -441,8 +454,7 @@ class BayesianGMM:
         return np.sum(self.bgmm.weights_ > 0.01)
 
 
-def select_optimal_components(data: np.ndarray,
-                              max_components: int = 10) -> Tuple[int, dict]:
+def select_optimal_components(data: np.ndarray, max_components: int = 10) -> Tuple[int, dict]:
     """
     Select optimal number of components using BIC.
 
@@ -471,10 +483,10 @@ def select_optimal_components(data: np.ndarray,
     optimal_n: int = int(np.argmin(bic_scores) + 1)
 
     results = {
-        'optimal_components': optimal_n,
-        'bic_scores': bic_scores,
-        'aic_scores': aic_scores,
-        'components_range': list(range(1, max_components + 1))
+        "optimal_components": optimal_n,
+        "bic_scores": bic_scores,
+        "aic_scores": aic_scores,
+        "components_range": list(range(1, max_components + 1)),
     }
 
     return optimal_n, results

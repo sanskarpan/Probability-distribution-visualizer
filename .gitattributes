@@ -1,0 +1,9 @@
+# Normalize line endings and mark generated paths.
+* text=auto eol=lf
+*.png binary
+*.gif binary
+*.jpg binary
+*.pdf binary
+htmlcov/ export-ignore
+.gitattributes export-ignore
+.github/ export-ignore

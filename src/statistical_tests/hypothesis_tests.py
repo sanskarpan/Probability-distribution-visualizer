@@ -1,6 +1,7 @@
 """Hypothesis testing functions."""
 
-from typing import Dict, Optional, Union, Tuple
+from typing import Dict, Optional, Union
+
 import numpy as np
 from scipy import stats
 
@@ -9,8 +10,8 @@ def t_test(
     sample1: np.ndarray,
     sample2: Optional[np.ndarray] = None,
     mu: float = 0,
-    alternative: str = 'two-sided',
-    alpha: float = 0.05
+    alternative: str = "two-sided",
+    alpha: float = 0.05,
 ) -> Dict[str, Union[float, bool, str]]:
     """
     Perform t-test (one-sample or two-sample).
@@ -37,20 +38,18 @@ def t_test(
     reject_null = p_value < alpha
 
     return {
-        'test': test_type,
-        'statistic': float(statistic),
-        'p_value': float(p_value),
-        'reject_null': reject_null,
-        'alpha': alpha,
-        'alternative': alternative,
-        'interpretation': f"{'Reject' if reject_null else 'Fail to reject'} null hypothesis at α={alpha}"
+        "test": test_type,
+        "statistic": float(statistic),
+        "p_value": float(p_value),
+        "reject_null": reject_null,
+        "alpha": alpha,
+        "alternative": alternative,
+        "interpretation": f"{'Reject' if reject_null else 'Fail to reject'} null hypothesis at α={alpha}",
     }
 
 
 def chi_square_test(
-    observed: np.ndarray,
-    expected: Optional[np.ndarray] = None,
-    alpha: float = 0.05
+    observed: np.ndarray, expected: Optional[np.ndarray] = None, alpha: float = 0.05
 ) -> Dict[str, Union[float, bool, int]]:
     """
     Perform chi-square goodness-of-fit test.
@@ -72,20 +71,17 @@ def chi_square_test(
     reject_null = p_value < alpha
 
     return {
-        'test': 'Chi-square goodness-of-fit',
-        'statistic': float(statistic),
-        'p_value': float(p_value),
-        'degrees_of_freedom': df,
-        'reject_null': reject_null,
-        'alpha': alpha,
-        'interpretation': f"{'Reject' if reject_null else 'Fail to reject'} null hypothesis at α={alpha}"
+        "test": "Chi-square goodness-of-fit",
+        "statistic": float(statistic),
+        "p_value": float(p_value),
+        "degrees_of_freedom": df,
+        "reject_null": reject_null,
+        "alpha": alpha,
+        "interpretation": f"{'Reject' if reject_null else 'Fail to reject'} null hypothesis at α={alpha}",
     }
 
 
-def anova(
-    *samples: np.ndarray,
-    alpha: float = 0.05
-) -> Dict[str, Union[float, bool]]:
+def anova(*samples: np.ndarray, alpha: float = 0.05) -> Dict[str, Union[float, bool]]:
     """
     Perform one-way ANOVA.
 
@@ -103,23 +99,20 @@ def anova(
     df_within = sum(len(s) for s in samples) - len(samples)
 
     return {
-        'test': 'One-way ANOVA',
-        'f_statistic': float(statistic),
-        'p_value': float(p_value),
-        'df_between': df_between,
-        'df_within': df_within,
-        'reject_null': reject_null,
-        'alpha': alpha,
-        'interpretation': f"{'Reject' if reject_null else 'Fail to reject'} null hypothesis at α={alpha}",
-        'conclusion': f"Group means are {'significantly different' if reject_null else 'not significantly different'}"
+        "test": "One-way ANOVA",
+        "f_statistic": float(statistic),
+        "p_value": float(p_value),
+        "df_between": df_between,
+        "df_within": df_within,
+        "reject_null": reject_null,
+        "alpha": alpha,
+        "interpretation": f"{'Reject' if reject_null else 'Fail to reject'} null hypothesis at α={alpha}",
+        "conclusion": f"Group means are {'significantly different' if reject_null else 'not significantly different'}",
     }
 
 
 def correlation_test(
-    x: np.ndarray,
-    y: np.ndarray,
-    method: str = 'pearson',
-    alpha: float = 0.05
+    x: np.ndarray, y: np.ndarray, method: str = "pearson", alpha: float = 0.05
 ) -> Dict[str, Union[float, bool, str]]:
     """
     Test for correlation between two variables.
@@ -133,13 +126,13 @@ def correlation_test(
     Returns:
         Dictionary with test results
     """
-    if method == 'pearson':
+    if method == "pearson":
         statistic, p_value = stats.pearsonr(x, y)
         test_name = "Pearson correlation"
-    elif method == 'spearman':
+    elif method == "spearman":
         statistic, p_value = stats.spearmanr(x, y)
         test_name = "Spearman rank correlation"
-    elif method == 'kendall':
+    elif method == "kendall":
         statistic, p_value = stats.kendalltau(x, y)
         test_name = "Kendall's tau"
     else:
@@ -159,20 +152,19 @@ def correlation_test(
     direction = "positive" if statistic > 0 else "negative"
 
     return {
-        'test': test_name,
-        'correlation': float(statistic),
-        'p_value': float(p_value),
-        'reject_null': reject_null,
-        'alpha': alpha,
-        'interpretation': f"{'Significant' if reject_null else 'Non-significant'} {strength} {direction} correlation",
-        'strength': strength,
-        'direction': direction
+        "test": test_name,
+        "correlation": float(statistic),
+        "p_value": float(p_value),
+        "reject_null": reject_null,
+        "alpha": alpha,
+        "interpretation": f"{'Significant' if reject_null else 'Non-significant'} {strength} {direction} correlation",
+        "strength": strength,
+        "direction": direction,
     }
 
 
 def normality_tests(
-    data: np.ndarray,
-    alpha: float = 0.05
+    data: np.ndarray, alpha: float = 0.05
 ) -> Dict[str, Dict[str, Union[float, bool]]]:
     """
     Run multiple normality tests.
@@ -189,51 +181,57 @@ def normality_tests(
     # Shapiro-Wilk test
     if len(data) <= 5000:  # SW test has sample size limits
         sw_stat, sw_p = stats.shapiro(data)
-        results['shapiro_wilk'] = {
-            'statistic': float(sw_stat),
-            'p_value': float(sw_p),
-            'reject_null': sw_p < alpha,
-            'conclusion': 'Non-normal' if sw_p < alpha else 'Normal'
+        results["shapiro_wilk"] = {
+            "statistic": float(sw_stat),
+            "p_value": float(sw_p),
+            "reject_null": sw_p < alpha,
+            "conclusion": "Non-normal" if sw_p < alpha else "Normal",
         }
 
-    # Kolmogorov-Smirnov test
-    ks_stat, ks_p = stats.kstest(data, 'norm', args=(np.mean(data), np.std(data)))
-    results['kolmogorov_smirnov'] = {
-        'statistic': float(ks_stat),
-        'p_value': float(ks_p),
-        'reject_null': ks_p < alpha,
-        'conclusion': 'Non-normal' if ks_p < alpha else 'Normal'
+    # Kolmogorov-Smirnov test against a fitted Normal (frozen CDF callable:
+    # scipy>=1.18 no longer forwards string-form `args` positionally).
+    norm_cdf = stats.norm(loc=np.mean(data), scale=np.std(data)).cdf
+    ks_stat, ks_p = stats.kstest(data, norm_cdf)
+    results["kolmogorov_smirnov"] = {
+        "statistic": float(ks_stat),
+        "p_value": float(ks_p),
+        "reject_null": ks_p < alpha,
+        "conclusion": "Non-normal" if ks_p < alpha else "Normal",
     }
 
     # Anderson-Darling test
-    ad_result = stats.anderson(data, dist='norm')
+    ad_result = stats.anderson(data, dist="norm")
     # Find critical value for given alpha
     critical_idx = {0.15: 0, 0.10: 1, 0.05: 2, 0.025: 3, 0.01: 4}.get(alpha, 2)
-    results['anderson_darling'] = {
-        'statistic': float(ad_result.statistic),
-        'critical_value': float(ad_result.critical_values[critical_idx]),
-        'significance_level': float(ad_result.significance_level[critical_idx]),
-        'reject_null': ad_result.statistic > ad_result.critical_values[critical_idx],
-        'conclusion': 'Non-normal' if ad_result.statistic > ad_result.critical_values[critical_idx] else 'Normal'
+    results["anderson_darling"] = {
+        "statistic": float(ad_result.statistic),
+        "critical_value": float(ad_result.critical_values[critical_idx]),
+        "significance_level": float(ad_result.significance_level[critical_idx]),
+        "reject_null": ad_result.statistic > ad_result.critical_values[critical_idx],
+        "conclusion": (
+            "Non-normal"
+            if ad_result.statistic > ad_result.critical_values[critical_idx]
+            else "Normal"
+        ),
     }
 
     # Jarque-Bera test
     jb_stat, jb_p = stats.jarque_bera(data)
-    results['jarque_bera'] = {
-        'statistic': float(jb_stat),
-        'p_value': float(jb_p),
-        'reject_null': jb_p < alpha,
-        'conclusion': 'Non-normal' if jb_p < alpha else 'Normal'
+    results["jarque_bera"] = {
+        "statistic": float(jb_stat),
+        "p_value": float(jb_p),
+        "reject_null": jb_p < alpha,
+        "conclusion": "Non-normal" if jb_p < alpha else "Normal",
     }
 
     # Overall consensus
-    reject_count = sum(1 for r in results.values() if r.get('reject_null', False))
+    reject_count = sum(1 for r in results.values() if r.get("reject_null", False))
     total_tests = len(results)
 
-    results['consensus'] = {
-        'tests_rejecting_normality': reject_count,
-        'total_tests': total_tests,
-        'conclusion': 'Likely non-normal' if reject_count > total_tests / 2 else 'Likely normal'
+    results["consensus"] = {
+        "tests_rejecting_normality": reject_count,
+        "total_tests": total_tests,
+        "conclusion": "Likely non-normal" if reject_count > total_tests / 2 else "Likely normal",
     }
 
     return results

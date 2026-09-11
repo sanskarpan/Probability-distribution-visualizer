@@ -1,21 +1,22 @@
 """Tests for multivariate distributions."""
 
-import pytest
-import numpy as np
-import sys
 import os
+import sys
 
 import matplotlib
-matplotlib.use('Agg')
+import numpy as np
+import pytest
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 # Add src to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from distributions.multivariate import (
+    DirichletDistribution,
     MultivariateDistribution,
     MultivariateNormalDistribution,
-    DirichletDistribution,
     MultivariateStudentT,
     WishartDistribution,
     plot_bivariate_normal,
@@ -578,7 +579,7 @@ class TestPlotFunctions:
         fig, axes = plot_bivariate_normal(dist, num_points=20, num_contours=5)
         assert fig is not None
         assert axes is not None
-        plt.close('all')
+        plt.close("all")
 
     def test_plot_bivariate_normal_dimension_error(self):
         """Test that plot_bivariate_normal raises for dim != 2."""
@@ -587,7 +588,7 @@ class TestPlotFunctions:
         dist = MultivariateNormalDistribution(mean, cov)
         with pytest.raises(ValueError, match="only plot bivariate"):
             plot_bivariate_normal(dist)
-        plt.close('all')
+        plt.close("all")
 
     def test_plot_dirichlet_simplex(self):
         """Test that plot_dirichlet_simplex returns figure and axes."""
@@ -596,7 +597,7 @@ class TestPlotFunctions:
         fig, ax = plot_dirichlet_simplex(dist, num_samples=50)
         assert fig is not None
         assert ax is not None
-        plt.close('all')
+        plt.close("all")
 
     def test_plot_dirichlet_simplex_dimension_error(self):
         """Test that plot_dirichlet_simplex raises for dim != 3."""
@@ -604,7 +605,7 @@ class TestPlotFunctions:
         dist = DirichletDistribution(alpha)
         with pytest.raises(ValueError, match="only plot 3"):
             plot_dirichlet_simplex(dist)
-        plt.close('all')
+        plt.close("all")
 
 
 class TestMultivariateDistributionBase:
