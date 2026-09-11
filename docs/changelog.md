@@ -1,6 +1,6 @@
 # Changelog
 
-The canonical changelog is [`CHANGELOG.md`](https://github.com/sanskarpan/Probability-distribution-visualizer/blob/main/CHANGELOG.md). Summary:
+The canonical changelog is [`CHANGELOG.md`](https://github.com/sanskarpan/probviz/blob/main/CHANGELOG.md). Summary:
 
 ## [1.0.0] — 2026-09-07
 
