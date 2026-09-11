@@ -5,23 +5,27 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "probability-distribution-visualizer"
 version = "1.0.0"
-description = "A comprehensive probability distribution visualizer with interactive web interface"
+description = "Interactive probability distribution visualizer: 16 univariate + multivariate, copulas, mixtures, fitting, Monte Carlo, and statistical tests"
 readme = "README.md"
-license = {text = "MIT"}
-authors = [{name = "Research Project"}]
-requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Sanskar Pan and contributors" }]
+maintainers = [{ name = "Sanskar Pan", email = "sanskarpandey2004@gmail.com" }]
+keywords = ["statistics", "probability", "distributions", "visualization", "streamlit", "monte-carlo"]
+requires-python = ">=3.10"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Education",
     "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
     "Topic :: Scientific/Engineering :: Mathematics",
     "Topic :: Scientific/Engineering :: Visualization",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
+    "Typing :: Typed",
 ]
 dependencies = [
     "numpy>=1.24.0",
@@ -31,6 +35,9 @@ dependencies = [
     "seaborn>=0.13.0",
     "plotly>=5.18.0",
     "streamlit>=1.29.0",
+    "scikit-learn>=1.7.2",
+    "statsmodels>=0.15.0",
+    "joblib>=1.6.0",
 ]
 
 [project.optional-dependencies]
@@ -41,17 +48,32 @@ dev = [
     "black>=23.12.0",
     "flake8>=6.1.0",
     "isort>=5.13.0",
+    "ruff>=0.1.0",
+    "pre-commit>=3.0.0",
 ]
 docs = [
-    "sphinx>=7.2.0",
-    "sphinx-rtd-theme>=2.0.0",
+    "mkdocs>=1.6.0",
+    "mkdocs-material>=9.0.0",
+    "mkdocstrings[python]>=0.24.0",
+]
+test = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
 ]
 
 [project.scripts]
-probviz = "web.app:main"
+probviz = "src.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/sanskarpan/Probability-distribution-visualizer"
+Documentation = "https://sanskarpan.github.io/Probability-distribution-visualizer/"
+Repository = "https://github.com/sanskarpan/Probability-distribution-visualizer"
+Issues = "https://github.com/sanskarpan/Probability-distribution-visualizer/issues"
+Changelog = "https://github.com/sanskarpan/Probability-distribution-visualizer/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
+include = ["src*", "web*"]
 
 [tool.pytest.ini_options]
 minversion = "7.4"
@@ -87,7 +109,7 @@ fail_under = 80
 directory = "htmlcov"
 
 [tool.mypy]
-python_version = "3.9"
+python_version = "3.10"
 strict = false
 warn_return_any = true
 warn_unused_configs = true
@@ -116,7 +138,7 @@ exclude = [
 
 [tool.black]
 line-length = 100
-target-version = ["py39"]
+target-version = ["py310"]
 include = '\.pyi?$'
 extend-exclude = '''
 /(
@@ -134,5 +156,16 @@ extend-exclude = '''
 [tool.isort]
 profile = "black"
 line_length = 100
-py_version = 39
+py_version = 310
 skip_gitignore = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src", "web", "tests"]
