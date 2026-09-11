@@ -188,8 +188,10 @@ def normality_tests(
             "conclusion": "Non-normal" if sw_p < alpha else "Normal",
         }
 
-    # Kolmogorov-Smirnov test
-    ks_stat, ks_p = stats.kstest(data, "norm", args=(np.mean(data), np.std(data)))
+    # Kolmogorov-Smirnov test against a fitted Normal (frozen CDF callable:
+    # scipy>=1.18 no longer forwards string-form `args` positionally).
+    norm_cdf = stats.norm(loc=np.mean(data), scale=np.std(data)).cdf
+    ks_stat, ks_p = stats.kstest(data, norm_cdf)
     results["kolmogorov_smirnov"] = {
         "statistic": float(ks_stat),
         "p_value": float(ks_p),
