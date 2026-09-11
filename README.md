@@ -146,7 +146,7 @@ MIT — see [`LICENSE`](LICENSE). If you use this in research or teaching:
 ```bibtex
 @software{probability_distribution_visualizer,
   title  = {Probability Distribution Visualizer},
-  author = {Pan, Sanskar and contributors},
+  author = {sanskarpan},
   year   = {2026},
   url    = {https://github.com/sanskarpan/Probability-distribution-visualizer}
 }
