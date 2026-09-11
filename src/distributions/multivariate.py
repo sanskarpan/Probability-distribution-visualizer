@@ -1,6 +1,6 @@
 """Multivariate probability distributions."""
 
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Optional, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -68,8 +68,8 @@ class MultivariateNormalDistribution(MultivariateDistribution):
         # Check if covariance matrix is positive definite
         try:
             np.linalg.cholesky(cov)
-        except np.linalg.LinAlgError:
-            raise ValueError("cov must be positive definite")
+        except np.linalg.LinAlgError as err:
+            raise ValueError("cov must be positive definite") from err
 
         super().__init__("Multivariate Normal", len(mean))
         self.mean_vec = mean
