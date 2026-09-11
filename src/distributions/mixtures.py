@@ -56,7 +56,7 @@ class MixtureDistribution:
         x = np.atleast_1d(x)
         pdf_vals = np.zeros_like(x, dtype=float)
 
-        for i, (component, weight) in enumerate(zip(self.components, self.weights)):
+        for _, (component, weight) in enumerate(zip(self.components, self.weights, strict=True)):
             pdf_vals += weight * component.pdf(x)
 
         return pdf_vals
@@ -74,7 +74,7 @@ class MixtureDistribution:
         x = np.atleast_1d(x)
         cdf_vals = np.zeros_like(x, dtype=float)
 
-        for i, (component, weight) in enumerate(zip(self.components, self.weights)):
+        for _, (component, weight) in enumerate(zip(self.components, self.weights, strict=True)):
             cdf_vals += weight * component.cdf(x)
 
         return cdf_vals
@@ -115,7 +115,7 @@ class MixtureDistribution:
             Mean value
         """
         mean = 0.0
-        for component, weight in zip(self.components, self.weights):
+        for component, weight in zip(self.components, self.weights, strict=True):
             mean += weight * component.mean()
 
         return mean
@@ -132,13 +132,13 @@ class MixtureDistribution:
 
         # E[Var(X|Z)]
         var_within = 0.0
-        for component, weight in zip(self.components, self.weights):
+        for component, weight in zip(self.components, self.weights, strict=True):
             var_within += weight * component.var()
 
         # Var(E[X|Z])
         mixture_mean = self.mean()
         var_between = 0.0
-        for component, weight in zip(self.components, self.weights):
+        for component, weight in zip(self.components, self.weights, strict=True):
             diff = component.mean() - mixture_mean
             var_between += weight * diff**2
 
@@ -183,7 +183,7 @@ class MixtureDistribution:
         std = float(np.std(data))
         stds = np.ones(n_components) * (std if std > 0 else 1.0)
 
-        for iteration in range(max_iter):
+        for _ in range(max_iter):
             prev_means = means.copy()
             prev_stds = stds.copy()
             # E-step: Calculate responsibilities
@@ -225,7 +225,7 @@ class MixtureDistribution:
                 break
 
         # Create component distributions
-        components = [stats.norm(loc=m, scale=s) for m, s in zip(means, stds)]
+        components = [stats.norm(loc=m, scale=s) for m, s in zip(means, stds, strict=True)]
 
         return responsibilities, components, weights.tolist()
 
