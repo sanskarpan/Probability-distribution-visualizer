@@ -496,7 +496,7 @@ def fit_copula_to_data(
     elif copula_type == "t":
         # Estimate correlation. Degrees of freedom are fixed at df=4 as a
         # documented simplification; full MLE over df is out of scope.
-        # See https://github.com/sanskarpan/Probability-distribution-visualizer/issues
+        # See https://github.com/sanskarpan/probviz/issues
         z = stats.t.ppf(u, df=4)
         corr = np.corrcoef(z.T)
         return StudentTCopula(corr, df=4)
