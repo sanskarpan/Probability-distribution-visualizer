@@ -3,7 +3,7 @@
 import logging
 import time
 from dataclasses import dataclass
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import numpy as np
 from scipy import stats
@@ -44,7 +44,7 @@ class MonteCarloSimulator:
         num_samples: int = 10000,
         track_convergence: bool = False,
         confidence_level: float = 0.95,
-        **kwargs,
+        **kwargs: Any,
     ) -> SimulationResult:
         """
         Run Monte Carlo simulation.
@@ -320,7 +320,6 @@ class MonteCarloSimulator:
         # Pool data
         pooled = np.concatenate([group1, group2])
         n1 = len(group1)
-        n_total = len(pooled)
 
         # Permutation distribution
         perm_stats = np.zeros(num_permutations)
