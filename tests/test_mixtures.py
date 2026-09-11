@@ -88,7 +88,6 @@ class TestMixtureDistribution:
         assert len(samples) == 10000
 
         samples_low = samples[samples < 5]
-        samples_high = samples[samples >= 5]
 
         ratio = len(samples_low) / len(samples)
         assert abs(ratio - 0.7) < 0.05
