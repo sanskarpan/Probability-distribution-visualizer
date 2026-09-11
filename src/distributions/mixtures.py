@@ -145,7 +145,12 @@ class MixtureDistribution:
         return var_within + var_between
 
     def fit_em(
-        self, data: np.ndarray, n_components: int, max_iter: int = 100, tol: float = 1e-4
+        self,
+        data: np.ndarray,
+        n_components: int,
+        max_iter: int = 100,
+        tol: float = 1e-4,
+        random_state: Optional[int] = None,
     ) -> Tuple[np.ndarray, List, List[float]]:
         """
         Fit mixture model using Expectation-Maximization.
@@ -155,6 +160,9 @@ class MixtureDistribution:
             n_components: Number of mixture components
             max_iter: Maximum EM iterations
             tol: Convergence tolerance
+            random_state: Seed for the random component initialization.
+                Pass an int for reproducible fits; ``None`` (default) uses
+                non-deterministic entropy.
 
         Returns:
             Tuple of (responsibilities, components, weights)
@@ -169,7 +177,7 @@ class MixtureDistribution:
             raise ValueError("n_components must not exceed number of data points")
 
         # Initialize parameters randomly
-        rng = np.random.default_rng()
+        rng = np.random.default_rng(random_state)
         weights = np.ones(n_components) / n_components
         means = rng.choice(data, size=n_components, replace=False)
         std = float(np.std(data))
