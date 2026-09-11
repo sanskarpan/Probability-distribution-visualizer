@@ -2,7 +2,7 @@
 
 import logging
 import warnings
-from typing import Dict, List, Optional, Tuple, Type
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import numpy as np
 from scipy import stats
@@ -65,7 +65,7 @@ class DistributionFitter:
                 results[dist_name] = result
             except Exception as e:
                 logger.warning("Failed to fit distribution '%s': %s", dist_name, e)
-                warnings.warn(f"Failed to fit {dist_name}: {e}")
+                warnings.warn(f"Failed to fit {dist_name}: {e}", stacklevel=2)
                 continue
 
         # Sort by AIC (lower is better)
@@ -400,7 +400,9 @@ class GoodnessOfFit:
         return chi2_stat, p_value
 
     @staticmethod
-    def kolmogorov_smirnov_test(data: np.ndarray, cdf_function) -> Tuple[float, float]:
+    def kolmogorov_smirnov_test(
+        data: np.ndarray, cdf_function: Callable[..., Any]
+    ) -> Tuple[float, float]:
         """
         Kolmogorov-Smirnov test.
 
@@ -458,7 +460,9 @@ class GoodnessOfFit:
             Tuple of (w_statistic, p_value)
         """
         if len(data) > 5000:
-            warnings.warn("Shapiro-Wilk test may be unreliable for large samples")
+            warnings.warn(
+                "Shapiro-Wilk test may be unreliable for large samples", stacklevel=2
+            )
 
         w_stat, p_value = stats.shapiro(data)
 
