@@ -179,7 +179,8 @@ class TestGoodnessOfFit:
 
         from scipy import stats
 
-        cdf_func = lambda x: stats.norm.cdf(x, loc=0, scale=1)
+        def cdf_func(x):
+            return stats.norm.cdf(x, loc=0, scale=1)
         ks_stat, p_value = GoodnessOfFit.kolmogorov_smirnov_test(data, cdf_func)
 
         assert ks_stat > 0
