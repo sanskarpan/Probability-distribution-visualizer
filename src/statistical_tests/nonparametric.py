@@ -1,15 +1,13 @@
 """Nonparametric statistical tests."""
 
-from typing import Dict, Union, Optional
+from typing import Dict, Optional, Union
+
 import numpy as np
 from scipy import stats
 
 
 def mann_whitney_u(
-    sample1: np.ndarray,
-    sample2: np.ndarray,
-    alternative: str = 'two-sided',
-    alpha: float = 0.05
+    sample1: np.ndarray, sample2: np.ndarray, alternative: str = "two-sided", alpha: float = 0.05
 ) -> Dict[str, Union[float, bool, str]]:
     """
     Mann-Whitney U test (nonparametric alternative to two-sample t-test).
@@ -23,30 +21,27 @@ def mann_whitney_u(
     Returns:
         Dictionary with test results
     """
-    statistic, p_value = stats.mannwhitneyu(
-        sample1, sample2,
-        alternative=alternative
-    )
+    statistic, p_value = stats.mannwhitneyu(sample1, sample2, alternative=alternative)
 
     reject_null = p_value < alpha
 
     return {
-        'test': 'Mann-Whitney U test',
-        'statistic': float(statistic),
-        'p_value': float(p_value),
-        'reject_null': reject_null,
-        'alpha': alpha,
-        'alternative': alternative,
-        'interpretation': f"{'Reject' if reject_null else 'Fail to reject'} null hypothesis",
-        'conclusion': f"Distributions are {'different' if reject_null else 'not significantly different'}"
+        "test": "Mann-Whitney U test",
+        "statistic": float(statistic),
+        "p_value": float(p_value),
+        "reject_null": reject_null,
+        "alpha": alpha,
+        "alternative": alternative,
+        "interpretation": f"{'Reject' if reject_null else 'Fail to reject'} null hypothesis",
+        "conclusion": f"Distributions are {'different' if reject_null else 'not significantly different'}",
     }
 
 
 def wilcoxon_signed_rank(
     sample1: np.ndarray,
     sample2: Optional[np.ndarray] = None,
-    alternative: str = 'two-sided',
-    alpha: float = 0.05
+    alternative: str = "two-sided",
+    alpha: float = 0.05,
 ) -> Dict[str, Union[float, bool, str]]:
     """
     Wilcoxon signed-rank test (nonparametric paired test).
@@ -71,37 +66,31 @@ def wilcoxon_signed_rank(
 
     if len(differences) == 0:
         return {
-            'test': 'Wilcoxon signed-rank test',
-            'error': 'No non-zero differences found',
-            'statistic': np.nan,
-            'p_value': np.nan,
-            'reject_null': False
+            "test": "Wilcoxon signed-rank test",
+            "error": "No non-zero differences found",
+            "statistic": np.nan,
+            "p_value": np.nan,
+            "reject_null": False,
         }
 
-    statistic, p_value = stats.wilcoxon(
-        differences,
-        alternative=alternative
-    )
+    statistic, p_value = stats.wilcoxon(differences, alternative=alternative)
 
     reject_null = p_value < alpha
 
     return {
-        'test': 'Wilcoxon signed-rank test',
-        'statistic': float(statistic),
-        'p_value': float(p_value),
-        'reject_null': reject_null,
-        'alpha': alpha,
-        'alternative': alternative,
-        'n_differences': len(differences),
-        'interpretation': f"{'Reject' if reject_null else 'Fail to reject'} null hypothesis",
-        'conclusion': f"Paired observations are {'different' if reject_null else 'not significantly different'}"
+        "test": "Wilcoxon signed-rank test",
+        "statistic": float(statistic),
+        "p_value": float(p_value),
+        "reject_null": reject_null,
+        "alpha": alpha,
+        "alternative": alternative,
+        "n_differences": len(differences),
+        "interpretation": f"{'Reject' if reject_null else 'Fail to reject'} null hypothesis",
+        "conclusion": f"Paired observations are {'different' if reject_null else 'not significantly different'}",
     }
 
 
-def kruskal_wallis(
-    *samples: np.ndarray,
-    alpha: float = 0.05
-) -> Dict[str, Union[float, bool, int]]:
+def kruskal_wallis(*samples: np.ndarray, alpha: float = 0.05) -> Dict[str, Union[float, bool, int]]:
     """
     Kruskal-Wallis H test (nonparametric alternative to one-way ANOVA).
 
@@ -118,22 +107,19 @@ def kruskal_wallis(
     df = len(samples) - 1
 
     return {
-        'test': 'Kruskal-Wallis H test',
-        'h_statistic': float(statistic),
-        'p_value': float(p_value),
-        'degrees_of_freedom': df,
-        'n_groups': len(samples),
-        'reject_null': reject_null,
-        'alpha': alpha,
-        'interpretation': f"{'Reject' if reject_null else 'Fail to reject'} null hypothesis",
-        'conclusion': f"Group distributions are {'different' if reject_null else 'not significantly different'}"
+        "test": "Kruskal-Wallis H test",
+        "h_statistic": float(statistic),
+        "p_value": float(p_value),
+        "degrees_of_freedom": df,
+        "n_groups": len(samples),
+        "reject_null": reject_null,
+        "alpha": alpha,
+        "interpretation": f"{'Reject' if reject_null else 'Fail to reject'} null hypothesis",
+        "conclusion": f"Group distributions are {'different' if reject_null else 'not significantly different'}",
     }
 
 
-def friedman_test(
-    *samples: np.ndarray,
-    alpha: float = 0.05
-) -> Dict[str, Union[float, bool, int]]:
+def friedman_test(*samples: np.ndarray, alpha: float = 0.05) -> Dict[str, Union[float, bool, int]]:
     """
     Friedman test (nonparametric alternative to repeated measures ANOVA).
 
@@ -153,20 +139,20 @@ def friedman_test(
     reject_null = p_value < alpha
 
     k = len(samples)  # number of treatments
-    n = lengths[0]    # number of blocks
+    n = lengths[0]  # number of blocks
     df = k - 1
 
     return {
-        'test': 'Friedman test',
-        'statistic': float(statistic),
-        'p_value': float(p_value),
-        'degrees_of_freedom': df,
-        'n_treatments': k,
-        'n_blocks': n,
-        'reject_null': reject_null,
-        'alpha': alpha,
-        'interpretation': f"{'Reject' if reject_null else 'Fail to reject'} null hypothesis",
-        'conclusion': f"Treatment effects are {'different' if reject_null else 'not significantly different'}"
+        "test": "Friedman test",
+        "statistic": float(statistic),
+        "p_value": float(p_value),
+        "degrees_of_freedom": df,
+        "n_treatments": k,
+        "n_blocks": n,
+        "reject_null": reject_null,
+        "alpha": alpha,
+        "interpretation": f"{'Reject' if reject_null else 'Fail to reject'} null hypothesis",
+        "conclusion": f"Treatment effects are {'different' if reject_null else 'not significantly different'}",
     }
 
 
