@@ -9,8 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Renamed the project and distribution from
-  `probability-distribution-visualizer` to **`probviz`** (GitHub repo
+- Renamed the project and distribution to **`probviz`** (GitHub repo
   `sanskarpan/probviz`, PyPI `probviz`, docs at
   <https://sanskarpan.github.io/probviz/>). All URLs, badges, packaging
   metadata, Docker labels, and citations updated; `docs/archive/` historical
