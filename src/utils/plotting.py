@@ -214,6 +214,8 @@ def plot_correlation_heatmap(
         Matplotlib figure
     """
     data = np.asarray(data)
+    if data.size == 0:
+        raise ValueError("data must not be empty")
     if data.ndim == 1:
         data = data.reshape(-1, 1)
 
