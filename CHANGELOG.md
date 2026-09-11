@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] — 2026-09-11
+
+### Changed
+
+- Renamed the project and distribution from
+  `probability-distribution-visualizer` to **`probviz`** (GitHub repo
+  `sanskarpan/probviz`, PyPI `probviz`, docs at
+  <https://sanskarpan.github.io/probviz/>). All URLs, badges, packaging
+  metadata, Docker labels, and citations updated; `docs/archive/` historical
+  notes intentionally left untouched.
+
 ## [1.0.0] — 2026-09-07
 
 ### Added
