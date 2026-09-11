@@ -103,7 +103,6 @@ def plot_qq(
     if params is None:
         params = distribution.fit(data)
 
-
     fig, ax = plt.subplots(figsize=figsize)
 
     # Theoretical quantiles
@@ -156,7 +155,6 @@ def plot_histogram_with_fit(
 
     if params is None:
         params = distribution.fit(data)
-
 
     fig, ax = plt.subplots(figsize=figsize)
 
