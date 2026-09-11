@@ -4,34 +4,34 @@ Probability Distribution Visualizer - Streamlit Web App
 An interactive web application for visualizing and exploring probability distributions.
 """
 
-import streamlit as st
+import os
+import sys
+
 import numpy as np
 import plotly.graph_objects as go
-import sys
-import os
+import streamlit as st
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.distributions import (
-    NormalDistribution,
-    ExponentialDistribution,
-    UniformDistribution,
     BetaDistribution,
-    GammaDistribution,
-    ChiSquareDistribution,
-    StudentTDistribution,
-    WeibullDistribution,
-    LognormalDistribution,
-    CauchyDistribution,
     BinomialDistribution,
-    PoissonDistribution,
-    GeometricDistribution,
-    NegativeBinomialDistribution,
-    HypergeometricDistribution,
+    CauchyDistribution,
+    ChiSquareDistribution,
     DiscreteUniformDistribution,
+    ExponentialDistribution,
+    GammaDistribution,
+    GeometricDistribution,
+    HypergeometricDistribution,
+    LognormalDistribution,
+    NegativeBinomialDistribution,
+    NormalDistribution,
+    PoissonDistribution,
+    StudentTDistribution,
+    UniformDistribution,
+    WeibullDistribution,
 )
-
-from src.utils.logger import get_logger, set_correlation_id, log_error
+from src.utils.logger import get_logger, log_error, set_correlation_id
 
 logger = get_logger(__name__)
 
@@ -69,7 +69,7 @@ DISTRIBUTIONS = {
         "Negative Binomial": NegativeBinomialDistribution,
         "Hypergeometric": HypergeometricDistribution,
         "Discrete Uniform": DiscreteUniformDistribution,
-    }
+    },
 }
 
 
@@ -84,24 +84,26 @@ def create_parameter_inputs(dist_class, dist_name):
         for param_name, param_value in params.items():
             min_val, max_val = bounds.get(param_name, (0.0, 10.0))
 
-            if isinstance(param_value, int) and param_name not in ['n', 'M', 'N', 'r']:
+            if isinstance(param_value, int) and param_name not in ["n", "M", "N", "r"]:
                 new_params[param_name] = st.sidebar.slider(
                     f"{param_name}",
                     min_value=float(min_val),
                     max_value=float(max_val),
                     value=float(param_value),
                     step=0.1,
-                    key=f"{dist_name}_{param_name}"
+                    key=f"{dist_name}_{param_name}",
                 )
             elif isinstance(param_value, int):
-                new_params[param_name] = int(st.sidebar.slider(
-                    f"{param_name}",
-                    min_value=int(min_val),
-                    max_value=int(max_val),
-                    value=int(param_value),
-                    step=1,
-                    key=f"{dist_name}_{param_name}"
-                ))
+                new_params[param_name] = int(
+                    st.sidebar.slider(
+                        f"{param_name}",
+                        min_value=int(min_val),
+                        max_value=int(max_val),
+                        value=int(param_value),
+                        step=1,
+                        key=f"{dist_name}_{param_name}",
+                    )
+                )
             else:
                 new_params[param_name] = st.sidebar.slider(
                     f"{param_name}",
@@ -109,7 +111,7 @@ def create_parameter_inputs(dist_class, dist_name):
                     max_value=float(max_val),
                     value=float(param_value),
                     step=0.01,
-                    key=f"{dist_name}_{param_name}"
+                    key=f"{dist_name}_{param_name}",
                 )
 
         return new_params
@@ -123,6 +125,7 @@ def create_parameter_inputs(dist_class, dist_name):
 def _cached_plot_pdf_pmf(dist_class_name, dist_type, params_json, num_points=1000):
     """Cached PDF/PMF plot generation."""
     import json
+
     params = json.loads(params_json)
     dist_class = DISTRIBUTIONS[dist_type][dist_class_name]
     dist = dist_class(**params)
@@ -143,26 +146,28 @@ def _build_pdf_pmf_plot(dist, num_points=1000):
             y = dist.pdf(x)
 
             fig = go.Figure()
-            fig.add_trace(go.Bar(
-                x=x,
-                y=y,
-                name='PMF',
-                marker=dict(
-                    color=y,
-                    colorscale='Viridis',
-                    showscale=True,
-                    colorbar=dict(title="Probability"),
-                ),
-                hovertemplate='<b>x</b>: %{x}<br><b>P(X=x)</b>: %{y:.4f}<extra></extra>'
-            ))
+            fig.add_trace(
+                go.Bar(
+                    x=x,
+                    y=y,
+                    name="PMF",
+                    marker=dict(
+                        color=y,
+                        colorscale="Viridis",
+                        showscale=True,
+                        colorbar=dict(title="Probability"),
+                    ),
+                    hovertemplate="<b>x</b>: %{x}<br><b>P(X=x)</b>: %{y:.4f}<extra></extra>",
+                )
+            )
 
             fig.update_layout(
                 title=f"{dist.name} Distribution - PMF",
                 xaxis_title="x",
                 yaxis_title="Probability Mass Function P(X=x)",
-                hovermode='closest',
-                template='plotly_white',
-                height=500
+                hovermode="closest",
+                template="plotly_white",
+                height=500,
             )
 
         else:
@@ -181,16 +186,18 @@ def _build_pdf_pmf_plot(dist, num_points=1000):
             y = dist.pdf(x)
 
             fig = go.Figure()
-            fig.add_trace(go.Scatter(
-                x=x,
-                y=y,
-                mode='lines',
-                name='PDF',
-                fill='tozeroy',
-                line=dict(color='#667eea', width=3),
-                fillcolor='rgba(102, 126, 234, 0.2)',
-                hovertemplate='<b>x</b>: %{x:.4f}<br><b>f(x)</b>: %{y:.4f}<extra></extra>'
-            ))
+            fig.add_trace(
+                go.Scatter(
+                    x=x,
+                    y=y,
+                    mode="lines",
+                    name="PDF",
+                    fill="tozeroy",
+                    line=dict(color="#667eea", width=3),
+                    fillcolor="rgba(102, 126, 234, 0.2)",
+                    hovertemplate="<b>x</b>: %{x:.4f}<br><b>f(x)</b>: %{y:.4f}<extra></extra>",
+                )
+            )
 
             mean_val = dist.mean()
             fig.add_vline(
@@ -198,16 +205,16 @@ def _build_pdf_pmf_plot(dist, num_points=1000):
                 line_dash="dash",
                 line_color="red",
                 annotation_text=f"Mean: {mean_val:.3f}",
-                annotation_position="top"
+                annotation_position="top",
             )
 
             fig.update_layout(
                 title=f"{dist.name} Distribution - PDF",
                 xaxis_title="x",
                 yaxis_title="Probability Density Function f(x)",
-                hovermode='closest',
-                template='plotly_white',
-                height=500
+                hovermode="closest",
+                template="plotly_white",
+                height=500,
             )
 
         return fig
@@ -219,6 +226,7 @@ def _build_pdf_pmf_plot(dist, num_points=1000):
 def plot_pdf_pmf(dist, dist_class_name, dist_type, num_points=1000):
     """Plot PDF or PMF of the distribution with caching."""
     import json
+
     params = dist.get_parameters()
     params_json = json.dumps(params, sort_keys=True, default=str)
     try:
@@ -232,6 +240,7 @@ def plot_pdf_pmf(dist, dist_class_name, dist_type, num_points=1000):
 def _cached_plot_cdf(dist_class_name, dist_type, params_json, num_points=1000):
     """Cached CDF plot generation."""
     import json
+
     params = json.loads(params_json)
     dist_class = DISTRIBUTIONS[dist_type][dist_class_name]
     dist = dist_class(**params)
@@ -252,15 +261,17 @@ def _build_cdf_plot(dist, num_points=1000):
             y = dist.cdf(x)
 
             fig = go.Figure()
-            fig.add_trace(go.Scatter(
-                x=x,
-                y=y,
-                mode='lines+markers',
-                name='CDF',
-                line=dict(color='#764ba2', width=3),
-                marker=dict(size=6),
-                hovertemplate='<b>x</b>: %{x}<br><b>F(x)</b>: %{y:.4f}<extra></extra>'
-            ))
+            fig.add_trace(
+                go.Scatter(
+                    x=x,
+                    y=y,
+                    mode="lines+markers",
+                    name="CDF",
+                    line=dict(color="#764ba2", width=3),
+                    marker=dict(size=6),
+                    hovertemplate="<b>x</b>: %{x}<br><b>F(x)</b>: %{y:.4f}<extra></extra>",
+                )
+            )
         else:
             support = dist.get_support()
             if support[0] == -np.inf:
@@ -277,14 +288,16 @@ def _build_cdf_plot(dist, num_points=1000):
             y = dist.cdf(x)
 
             fig = go.Figure()
-            fig.add_trace(go.Scatter(
-                x=x,
-                y=y,
-                mode='lines',
-                name='CDF',
-                line=dict(color='#764ba2', width=3),
-                hovertemplate='<b>x</b>: %{x:.4f}<br><b>F(x)</b>: %{y:.4f}<extra></extra>'
-            ))
+            fig.add_trace(
+                go.Scatter(
+                    x=x,
+                    y=y,
+                    mode="lines",
+                    name="CDF",
+                    line=dict(color="#764ba2", width=3),
+                    hovertemplate="<b>x</b>: %{x:.4f}<br><b>F(x)</b>: %{y:.4f}<extra></extra>",
+                )
+            )
 
             median_val = dist.median()
             fig.add_vline(
@@ -292,16 +305,16 @@ def _build_cdf_plot(dist, num_points=1000):
                 line_dash="dash",
                 line_color="green",
                 annotation_text=f"Median: {median_val:.3f}",
-                annotation_position="top"
+                annotation_position="top",
             )
 
         fig.update_layout(
             title=f"{dist.name} Distribution - CDF",
             xaxis_title="x",
             yaxis_title="Cumulative Distribution Function F(x)",
-            hovermode='closest',
-            template='plotly_white',
-            height=500
+            hovermode="closest",
+            template="plotly_white",
+            height=500,
         )
 
         return fig
@@ -313,6 +326,7 @@ def _build_cdf_plot(dist, num_points=1000):
 def plot_cdf(dist, dist_class_name, dist_type, num_points=1000):
     """Plot CDF of the distribution with caching."""
     import json
+
     params = dist.get_parameters()
     params_json = json.dumps(params, sort_keys=True, default=str)
     try:
@@ -326,6 +340,7 @@ def plot_cdf(dist, dist_class_name, dist_type, num_points=1000):
 def _cached_get_statistics(dist_class_name, dist_type, params_json):
     """Cached statistics computation."""
     import json
+
     params = json.loads(params_json)
     dist_class = DISTRIBUTIONS[dist_type][dist_class_name]
     dist = dist_class(**params)
@@ -335,6 +350,7 @@ def _cached_get_statistics(dist_class_name, dist_type, params_json):
 def get_statistics(dist, dist_class_name, dist_type):
     """Get distribution statistics with caching."""
     import json
+
     params = dist.get_parameters()
     params_json = json.dumps(params, sort_keys=True, default=str)
     try:
@@ -357,30 +373,30 @@ def display_statistics(dist, dist_class_name, dist_type):
         cols = st.columns(4)
 
         with cols[0]:
-            st.metric("Mean", _safe_format(stats.get('mean'), 'N/A'))
+            st.metric("Mean", _safe_format(stats.get("mean"), "N/A"))
 
         with cols[1]:
-            st.metric("Variance", _safe_format(stats.get('variance'), 'N/A'))
+            st.metric("Variance", _safe_format(stats.get("variance"), "N/A"))
 
         with cols[2]:
-            st.metric("Std Dev", _safe_format(stats.get('std_dev'), 'N/A'))
+            st.metric("Std Dev", _safe_format(stats.get("std_dev"), "N/A"))
 
         with cols[3]:
-            st.metric("Median", _safe_format(stats.get('median'), 'N/A'))
+            st.metric("Median", _safe_format(stats.get("median"), "N/A"))
 
         st.markdown("### Additional Statistics")
         cols2 = st.columns(3)
 
         with cols2[0]:
-            mode_val = stats.get('mode')
+            mode_val = stats.get("mode")
             st.metric("Mode", _safe_format(mode_val, "N/A"))
 
         with cols2[1]:
-            skew_val = stats.get('skewness')
+            skew_val = stats.get("skewness")
             st.metric("Skewness", _safe_format(skew_val, "N/A"))
 
         with cols2[2]:
-            kurt_val = stats.get('kurtosis')
+            kurt_val = stats.get("kurtosis")
             st.metric("Excess Kurtosis", _safe_format(kurt_val, "N/A"))
 
     except Exception as e:
@@ -396,7 +412,9 @@ def main():
         _main_impl()
     except Exception as e:
         log_error(logger, "Unhandled exception in main()", exc=e)
-        st.error("⚠️ An unexpected error occurred. Please refresh the page or try adjusting your parameters.")
+        st.error(
+            "⚠️ An unexpected error occurred. Please refresh the page or try adjusting your parameters."
+        )
         st.error(f"Details: {e}")
 
 
@@ -410,9 +428,7 @@ def _main_impl():
 
     available_dists = list(DISTRIBUTIONS[dist_type].keys())
     selected_dist_name = st.sidebar.selectbox(
-        "Select Distribution",
-        available_dists,
-        key="dist_select"
+        "Select Distribution", available_dists, key="dist_select"
     )
 
     st.sidebar.markdown("---")
@@ -501,38 +517,44 @@ def _main_impl():
 
                 if dist.is_discrete:
                     unique, counts = np.unique(samples, return_counts=True)
-                    fig_samples.add_trace(go.Bar(
-                        x=unique,
-                        y=counts / num_samples,
-                        name='Sample Distribution',
-                        marker=dict(color='rgba(102, 126, 234, 0.7)'),
-                    ))
+                    fig_samples.add_trace(
+                        go.Bar(
+                            x=unique,
+                            y=counts / num_samples,
+                            name="Sample Distribution",
+                            marker=dict(color="rgba(102, 126, 234, 0.7)"),
+                        )
+                    )
                 else:
-                    fig_samples.add_trace(go.Histogram(
-                        x=samples,
-                        name='Sample Distribution',
-                        nbinsx=50,
-                        histnorm='probability density',
-                        marker=dict(color='rgba(102, 126, 234, 0.7)'),
-                    ))
+                    fig_samples.add_trace(
+                        go.Histogram(
+                            x=samples,
+                            name="Sample Distribution",
+                            nbinsx=50,
+                            histnorm="probability density",
+                            marker=dict(color="rgba(102, 126, 234, 0.7)"),
+                        )
+                    )
 
                     x_theory = np.linspace(samples.min(), samples.max(), 500)
                     y_theory = dist.pdf(x_theory)
-                    fig_samples.add_trace(go.Scatter(
-                        x=x_theory,
-                        y=y_theory,
-                        mode='lines',
-                        name='Theoretical PDF',
-                        line=dict(color='red', width=3),
-                    ))
+                    fig_samples.add_trace(
+                        go.Scatter(
+                            x=x_theory,
+                            y=y_theory,
+                            mode="lines",
+                            name="Theoretical PDF",
+                            line=dict(color="red", width=3),
+                        )
+                    )
 
                 fig_samples.update_layout(
                     title=f"Random Samples (n={num_samples})",
                     xaxis_title="Value",
                     yaxis_title="Density/Probability",
-                    template='plotly_white',
+                    template="plotly_white",
                     height=500,
-                    showlegend=True
+                    showlegend=True,
                 )
 
                 st.plotly_chart(fig_samples, use_container_width=True)
@@ -560,10 +582,10 @@ def _main_impl():
             try:
                 q_val = dist.ppf(p / 100)
                 if np.isinf(q_val) or np.isnan(q_val):
-                    q_val = float('nan')
+                    q_val = float("nan")
                 quantile_values.append(q_val)
             except Exception:
-                quantile_values.append(float('nan'))
+                quantile_values.append(float("nan"))
 
         quant_cols = st.columns(len(percentiles))
         for i, (p, q) in enumerate(zip(percentiles, quantile_values)):
