@@ -1,32 +1,32 @@
 """Tests for utility modules: validation and data_preprocessing."""
 
-import pytest
-import numpy as np
-import sys
 import os
+import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+import numpy as np
+import pytest
 
-from utils.validation import (
-    validate_probability,
-    validate_positive,
-    validate_nonnegative,
-    validate_in_range,
-    validate_array,
-    validate_integer,
-    validate_covariance_matrix,
-    validate_correlation_matrix,
-)
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+
 from utils.data_preprocessing import (
-    standardize,
+    bin_data,
+    box_cox_transform,
+    handle_missing,
+    log_transform,
     normalize,
     remove_outliers,
-    handle_missing,
-    bin_data,
-    log_transform,
-    box_cox_transform,
+    standardize,
 )
-
+from utils.validation import (
+    validate_array,
+    validate_correlation_matrix,
+    validate_covariance_matrix,
+    validate_in_range,
+    validate_integer,
+    validate_nonnegative,
+    validate_positive,
+    validate_probability,
+)
 
 # ---------------------------------------------------------------------------
 # validation.py
@@ -137,34 +137,34 @@ class TestValidateInRange:
             validate_in_range(15.0, 0, 10)
 
     def test_inclusive_lower_valid(self):
-        result = validate_in_range(5.0, 0, 10, inclusive='lower')
+        result = validate_in_range(5.0, 0, 10, inclusive="lower")
         assert result == 5.0
 
     def test_inclusive_lower_upper_excluded(self):
         with pytest.raises(ValueError):
-            validate_in_range(10.0, 0, 10, inclusive='lower')
+            validate_in_range(10.0, 0, 10, inclusive="lower")
 
     def test_inclusive_upper_valid(self):
-        result = validate_in_range(5.0, 0, 10, inclusive='upper')
+        result = validate_in_range(5.0, 0, 10, inclusive="upper")
         assert result == 5.0
 
     def test_inclusive_upper_lower_excluded(self):
         with pytest.raises(ValueError):
-            validate_in_range(0.0, 0, 10, inclusive='upper')
+            validate_in_range(0.0, 0, 10, inclusive="upper")
 
     def test_inclusive_neither_valid(self):
-        result = validate_in_range(5.0, 0, 10, inclusive='neither')
+        result = validate_in_range(5.0, 0, 10, inclusive="neither")
         assert result == 5.0
 
     def test_inclusive_neither_bounds_excluded(self):
         with pytest.raises(ValueError):
-            validate_in_range(0.0, 0, 10, inclusive='neither')
+            validate_in_range(0.0, 0, 10, inclusive="neither")
         with pytest.raises(ValueError):
-            validate_in_range(10.0, 0, 10, inclusive='neither')
+            validate_in_range(10.0, 0, 10, inclusive="neither")
 
     def test_unknown_inclusive_option(self):
         with pytest.raises(ValueError, match="Unknown inclusive"):
-            validate_in_range(5.0, 0, 10, inclusive='bad')
+            validate_in_range(5.0, 0, 10, inclusive="bad")
 
     def test_array_input(self):
         result = validate_in_range(np.array([1, 2, 3]), 0, 5)
@@ -211,7 +211,7 @@ class TestValidateArray:
         assert result.dtype == np.float64
 
     def test_dtype_cast_failure(self):
-        arr = np.array(['a', 'b'])
+        arr = np.array(["a", "b"])
         with pytest.raises(ValueError, match="must have dtype"):
             validate_array(arr, dtype=np.float64)
 
@@ -346,10 +346,10 @@ class TestStandardize:
         data = np.random.normal(10, 5, 100)
         result, params = standardize(data, return_params=True)
 
-        assert 'mean' in params
-        assert 'std' in params
-        assert np.isclose(params['mean'], np.mean(data))
-        assert np.isclose(params['std'], np.std(data, ddof=1))
+        assert "mean" in params
+        assert "std" in params
+        assert np.isclose(params["mean"], np.mean(data))
+        assert np.isclose(params["std"], np.std(data, ddof=1))
 
     def test_standardize_constant_data(self):
         data = np.array([5.0, 5.0, 5.0])
@@ -359,6 +359,7 @@ class TestStandardize:
 
     def test_standardize_single_value(self):
         import warnings
+
         data = np.array([7.0, 7.0])
         result = standardize(data)
         assert np.allclose(result, [0.0, 0.0])
@@ -373,74 +374,74 @@ class TestStandardize:
 class TestNormalize:
     def test_minmax_basic(self):
         data = np.array([0, 5, 10])
-        result = normalize(data, method='minmax')
+        result = normalize(data, method="minmax")
 
         assert np.isclose(np.min(result), 0.0)
         assert np.isclose(np.max(result), 1.0)
 
     def test_minmax_custom_range(self):
         data = np.array([0, 5, 10])
-        result = normalize(data, method='minmax', feature_range=(-1, 1))
+        result = normalize(data, method="minmax", feature_range=(-1, 1))
 
         assert abs(np.min(result) - (-1)) < 1e-10
         assert abs(np.max(result) - 1) < 1e-10
 
     def test_minmax_return_params(self):
         data = np.array([0, 5, 10])
-        result, params = normalize(data, method='minmax', return_params=True)
+        result, params = normalize(data, method="minmax", return_params=True)
 
-        assert 'min' in params
-        assert 'max' in params
-        assert 'feature_range' in params
+        assert "min" in params
+        assert "max" in params
+        assert "feature_range" in params
 
     def test_minmax_constant_data(self):
         data = np.array([3.0, 3.0, 3.0])
-        result = normalize(data, method='minmax', feature_range=(0, 1))
+        result = normalize(data, method="minmax", feature_range=(0, 1))
 
         assert np.allclose(result, [0.5, 0.5, 0.5])
 
     def test_maxabs_basic(self):
         data = np.array([-4, 1, 2])
-        result = normalize(data, method='maxabs')
+        result = normalize(data, method="maxabs")
 
         assert np.max(np.abs(result)) == 1.0
 
     def test_maxabs_return_params(self):
         data = np.array([-4, 1, 2])
-        result, params = normalize(data, method='maxabs', return_params=True)
+        result, params = normalize(data, method="maxabs", return_params=True)
 
-        assert 'max_abs' in params
-        assert params['max_abs'] == 4
+        assert "max_abs" in params
+        assert params["max_abs"] == 4
 
     def test_maxabs_all_zeros(self):
         data = np.array([0.0, 0.0, 0.0])
-        result = normalize(data, method='maxabs')
+        result = normalize(data, method="maxabs")
 
         assert np.allclose(result, [0.0, 0.0, 0.0])
 
     def test_unknown_method(self):
         data = np.array([1, 2, 3])
         with pytest.raises(ValueError, match="Unknown method"):
-            normalize(data, method='unknown')
+            normalize(data, method="unknown")
 
 
 class TestRemoveOutliers:
     def test_iqr_no_outliers(self):
         np.random.seed(42)
         data = np.random.normal(0, 1, 1000)
-        cleaned = remove_outliers(data, method='iqr', threshold=1.5)
+        cleaned = remove_outliers(data, method="iqr", threshold=1.5)
 
         assert len(cleaned) >= len(data) * 0.95
 
     def test_iqr_with_outliers(self):
         data = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 200])
-        cleaned = remove_outliers(data, method='iqr', threshold=1.5)
+        cleaned = remove_outliers(data, method="iqr", threshold=1.5)
 
         assert len(cleaned) < len(data)
 
     def test_iqr_return_mask(self):
         data = np.array([1, 2, 3, 100])
-        cleaned, mask = remove_outliers(data, method='iqr', return_mask=True)
+        cleaned, mask = remove_outliers(data, method="iqr", return_mask=True)
 
         assert len(cleaned) < len(data)
         assert len(mask) == len(data)
@@ -449,45 +450,45 @@ class TestRemoveOutliers:
     def test_zscore_no_outliers(self):
         np.random.seed(42)
         data = np.random.normal(0, 1, 1000)
-        cleaned = remove_outliers(data, method='zscore', threshold=3.0)
+        cleaned = remove_outliers(data, method="zscore", threshold=3.0)
 
         assert len(cleaned) >= len(data) * 0.95
 
     def test_zscore_with_outliers(self):
         data = np.array([1.0, 1.1, 1.0, 0.9, 1.0, 100.0, 200.0])
-        cleaned = remove_outliers(data, method='zscore', threshold=1.0)
+        cleaned = remove_outliers(data, method="zscore", threshold=1.0)
 
         assert len(cleaned) < len(data)
 
     def test_mad_no_outliers(self):
         np.random.seed(42)
         data = np.random.normal(0, 1, 1000)
-        cleaned = remove_outliers(data, method='mad', threshold=3.0)
+        cleaned = remove_outliers(data, method="mad", threshold=3.0)
 
         assert len(cleaned) >= len(data) * 0.90
 
     def test_mad_constant_data(self):
         data = np.array([5.0, 5.0, 5.0, 5.0])
-        cleaned = remove_outliers(data, method='mad', threshold=2.5)
+        cleaned = remove_outliers(data, method="mad", threshold=2.5)
 
         assert len(cleaned) == len(data)
 
     def test_unknown_method(self):
         data = np.array([1, 2, 3])
         with pytest.raises(ValueError, match="Unknown method"):
-            remove_outliers(data, method='unknown')
+            remove_outliers(data, method="unknown")
 
 
 class TestHandleMissing:
     def test_no_missing(self):
         data = np.array([1.0, 2.0, 3.0])
-        result = handle_missing(data, method='mean')
+        result = handle_missing(data, method="mean")
 
         assert np.allclose(result, [1.0, 2.0, 3.0])
 
     def test_mean_fill(self):
         data = np.array([1.0, np.nan, 3.0, np.nan, 5.0])
-        result = handle_missing(data, method='mean')
+        result = handle_missing(data, method="mean")
 
         assert not np.any(np.isnan(result))
         assert np.isclose(result[1], 3.0)
@@ -495,19 +496,19 @@ class TestHandleMissing:
 
     def test_median_fill(self):
         data = np.array([1.0, np.nan, 100.0, np.nan, 2.0])
-        result = handle_missing(data, method='median')
+        result = handle_missing(data, method="median")
 
         assert not np.any(np.isnan(result))
 
     def test_mode_fill(self):
         data = np.array([1.0, np.nan, 3.0, np.nan, 5.0])
-        result = handle_missing(data, method='mode')
+        result = handle_missing(data, method="mode")
 
         assert not np.any(np.isnan(result))
 
     def test_constant_fill(self):
         data = np.array([1.0, np.nan, 3.0])
-        result = handle_missing(data, method='constant', fill_value=-999)
+        result = handle_missing(data, method="constant", fill_value=-999)
 
         assert result[1] == -999
         assert not np.any(np.isnan(result))
@@ -515,41 +516,41 @@ class TestHandleMissing:
     def test_constant_no_fill_value(self):
         data = np.array([1.0, np.nan, 3.0])
         with pytest.raises(ValueError, match="fill_value must be provided"):
-            handle_missing(data, method='constant')
+            handle_missing(data, method="constant")
 
     def test_forward_fill(self):
         data = np.array([1.0, np.nan, np.nan, 4.0, np.nan])
-        result = handle_missing(data, method='forward_fill')
+        result = handle_missing(data, method="forward_fill")
 
         assert np.allclose(result, [1.0, 1.0, 1.0, 4.0, 4.0])
 
     def test_forward_fill_all_nan_start(self):
         data = np.array([np.nan, np.nan, 3.0, np.nan, 5.0])
-        result = handle_missing(data, method='forward_fill')
+        result = handle_missing(data, method="forward_fill")
 
         assert np.allclose(result, [3.0, 3.0, 3.0, 3.0, 5.0])
 
     def test_backward_fill(self):
         data = np.array([1.0, np.nan, np.nan, 4.0, np.nan])
-        result = handle_missing(data, method='backward_fill')
+        result = handle_missing(data, method="backward_fill")
 
         expected = np.array([1.0, 4.0, 4.0, 4.0, 4.0])
         assert np.allclose(result, expected)
 
     def test_backward_fill_all_nan_end(self):
         data = np.array([1.0, np.nan, 4.0, np.nan, np.nan])
-        result = handle_missing(data, method='backward_fill')
+        result = handle_missing(data, method="backward_fill")
 
         assert np.allclose(result, [1.0, 4.0, 4.0, 4.0, 4.0])
 
     def test_unknown_method(self):
         data = np.array([1.0, np.nan])
         with pytest.raises(ValueError, match="Unknown method"):
-            handle_missing(data, method='unknown')
+            handle_missing(data, method="unknown")
 
     def test_all_nan_forward(self):
         data = np.array([np.nan, np.nan, np.nan])
-        result = handle_missing(data, method='forward_fill')
+        result = handle_missing(data, method="forward_fill")
         assert np.all(np.isnan(result))
 
 
@@ -557,7 +558,7 @@ class TestBinData:
     def test_equal_width_basic(self):
         np.random.seed(42)
         data = np.random.uniform(0, 10, 100)
-        binned = bin_data(data, n_bins=5, method='equal_width')
+        binned = bin_data(data, n_bins=5, method="equal_width")
 
         assert len(binned) == 100
         assert np.min(binned) >= 0
@@ -566,7 +567,7 @@ class TestBinData:
     def test_equal_frequency(self):
         np.random.seed(42)
         data = np.random.uniform(0, 10, 500)
-        binned = bin_data(data, n_bins=10, method='equal_frequency')
+        binned = bin_data(data, n_bins=10, method="equal_frequency")
 
         assert len(binned) == 500
         counts = np.bincount(binned, minlength=10)
@@ -574,7 +575,7 @@ class TestBinData:
 
     def test_return_bins(self):
         data = np.array([1, 2, 3, 4, 5])
-        binned, bins_edges = bin_data(data, n_bins=2, method='equal_width', return_bins=True)
+        binned, bins_edges = bin_data(data, n_bins=2, method="equal_width", return_bins=True)
 
         assert len(bins_edges) == 3
         assert len(binned) == 5
@@ -597,7 +598,7 @@ class TestBinData:
     def test_unknown_method(self):
         data = np.array([1, 2, 3])
         with pytest.raises(ValueError, match="Unknown method"):
-            bin_data(data, n_bins=2, method='unknown')
+            bin_data(data, n_bins=2, method="unknown")
 
     def test_small_data(self):
         data = np.array([1, 2])
@@ -608,25 +609,25 @@ class TestBinData:
 class TestLogTransform:
     def test_natural_log(self):
         data = np.array([1, 10, 100])
-        result = log_transform(data, base='e')
+        result = log_transform(data, base="e")
 
         assert np.allclose(result, np.log(data))
 
     def test_log10(self):
         data = np.array([1, 10, 100])
-        result = log_transform(data, base='10')
+        result = log_transform(data, base="10")
 
         assert np.allclose(result, np.log10(data))
 
     def test_log2(self):
         data = np.array([1, 2, 4, 8])
-        result = log_transform(data, base='2')
+        result = log_transform(data, base="2")
 
         assert np.allclose(result, np.log2(data))
 
     def test_with_shift(self):
         data = np.array([0, 1, 2])
-        result = log_transform(data, shift=1, base='e')
+        result = log_transform(data, shift=1, base="e")
 
         assert np.allclose(result, np.log(data + 1))
 
@@ -638,7 +639,7 @@ class TestLogTransform:
     def test_unknown_base(self):
         data = np.array([1, 2, 3])
         with pytest.raises(ValueError, match="Unknown base"):
-            log_transform(data, base='5')
+            log_transform(data, base="5")
 
     def test_shift_handles_zeros(self):
         data = np.array([0, 1, 2])
@@ -685,5 +686,5 @@ class TestBoxCoxTransform:
         data = np.array([1.0, 2.0, 3.0])
         result = box_cox_transform(data, lambda_param=-1)
 
-        expected = (data ** -1 - 1) / -1
+        expected = (data**-1 - 1) / -1
         assert np.allclose(result, expected)
