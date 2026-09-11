@@ -1,11 +1,11 @@
 """Distribution fitting to empirical data."""
 
-from typing import Dict, List, Tuple, Optional, Type
 import logging
-import numpy as np
-from scipy import stats, optimize
-from scipy.special import gammaln
 import warnings
+from typing import Dict, List, Optional, Tuple, Type
+
+import numpy as np
+from scipy import stats
 
 logger = logging.getLogger(__name__)
 
@@ -39,8 +39,16 @@ class DistributionFitter:
         """
         if distributions is None:
             distributions = [
-                'norm', 'expon', 'gamma', 'beta', 'lognorm',
-                'weibull_min', 't', 'chi2', 'uniform', 'cauchy'
+                "norm",
+                "expon",
+                "gamma",
+                "beta",
+                "lognorm",
+                "weibull_min",
+                "t",
+                "chi2",
+                "uniform",
+                "cauchy",
             ]
 
         results = {}
@@ -61,8 +69,7 @@ class DistributionFitter:
                 continue
 
         # Sort by AIC (lower is better)
-        sorted_results = dict(sorted(results.items(),
-                                    key=lambda x: x[1]['aic']))
+        sorted_results = dict(sorted(results.items(), key=lambda x: x[1]["aic"]))
 
         if sorted_results:
             best = next(iter(sorted_results))
@@ -103,8 +110,7 @@ class DistributionFitter:
         bic = k * np.log(self.n) - 2 * log_likelihood
 
         # Perform goodness-of-fit tests
-        ks_statistic, ks_pvalue = stats.kstest(self.data,
-                                                lambda x: dist.cdf(x, *params))
+        ks_statistic, ks_pvalue = stats.kstest(self.data, lambda x: dist.cdf(x, *params))
 
         logger.debug(
             "Fitted '%s': params=%s, AIC=%.2f, BIC=%.2f, KS_p=%.4f",
@@ -116,14 +122,14 @@ class DistributionFitter:
         )
 
         return {
-            'distribution': dist_name,
-            'parameters': params,
-            'log_likelihood': log_likelihood,
-            'aic': aic,
-            'bic': bic,
-            'ks_statistic': ks_statistic,
-            'ks_pvalue': ks_pvalue,
-            'fitted_dist': dist(*params),
+            "distribution": dist_name,
+            "parameters": params,
+            "log_likelihood": log_likelihood,
+            "aic": aic,
+            "bic": bic,
+            "ks_statistic": ks_statistic,
+            "ks_pvalue": ks_pvalue,
+            "fitted_dist": dist(*params),
         }
 
     def fit_normal(self) -> Tuple[float, float]:
@@ -281,10 +287,9 @@ class BayesianEstimator:
         self.data = np.asarray(data).flatten()
         self.n = len(self.data)
 
-    def estimate_normal_mean(self,
-                            prior_mean: float,
-                            prior_var: float,
-                            known_variance: float) -> Tuple[float, float]:
+    def estimate_normal_mean(
+        self, prior_mean: float, prior_var: float, known_variance: float
+    ) -> Tuple[float, float]:
         """
         Bayesian estimation of normal mean with known variance.
 
@@ -300,16 +305,16 @@ class BayesianEstimator:
         sample_mean = np.mean(self.data)
 
         # Posterior parameters
-        posterior_var = 1.0 / (1.0/prior_var + self.n/known_variance)
-        posterior_mean = posterior_var * (prior_mean/prior_var +
-                                         self.n*sample_mean/known_variance)
+        posterior_var = 1.0 / (1.0 / prior_var + self.n / known_variance)
+        posterior_mean = posterior_var * (
+            prior_mean / prior_var + self.n * sample_mean / known_variance
+        )
 
         return posterior_mean, posterior_var
 
-    def estimate_normal_variance(self,
-                                prior_shape: float,
-                                prior_scale: float,
-                                known_mean: float) -> Tuple[float, float]:
+    def estimate_normal_variance(
+        self, prior_shape: float, prior_scale: float, known_mean: float
+    ) -> Tuple[float, float]:
         """
         Bayesian estimation of normal variance with known mean.
 
@@ -322,7 +327,7 @@ class BayesianEstimator:
             Tuple of (posterior_shape, posterior_scale)
         """
         # Conjugate prior: Inverse-Gamma
-        ss = np.sum((self.data - known_mean)**2)
+        ss = np.sum((self.data - known_mean) ** 2)
 
         # Posterior parameters
         posterior_shape = prior_shape + self.n / 2
@@ -330,9 +335,7 @@ class BayesianEstimator:
 
         return posterior_shape, posterior_scale
 
-    def estimate_poisson_rate(self,
-                             prior_shape: float,
-                             prior_rate: float) -> Tuple[float, float]:
+    def estimate_poisson_rate(self, prior_shape: float, prior_rate: float) -> Tuple[float, float]:
         """
         Bayesian estimation of Poisson rate parameter.
 
@@ -352,9 +355,7 @@ class BayesianEstimator:
 
         return posterior_shape, posterior_rate
 
-    def estimate_bernoulli_p(self,
-                            prior_alpha: float,
-                            prior_beta: float) -> Tuple[float, float]:
+    def estimate_bernoulli_p(self, prior_alpha: float, prior_beta: float) -> Tuple[float, float]:
         """
         Bayesian estimation of Bernoulli success probability.
 
@@ -380,9 +381,9 @@ class GoodnessOfFit:
     """Goodness of fit tests."""
 
     @staticmethod
-    def chi_square_test(observed: np.ndarray,
-                       expected: np.ndarray,
-                       df: Optional[int] = None) -> Tuple[float, float]:
+    def chi_square_test(
+        observed: np.ndarray, expected: np.ndarray, df: Optional[int] = None
+    ) -> Tuple[float, float]:
         """
         Chi-square goodness of fit test.
 
@@ -399,8 +400,7 @@ class GoodnessOfFit:
         return chi2_stat, p_value
 
     @staticmethod
-    def kolmogorov_smirnov_test(data: np.ndarray,
-                                cdf_function) -> Tuple[float, float]:
+    def kolmogorov_smirnov_test(data: np.ndarray, cdf_function) -> Tuple[float, float]:
         """
         Kolmogorov-Smirnov test.
 
@@ -416,8 +416,7 @@ class GoodnessOfFit:
         return ks_stat, p_value
 
     @staticmethod
-    def anderson_darling_test(data: np.ndarray,
-                             dist: str = 'norm') -> Dict:
+    def anderson_darling_test(data: np.ndarray, dist: str = "norm") -> Dict:
         """
         Anderson-Darling test.
 
@@ -429,21 +428,22 @@ class GoodnessOfFit:
             Dictionary with test results
         """
         import scipy
-        scipy_major = int(scipy.__version__.split('.')[0])
-        scipy_minor = int(scipy.__version__.split('.')[1])
+
+        scipy_major = int(scipy.__version__.split(".")[0])
+        scipy_minor = int(scipy.__version__.split(".")[1])
 
         if scipy_major > 1 or (scipy_major == 1 and scipy_minor >= 17):
-            result = stats.anderson(data, dist=dist, method='interpolate')
+            result = stats.anderson(data, dist=dist, method="interpolate")
             return {
-                'statistic': result.statistic,
-                'pvalue': result.pvalue,
+                "statistic": result.statistic,
+                "pvalue": result.pvalue,
             }
         else:
             result = stats.anderson(data, dist=dist)
             return {
-                'statistic': result.statistic,
-                'critical_values': result.critical_values,
-                'significance_levels': result.significance_level,
+                "statistic": result.statistic,
+                "critical_values": result.critical_values,
+                "significance_levels": result.significance_level,
             }
 
     @staticmethod

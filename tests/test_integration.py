@@ -1,51 +1,62 @@
 """Integration tests for the probability distribution visualizer."""
 
-import pytest
-import numpy as np
-import sys
 import os
+import sys
+
+import numpy as np
+import pytest
 
 # Add src to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 
 def test_all_imports():
     """Test that all modules can be imported."""
     # Basic distributions
-    from distributions import (
-        NormalDistribution, ExponentialDistribution, UniformDistribution,
-        BetaDistribution, GammaDistribution, ChiSquareDistribution,
-        StudentTDistribution, WeibullDistribution, LognormalDistribution,
-        CauchyDistribution, BinomialDistribution, PoissonDistribution,
-        GeometricDistribution, NegativeBinomialDistribution,
-        HypergeometricDistribution, DiscreteUniformDistribution
-    )
-
+    # Mixtures
+    # Copulas
     # Multivariate distributions
     from distributions import (
-        MultivariateNormalDistribution, DirichletDistribution,
-        MultivariateStudentT, WishartDistribution
-    )
-
-    # Copulas
-    from distributions import (
-        GaussianCopula, ClaytonCopula, GumbelCopula, StudentTCopula,
-        fit_copula_to_data
-    )
-
-    # Mixtures
-    from distributions import (
-        MixtureDistribution, GaussianMixtureModel, BayesianGMM,
-        select_optimal_components
+        BayesianGMM,
+        BetaDistribution,
+        BinomialDistribution,
+        CauchyDistribution,
+        ChiSquareDistribution,
+        ClaytonCopula,
+        DirichletDistribution,
+        DiscreteUniformDistribution,
+        ExponentialDistribution,
+        GammaDistribution,
+        GaussianCopula,
+        GaussianMixtureModel,
+        GeometricDistribution,
+        GumbelCopula,
+        HypergeometricDistribution,
+        LognormalDistribution,
+        MixtureDistribution,
+        MultivariateNormalDistribution,
+        MultivariateStudentT,
+        NegativeBinomialDistribution,
+        NormalDistribution,
+        PoissonDistribution,
+        StudentTCopula,
+        StudentTDistribution,
+        UniformDistribution,
+        WeibullDistribution,
+        WishartDistribution,
+        fit_copula_to_data,
+        select_optimal_components,
     )
 
     # Fitting
-    from fitting import DistributionFitter, BayesianEstimator, GoodnessOfFit
+    from fitting import BayesianEstimator, DistributionFitter, GoodnessOfFit
 
     # Monte Carlo
     from monte_carlo import (
-        MonteCarloSimulator, SimulationResult, VarianceReduction,
-        QuasiMonteCarloSimulator
+        MonteCarloSimulator,
+        QuasiMonteCarloSimulator,
+        SimulationResult,
+        VarianceReduction,
     )
 
     assert True  # If we get here, all imports succeeded
@@ -169,16 +180,16 @@ def test_distribution_fitting():
 
     # Fit distribution
     fitter = DistributionFitter(data)
-    result = fitter.fit_distribution('norm')
+    result = fitter.fit_distribution("norm")
 
-    assert 'distribution' in result
-    assert 'parameters' in result
-    assert 'aic' in result
-    assert 'bic' in result
-    assert 'log_likelihood' in result
+    assert "distribution" in result
+    assert "parameters" in result
+    assert "aic" in result
+    assert "bic" in result
+    assert "log_likelihood" in result
 
     # Check fitted parameters are reasonable
-    params = result['parameters']
+    params = result["parameters"]
     assert len(params) >= 2
 
 
@@ -190,10 +201,10 @@ def test_distribution_fitting_multiple():
     data = np.random.exponential(2, 500)
 
     fitter = DistributionFitter(data)
-    results = fitter.fit_all(['norm', 'expon', 'gamma'])
+    results = fitter.fit_all(["norm", "expon", "gamma"])
 
     assert len(results) >= 2
-    assert all('aic' in r for r in results.values())
+    assert all("aic" in r for r in results.values())
 
 
 def test_goodness_of_fit():
@@ -227,9 +238,9 @@ def test_monte_carlo_basic():
 
     result = sim.simulate(sampler, num_samples=1000)
 
-    assert hasattr(result, 'mean')
-    assert hasattr(result, 'std')
-    assert hasattr(result, 'confidence_interval')
+    assert hasattr(result, "mean")
+    assert hasattr(result, "std")
+    assert hasattr(result, "confidence_interval")
 
 
 def test_monte_carlo_bootstrap():
@@ -258,7 +269,7 @@ def test_qmc_simulator():
 
 def test_end_to_end_workflow():
     """Test complete end-to-end workflow."""
-    from distributions import NormalDistribution, MixtureDistribution
+    from distributions import MixtureDistribution, NormalDistribution
     from fitting import DistributionFitter
     from monte_carlo import MonteCarloSimulator
 
@@ -272,7 +283,7 @@ def test_end_to_end_workflow():
 
     # 3. Fit distribution to samples
     fitter = DistributionFitter(samples)
-    results = fitter.fit_all(['norm', 'gamma'])
+    results = fitter.fit_all(["norm", "gamma"])
 
     assert len(results) >= 1
 
@@ -284,14 +295,15 @@ def test_end_to_end_workflow():
 
     result = sim.simulate(sampler, num_samples=100)
 
-    assert hasattr(result, 'mean')
-    assert hasattr(result, 'confidence_interval')
+    assert hasattr(result, "mean")
+    assert hasattr(result, "confidence_interval")
 
 
 def test_copula_data_fitting():
     """Test fitting copula to data."""
-    from distributions import fit_copula_to_data
     from scipy.stats import norm
+
+    from distributions import fit_copula_to_data
 
     # Generate correlated data
     np.random.seed(42)
@@ -303,7 +315,7 @@ def test_copula_data_fitting():
     u_data = norm.cdf(data)
 
     # Fit Gaussian copula
-    fitted_copula = fit_copula_to_data(u_data, 'gaussian')
+    fitted_copula = fit_copula_to_data(u_data, "gaussian")
 
     assert fitted_copula is not None
 
@@ -311,8 +323,10 @@ def test_copula_data_fitting():
 def test_statistical_properties():
     """Test that statistical properties are computed correctly."""
     from distributions import (
-        NormalDistribution, ExponentialDistribution,
-        BinomialDistribution, PoissonDistribution
+        BinomialDistribution,
+        ExponentialDistribution,
+        NormalDistribution,
+        PoissonDistribution,
     )
 
     # Normal distribution
@@ -346,5 +360,5 @@ def test_confidence_intervals():
     assert abs(upper - 1.96) < 0.01
 
 
-if __name__ == '__main__':
-    pytest.main([__file__, '-v'])
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])

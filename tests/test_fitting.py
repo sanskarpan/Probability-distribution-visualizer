@@ -1,17 +1,17 @@
 """Tests for distribution fitting."""
 
-import warnings
-import warnings
-import pytest
-import numpy as np
-import sys
 import os
+import sys
+import warnings
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+import numpy as np
+import pytest
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from fitting.distribution_fitter import (
-    DistributionFitter,
     BayesianEstimator,
+    DistributionFitter,
     GoodnessOfFit,
 )
 
@@ -31,14 +31,14 @@ class TestDistributionFitter:
         data = np.random.normal(5, 2, 1000)
 
         fitter = DistributionFitter(data)
-        result = fitter.fit_distribution('norm')
+        result = fitter.fit_distribution("norm")
 
-        assert 'parameters' in result
-        assert 'aic' in result
-        assert 'bic' in result
-        assert 'log_likelihood' in result
+        assert "parameters" in result
+        assert "aic" in result
+        assert "bic" in result
+        assert "log_likelihood" in result
 
-        loc, scale = result['parameters']
+        loc, scale = result["parameters"]
         assert abs(loc - 5) < 0.5
         assert abs(scale - 2) < 0.5
 
@@ -48,13 +48,13 @@ class TestDistributionFitter:
         data = np.random.exponential(2, 1000)
 
         fitter = DistributionFitter(data)
-        results = fitter.fit_all(['norm', 'expon', 'gamma'])
+        results = fitter.fit_all(["norm", "expon", "gamma"])
 
         assert len(results) == 3
-        assert all('aic' in r for r in results.values())
+        assert all("aic" in r for r in results.values())
 
-        best_dist = min(results.items(), key=lambda x: x[1]['aic'])[0]
-        assert best_dist in ['expon', 'gamma']
+        best_dist = min(results.items(), key=lambda x: x[1]["aic"])[0]
+        assert best_dist in ["expon", "gamma"]
 
     def test_fit_normal(self):
         """Test normal distribution fitting."""
@@ -84,9 +84,9 @@ class TestDistributionFitter:
         data = np.random.normal(0, 1, 100)
 
         fitter = DistributionFitter(data)
-        result = fitter.fit_distribution('norm')
+        result = fitter.fit_distribution("norm")
 
-        theoretical, sample = fitter.qq_plot_data('norm', result['parameters'])
+        theoretical, sample = fitter.qq_plot_data("norm", result["parameters"])
 
         assert len(theoretical) == len(sample)
         assert len(theoretical) == len(data)
@@ -178,6 +178,7 @@ class TestGoodnessOfFit:
         data = np.random.normal(0, 1, 1000)
 
         from scipy import stats
+
         cdf_func = lambda x: stats.norm.cdf(x, loc=0, scale=1)
         ks_stat, p_value = GoodnessOfFit.kolmogorov_smirnov_test(data, cdf_func)
 
@@ -188,14 +189,14 @@ class TestGoodnessOfFit:
         np.random.seed(42)
         data = np.random.normal(0, 1, 1000)
 
-        result = GoodnessOfFit.anderson_darling_test(data, 'norm')
+        result = GoodnessOfFit.anderson_darling_test(data, "norm")
 
-        assert 'statistic' in result
+        assert "statistic" in result
         # scipy >= 1.17 returns pvalue, older returns critical_values
-        if 'pvalue' in result:
-            assert result['pvalue'] > 0.05
+        if "pvalue" in result:
+            assert result["pvalue"] > 0.05
         else:
-            assert 'critical_values' in result
+            assert "critical_values" in result
 
     def test_chi_square(self):
         """Test Chi-square test."""
@@ -244,10 +245,10 @@ def test_aic_bic_calculation():
     data = np.random.normal(0, 1, 1000)
 
     fitter = DistributionFitter(data)
-    result = fitter.fit_distribution('norm')
+    result = fitter.fit_distribution("norm")
 
-    aic = result['aic']
-    bic = result['bic']
+    aic = result["aic"]
+    bic = result["bic"]
 
     assert bic > aic
     assert aic > 0
@@ -337,7 +338,7 @@ class TestDistributionFitterEdgeCases:
         data = np.random.normal(0, 1, 200)
         fitter = DistributionFitter(data)
         mu, sigma = fitter.fit_normal()
-        residuals = fitter.calculate_residuals('norm', (mu, sigma))
+        residuals = fitter.calculate_residuals("norm", (mu, sigma))
         assert len(residuals) == len(data)
         assert not np.any(np.isnan(residuals))
 
@@ -346,15 +347,15 @@ class TestDistributionFitterEdgeCases:
         data = np.random.exponential(2, 200)
         fitter = DistributionFitter(data)
         lam = fitter.fit_exponential()
-        residuals = fitter.calculate_residuals('expon', (0, 1 / lam))
+        residuals = fitter.calculate_residuals("expon", (0, 1 / lam))
         assert len(residuals) == len(data)
 
     def test_fit_distribution_ks_pvalue(self):
         np.random.seed(42)
         data = np.random.normal(0, 1, 1000)
         fitter = DistributionFitter(data)
-        result = fitter.fit_distribution('norm')
-        assert result['ks_pvalue'] > 0.05
+        result = fitter.fit_distribution("norm")
+        assert result["ks_pvalue"] > 0.05
 
     def test_fit_distribution_on_2d_array(self):
         np.random.seed(42)
@@ -368,9 +369,9 @@ class TestDistributionFitterEdgeCases:
         fitter = DistributionFitter(data)
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
-            results = fitter.fit_all(['norm', 'bogus_dist'])
-        assert 'norm' in results
-        assert 'bogus_dist' not in results
+            results = fitter.fit_all(["norm", "bogus_dist"])
+        assert "norm" in results
+        assert "bogus_dist" not in results
         assert len(w) >= 1
 
 
@@ -386,6 +387,7 @@ class TestGoodnessOfFitEdgeCases:
         np.random.seed(42)
         data = np.random.exponential(1, 200)
         from scipy import stats
+
         ks_stat, p = GoodnessOfFit.kolmogorov_smirnov_test(
             data, lambda x: stats.norm.cdf(x, loc=1, scale=1)
         )
@@ -394,9 +396,9 @@ class TestGoodnessOfFitEdgeCases:
     def test_anderson_darling_expon(self):
         np.random.seed(42)
         data = np.random.exponential(1, 500)
-        result = GoodnessOfFit.anderson_darling_test(data, 'expon')
-        assert 'statistic' in result
-        assert ('pvalue' in result or 'critical_values' in result)
+        result = GoodnessOfFit.anderson_darling_test(data, "expon")
+        assert "statistic" in result
+        assert "pvalue" in result or "critical_values" in result
 
     def test_shapiro_wilk_large_warning(self):
         np.random.seed(42)

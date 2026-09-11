@@ -1,11 +1,10 @@
 """Multivariate probability distributions."""
 
-from typing import Dict, Any, Tuple, Optional, Union
+from typing import Any, Dict, Optional, Tuple, Union
+
+import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
-from scipy.special import gammaln
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
 
 class MultivariateDistribution:
@@ -120,7 +119,7 @@ class MultivariateNormalDistribution(MultivariateDistribution):
         """Calculate covariance matrix."""
         return self.cov_mat
 
-    def marginal(self, indices: list) -> 'MultivariateNormalDistribution':
+    def marginal(self, indices: list) -> "MultivariateNormalDistribution":
         """
         Get marginal distribution for selected variables.
 
@@ -137,7 +136,7 @@ class MultivariateNormalDistribution(MultivariateDistribution):
         marginal_cov = self.cov_mat[np.ix_(indices, indices)]
         return MultivariateNormalDistribution(marginal_mean, marginal_cov)
 
-    def conditional(self, indices: list, values: np.ndarray) -> 'MultivariateNormalDistribution':
+    def conditional(self, indices: list, values: np.ndarray) -> "MultivariateNormalDistribution":
         """
         Get conditional distribution.
 
@@ -321,6 +320,7 @@ class MultivariateStudentT(MultivariateDistribution):
 
         # Compute normalizing constant
         from scipy.special import gamma
+
         numer = gamma((df + d) / 2)
         denom = gamma(df / 2) * ((df * np.pi) ** (d / 2)) * np.sqrt(shape_det)
         normalizing = numer / denom
@@ -332,15 +332,12 @@ class MultivariateStudentT(MultivariateDistribution):
 
     def rvs(self, size: int = 1, random_state: Optional[int] = None) -> np.ndarray:
         """Generate random samples."""
-        if random_state is not None:
-            np.random.seed(random_state)
+        rng = np.random.default_rng(random_state)
 
         # Generate using property: t_d = loc + sqrt(d/chi^2_d) * N(0, shape)
-        chi2_samples = np.random.chisquare(self.df, size=size)
-        normal_samples = np.random.multivariate_normal(
-            np.zeros(self.dimension),
-            self.shape_mat,
-            size=size
+        chi2_samples = rng.chisquare(self.df, size=size)
+        normal_samples = rng.multivariate_normal(
+            np.zeros(self.dimension), self.shape_mat, size=size
         )
 
         samples = self.loc_vec + normal_samples * np.sqrt(self.df / chi2_samples)[:, np.newaxis]
@@ -415,9 +412,9 @@ class WishartDistribution:
         return f"Wishart(dimension={self.dimension}, df={self.df})"
 
 
-def plot_bivariate_normal(dist: MultivariateNormalDistribution,
-                          num_points: int = 100,
-                          num_contours: int = 10) -> Tuple[plt.Figure, Tuple[plt.Axes, plt.Axes]]:
+def plot_bivariate_normal(
+    dist: MultivariateNormalDistribution, num_points: int = 100, num_contours: int = 10
+) -> Tuple[plt.Figure, Tuple[plt.Axes, plt.Axes]]:
     """
     Plot bivariate normal distribution.
 
@@ -440,43 +437,45 @@ def plot_bivariate_normal(dist: MultivariateNormalDistribution,
     std1 = np.sqrt(cov[0, 0])
     std2 = np.sqrt(cov[1, 1])
 
-    x1 = np.linspace(mean[0] - 3*std1, mean[0] + 3*std1, num_points)
-    x2 = np.linspace(mean[1] - 3*std2, mean[1] + 3*std2, num_points)
+    x1 = np.linspace(mean[0] - 3 * std1, mean[0] + 3 * std1, num_points)
+    x2 = np.linspace(mean[1] - 3 * std2, mean[1] + 3 * std2, num_points)
     X1, X2 = np.meshgrid(x1, x2)
 
     # Evaluate PDF
     pos = np.dstack((X1, X2))
     Z = dist.pdf(pos)
 
-    # Create figure
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+    # Create figure with a 2-D panel and a 3-D panel side by side.
+    fig = plt.figure(figsize=(14, 6))
+    ax1 = fig.add_subplot(121)
+    ax2 = fig.add_subplot(122, projection="3d")
 
     # Contour plot
-    contour = ax1.contourf(X1, X2, Z, levels=num_contours, cmap='viridis')
-    ax1.contour(X1, X2, Z, levels=num_contours, colors='white', alpha=0.3, linewidths=0.5)
-    fig.colorbar(contour, ax=ax1, label='Probability Density')
-    ax1.plot(mean[0], mean[1], 'r*', markersize=15, label='Mean')
-    ax1.set_xlabel('X₁')
-    ax1.set_ylabel('X₂')
-    ax1.set_title('Bivariate Normal Distribution - Contour Plot')
+    contour = ax1.contourf(X1, X2, Z, levels=num_contours, cmap="viridis")
+    ax1.contour(X1, X2, Z, levels=num_contours, colors="white", alpha=0.3, linewidths=0.5)
+    fig.colorbar(contour, ax=ax1, label="Probability Density")
+    ax1.plot(mean[0], mean[1], "r*", markersize=15, label="Mean")
+    ax1.set_xlabel("X₁")
+    ax1.set_ylabel("X₂")
+    ax1.set_title("Bivariate Normal Distribution - Contour Plot")
     ax1.legend()
     ax1.grid(True, alpha=0.3)
 
     # 3D surface plot
-    ax2 = fig.add_subplot(122, projection='3d')
-    surf = ax2.plot_surface(X1, X2, Z, cmap='viridis', alpha=0.8, edgecolor='none')
-    ax2.set_xlabel('X₁')
-    ax2.set_ylabel('X₂')
-    ax2.set_zlabel('Probability Density')
-    ax2.set_title('Bivariate Normal Distribution - 3D Surface')
+    surf = ax2.plot_surface(X1, X2, Z, cmap="viridis", alpha=0.8, edgecolor="none")
+    ax2.set_xlabel("X₁")
+    ax2.set_ylabel("X₂")
+    ax2.set_zlabel("Probability Density")
+    ax2.set_title("Bivariate Normal Distribution - 3D Surface")
     fig.colorbar(surf, ax=ax2, shrink=0.5, aspect=5)
 
     plt.tight_layout()
     return fig, (ax1, ax2)
 
 
-def plot_dirichlet_simplex(dist: DirichletDistribution,
-                           num_samples: int = 1000) -> Tuple[plt.Figure, plt.Axes]:
+def plot_dirichlet_simplex(
+    dist: DirichletDistribution, num_samples: int = 1000
+) -> Tuple[plt.Figure, plt.Axes]:
     """
     Plot Dirichlet distribution samples on simplex (for dimension 3).
 
@@ -495,25 +494,36 @@ def plot_dirichlet_simplex(dist: DirichletDistribution,
 
     # Create figure
     fig = plt.figure(figsize=(12, 10))
-    ax = fig.add_subplot(111, projection='3d')
+    ax = fig.add_subplot(111, projection="3d")
 
     # Plot samples
-    scatter = ax.scatter(samples[:, 0], samples[:, 1], samples[:, 2],
-                        c=samples[:, 0], cmap='viridis', alpha=0.6, s=20)
+    scatter = ax.scatter(
+        samples[:, 0],
+        samples[:, 1],
+        samples[:, 2],
+        c=samples[:, 0],
+        cmap="viridis",
+        alpha=0.6,
+        s=20,
+    )
 
     # Plot simplex edges
     vertices = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
     for i in range(3):
-        for j in range(i+1, 3):
-            ax.plot([vertices[i, 0], vertices[j, 0]],
-                   [vertices[i, 1], vertices[j, 1]],
-                   [vertices[i, 2], vertices[j, 2]],
-                   'k-', linewidth=2, alpha=0.5)
+        for j in range(i + 1, 3):
+            ax.plot(
+                [vertices[i, 0], vertices[j, 0]],
+                [vertices[i, 1], vertices[j, 1]],
+                [vertices[i, 2], vertices[j, 2]],
+                "k-",
+                linewidth=2,
+                alpha=0.5,
+            )
 
-    ax.set_xlabel('X₁')
-    ax.set_ylabel('X₂')
-    ax.set_zlabel('X₃')
-    ax.set_title(f'Dirichlet Distribution Samples\nα = {dist.alpha}')
-    fig.colorbar(scatter, ax=ax, label='X₁ value', shrink=0.5)
+    ax.set_xlabel("X₁")
+    ax.set_ylabel("X₂")
+    ax.set_zlabel("X₃")
+    ax.set_title(f"Dirichlet Distribution Samples\nα = {dist.alpha}")
+    fig.colorbar(scatter, ax=ax, label="X₁ value", shrink=0.5)
 
     return fig, ax

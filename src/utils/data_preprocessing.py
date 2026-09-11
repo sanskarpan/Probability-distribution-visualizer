@@ -1,13 +1,13 @@
 """Data preprocessing utilities."""
 
-from typing import Optional, Union, Tuple
+from typing import Optional, Tuple, Union
+
 import numpy as np
 from scipy import stats
 
 
 def standardize(
-    data: np.ndarray,
-    return_params: bool = False
+    data: np.ndarray, return_params: bool = False
 ) -> Union[np.ndarray, Tuple[np.ndarray, dict]]:
     """
     Standardize data to zero mean and unit variance (Z-score normalization).
@@ -29,15 +29,15 @@ def standardize(
         standardized = (data - mean) / std
 
     if return_params:
-        return standardized, {'mean': mean, 'std': std}
+        return standardized, {"mean": mean, "std": std}
     return standardized
 
 
 def normalize(
     data: np.ndarray,
-    method: str = 'minmax',
+    method: str = "minmax",
     feature_range: Tuple[float, float] = (0, 1),
-    return_params: bool = False
+    return_params: bool = False,
 ) -> Union[np.ndarray, Tuple[np.ndarray, dict]]:
     """
     Normalize data to specified range.
@@ -53,7 +53,7 @@ def normalize(
     """
     data = np.asarray(data)
 
-    if method == 'minmax':
+    if method == "minmax":
         min_val = np.min(data)
         max_val = np.max(data)
         range_val = max_val - min_val
@@ -66,9 +66,9 @@ def normalize(
             # Scale to feature_range
             normalized = normalized * (feature_range[1] - feature_range[0]) + feature_range[0]
 
-        params = {'min': min_val, 'max': max_val, 'feature_range': feature_range}
+        params = {"min": min_val, "max": max_val, "feature_range": feature_range}
 
-    elif method == 'maxabs':
+    elif method == "maxabs":
         max_abs = np.max(np.abs(data))
 
         if max_abs == 0:
@@ -76,7 +76,7 @@ def normalize(
         else:
             normalized = data / max_abs
 
-        params = {'max_abs': max_abs}
+        params = {"max_abs": max_abs}
 
     else:
         raise ValueError(f"Unknown method: {method}")
@@ -87,10 +87,7 @@ def normalize(
 
 
 def remove_outliers(
-    data: np.ndarray,
-    method: str = 'iqr',
-    threshold: float = 1.5,
-    return_mask: bool = False
+    data: np.ndarray, method: str = "iqr", threshold: float = 1.5, return_mask: bool = False
 ) -> Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]:
     """
     Remove outliers from data.
@@ -106,18 +103,18 @@ def remove_outliers(
     """
     data = np.asarray(data)
 
-    if method == 'iqr':
+    if method == "iqr":
         q1, q3 = np.percentile(data, [25, 75])
         iqr = q3 - q1
         lower_bound = q1 - threshold * iqr
         upper_bound = q3 + threshold * iqr
         mask = (data >= lower_bound) & (data <= upper_bound)
 
-    elif method == 'zscore':
+    elif method == "zscore":
         z_scores = np.abs(stats.zscore(data))
         mask = z_scores <= threshold
 
-    elif method == 'mad':
+    elif method == "mad":
         median = np.median(data)
         mad = np.median(np.abs(data - median))
         if mad == 0:
@@ -137,9 +134,7 @@ def remove_outliers(
 
 
 def handle_missing(
-    data: np.ndarray,
-    method: str = 'mean',
-    fill_value: Optional[float] = None
+    data: np.ndarray, method: str = "mean", fill_value: Optional[float] = None
 ) -> np.ndarray:
     """
     Handle missing values (NaN) in data.
@@ -158,36 +153,36 @@ def handle_missing(
     if not np.any(mask):
         return data  # No missing values
 
-    if method == 'mean':
+    if method == "mean":
         fill = np.nanmean(data)
-    elif method == 'median':
+    elif method == "median":
         fill = np.nanmedian(data)
-    elif method == 'mode':
+    elif method == "mode":
         # For continuous data, use median as approximation
         fill = np.nanmedian(data)
-    elif method == 'constant':
+    elif method == "constant":
         if fill_value is None:
             raise ValueError("fill_value must be provided for 'constant' method")
         fill = fill_value
-    elif method == 'forward_fill':
+    elif method == "forward_fill":
         # Forward fill
         for i in range(len(data)):
             if np.isnan(data[i]) and i > 0:
-                data[i] = data[i-1]
+                data[i] = data[i - 1]
         # Fill any remaining NaNs at the start
         first_valid = np.where(~np.isnan(data))[0]
         if len(first_valid) > 0:
-            data[:first_valid[0]] = data[first_valid[0]]
+            data[: first_valid[0]] = data[first_valid[0]]
         return data
-    elif method == 'backward_fill':
+    elif method == "backward_fill":
         # Backward fill
-        for i in range(len(data)-1, -1, -1):
-            if np.isnan(data[i]) and i < len(data)-1:
-                data[i] = data[i+1]
+        for i in range(len(data) - 1, -1, -1):
+            if np.isnan(data[i]) and i < len(data) - 1:
+                data[i] = data[i + 1]
         # Fill any remaining NaNs at the end
         last_valid = np.where(~np.isnan(data))[0]
         if len(last_valid) > 0:
-            data[last_valid[-1]+1:] = data[last_valid[-1]]
+            data[last_valid[-1] + 1 :] = data[last_valid[-1]]
         return data
     else:
         raise ValueError(f"Unknown method: {method}")
@@ -200,8 +195,8 @@ def bin_data(
     data: np.ndarray,
     n_bins: Optional[int] = None,
     bins: Optional[np.ndarray] = None,
-    method: str = 'equal_width',
-    return_bins: bool = False
+    method: str = "equal_width",
+    return_bins: bool = False,
 ) -> Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]:
     """
     Bin continuous data into discrete bins.
@@ -223,9 +218,9 @@ def bin_data(
 
     if bins is None:
         assert n_bins is not None
-        if method == 'equal_width':
+        if method == "equal_width":
             bins = np.linspace(np.min(data), np.max(data), n_bins + 1)
-        elif method == 'equal_frequency':
+        elif method == "equal_frequency":
             bins = np.percentile(data, np.linspace(0, 100, n_bins + 1))
         else:
             raise ValueError(f"Unknown method: {method}")
@@ -241,11 +236,7 @@ def bin_data(
     return bin_indices
 
 
-def log_transform(
-    data: np.ndarray,
-    shift: float = 0.0,
-    base: str = 'e'
-) -> np.ndarray:
+def log_transform(data: np.ndarray, shift: float = 0.0, base: str = "e") -> np.ndarray:
     """
     Apply logarithmic transformation to data.
 
@@ -262,19 +253,18 @@ def log_transform(
     if np.any(data <= 0):
         raise ValueError("Cannot take log of non-positive values. Use shift parameter.")
 
-    if base == 'e':
+    if base == "e":
         return np.log(data)
-    elif base == '10':
+    elif base == "10":
         return np.log10(data)
-    elif base == '2':
+    elif base == "2":
         return np.log2(data)
     else:
         raise ValueError(f"Unknown base: {base}")
 
 
 def box_cox_transform(
-    data: np.ndarray,
-    lambda_param: Optional[float] = None
+    data: np.ndarray, lambda_param: Optional[float] = None
 ) -> Union[np.ndarray, Tuple[np.ndarray, float]]:
     """
     Apply Box-Cox power transformation.

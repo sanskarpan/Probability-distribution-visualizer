@@ -2,45 +2,47 @@
 
 from .base import Distribution
 from .continuous import (
-    NormalDistribution,
-    ExponentialDistribution,
-    UniformDistribution,
     BetaDistribution,
-    GammaDistribution,
-    ChiSquareDistribution,
-    StudentTDistribution,
-    WeibullDistribution,
-    LognormalDistribution,
     CauchyDistribution,
-)
-from .discrete import (
-    BinomialDistribution,
-    PoissonDistribution,
-    GeometricDistribution,
-    NegativeBinomialDistribution,
-    HypergeometricDistribution,
-    DiscreteUniformDistribution,
-)
-from .multivariate import (
-    MultivariateNormalDistribution,
-    DirichletDistribution,
-    MultivariateStudentT,
-    WishartDistribution,
-    plot_bivariate_normal,
-    plot_dirichlet_simplex,
+    ChiSquareDistribution,
+    ExponentialDistribution,
+    GammaDistribution,
+    LognormalDistribution,
+    NormalDistribution,
+    StudentTDistribution,
+    UniformDistribution,
+    WeibullDistribution,
 )
 from .copulas import (
-    GaussianCopula,
     ClaytonCopula,
+    Copula,
+    GaussianCopula,
     GumbelCopula,
     StudentTCopula,
     fit_copula_to_data,
 )
+from .discrete import (
+    BinomialDistribution,
+    DiscreteUniformDistribution,
+    GeometricDistribution,
+    HypergeometricDistribution,
+    NegativeBinomialDistribution,
+    PoissonDistribution,
+)
 from .mixtures import (
-    MixtureDistribution,
-    GaussianMixtureModel,
     BayesianGMM,
+    GaussianMixtureModel,
+    MixtureDistribution,
     select_optimal_components,
+)
+from .multivariate import (
+    DirichletDistribution,
+    MultivariateDistribution,
+    MultivariateNormalDistribution,
+    MultivariateStudentT,
+    WishartDistribution,
+    plot_bivariate_normal,
+    plot_dirichlet_simplex,
 )
 
 __all__ = [
@@ -65,6 +67,7 @@ __all__ = [
     "HypergeometricDistribution",
     "DiscreteUniformDistribution",
     # Multivariate
+    "MultivariateDistribution",
     "MultivariateNormalDistribution",
     "DirichletDistribution",
     "MultivariateStudentT",
@@ -72,6 +75,7 @@ __all__ = [
     "plot_bivariate_normal",
     "plot_dirichlet_simplex",
     # Copulas
+    "Copula",
     "GaussianCopula",
     "ClaytonCopula",
     "GumbelCopula",

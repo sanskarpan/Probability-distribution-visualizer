@@ -1,7 +1,9 @@
 """Discrete probability distributions."""
 
-from typing import Dict, Any, Tuple
+from typing import Any, Dict, Tuple
+
 from scipy import stats
+
 from .base import Distribution
 
 
@@ -23,7 +25,7 @@ class BinomialDistribution(Distribution):
 
     def _create_distribution(self, **params):
         """Create scipy binomial distribution."""
-        return stats.binom(n=params['n'], p=params['p'])
+        return stats.binom(n=params["n"], p=params["p"])
 
     def get_parameters(self) -> Dict[str, Any]:
         """Get current parameters."""
@@ -31,8 +33,8 @@ class BinomialDistribution(Distribution):
 
     def set_parameters(self, **params):
         """Set distribution parameters."""
-        self.n = int(params.get('n', self.n))
-        self.p = params.get('p', self.p)
+        self.n = int(params.get("n", self.n))
+        self.p = params.get("p", self.p)
 
         if self.n <= 0:
             raise ValueError("n must be positive")
@@ -65,7 +67,7 @@ class PoissonDistribution(Distribution):
 
     def _create_distribution(self, **params):
         """Create scipy poisson distribution."""
-        return stats.poisson(mu=params['lambda_param'])
+        return stats.poisson(mu=params["lambda_param"])
 
     def get_parameters(self) -> Dict[str, Any]:
         """Get current parameters."""
@@ -73,7 +75,7 @@ class PoissonDistribution(Distribution):
 
     def set_parameters(self, **params):
         """Set distribution parameters."""
-        self.lambda_param = params.get('lambda_param', params.get('lambda', self.lambda_param))
+        self.lambda_param = params.get("lambda_param", params.get("lambda", self.lambda_param))
 
         if self.lambda_param <= 0:
             raise ValueError("lambda must be positive")
@@ -101,7 +103,7 @@ class GeometricDistribution(Distribution):
 
     def _create_distribution(self, **params):
         """Create scipy geometric distribution."""
-        return stats.geom(p=params['p'])
+        return stats.geom(p=params["p"])
 
     def get_parameters(self) -> Dict[str, Any]:
         """Get current parameters."""
@@ -109,7 +111,7 @@ class GeometricDistribution(Distribution):
 
     def set_parameters(self, **params):
         """Set distribution parameters."""
-        self.p = params.get('p', self.p)
+        self.p = params.get("p", self.p)
 
         if not 0 < self.p <= 1:
             raise ValueError("p must be between 0 and 1 (exclusive of 0)")
@@ -139,7 +141,7 @@ class NegativeBinomialDistribution(Distribution):
 
     def _create_distribution(self, **params):
         """Create scipy negative binomial distribution."""
-        return stats.nbinom(n=params['r'], p=params['p'])
+        return stats.nbinom(n=params["r"], p=params["p"])
 
     def get_parameters(self) -> Dict[str, Any]:
         """Get current parameters."""
@@ -147,8 +149,8 @@ class NegativeBinomialDistribution(Distribution):
 
     def set_parameters(self, **params):
         """Set distribution parameters."""
-        self.r = int(params.get('r', self.r))
-        self.p = params.get('p', self.p)
+        self.r = int(params.get("r", self.r))
+        self.p = params.get("p", self.p)
 
         if self.r <= 0:
             raise ValueError("r must be positive")
@@ -185,7 +187,7 @@ class HypergeometricDistribution(Distribution):
 
     def _create_distribution(self, **params):
         """Create scipy hypergeometric distribution."""
-        return stats.hypergeom(M=params['M'], n=params['n'], N=params['N'])
+        return stats.hypergeom(M=params["M"], n=params["n"], N=params["N"])
 
     def get_parameters(self) -> Dict[str, Any]:
         """Get current parameters."""
@@ -193,9 +195,9 @@ class HypergeometricDistribution(Distribution):
 
     def set_parameters(self, **params):
         """Set distribution parameters."""
-        self.M = int(params.get('M', self.M))
-        self.n = int(params.get('n', self.n))
-        self.N = int(params.get('N', self.N))
+        self.M = int(params.get("M", self.M))
+        self.n = int(params.get("n", self.n))
+        self.N = int(params.get("N", self.N))
 
         if self.M <= 0 or self.n < 0 or self.N < 0:
             raise ValueError("M must be positive, n and N must be non-negative")
@@ -233,7 +235,7 @@ class DiscreteUniformDistribution(Distribution):
 
     def _create_distribution(self, **params):
         """Create scipy discrete uniform distribution."""
-        return stats.randint(low=params['low'], high=params['high'] + 1)
+        return stats.randint(low=params["low"], high=params["high"] + 1)
 
     def get_parameters(self) -> Dict[str, Any]:
         """Get current parameters."""
@@ -241,8 +243,8 @@ class DiscreteUniformDistribution(Distribution):
 
     def set_parameters(self, **params):
         """Set distribution parameters."""
-        self.low = int(params.get('low', self.low))
-        self.high = int(params.get('high', self.high))
+        self.low = int(params.get("low", self.low))
+        self.high = int(params.get("high", self.high))
 
         if self.low >= self.high:
             raise ValueError("low must be less than high")
