@@ -164,7 +164,10 @@ line-length = 100
 target-version = "py310"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "W", "UP", "B"]
+# NOTE: pyupgrade rules (UP) are intentionally out of the gate until
+# https://github.com/sanskarpan/Probability-distribution-visualizer/issues/62
+# (typing modernization) lands; E/F/I/W/B must stay clean.
+select = ["E", "F", "I", "W", "B"]
 ignore = ["E501"]
 
 [tool.ruff.lint.isort]
