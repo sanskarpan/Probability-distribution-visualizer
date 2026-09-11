@@ -352,8 +352,7 @@ class LognormalDistribution(Distribution):
 
     def set_parameters(self, **params):
         """Set distribution parameters."""
-        import numpy as np
-
+    
         self.mu = params.get("mu", self.mu)
         self.sigma = params.get("sigma", self.sigma)
 
