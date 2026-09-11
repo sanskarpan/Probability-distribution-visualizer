@@ -1,13 +1,12 @@
 """Monte Carlo simulation engine for complex probability calculations."""
 
-from typing import Callable, Dict, List, Optional, Tuple, Union
 import logging
 import time
+from dataclasses import dataclass
+from typing import Callable, Dict, List, Optional, Tuple, Union
+
 import numpy as np
 from scipy import stats
-import warnings
-from concurrent.futures import ProcessPoolExecutor
-from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +14,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class SimulationResult:
     """Results from Monte Carlo simulation."""
+
     mean: float
     std: float
     var: float
@@ -38,12 +38,14 @@ class MonteCarloSimulator:
         self.random_seed = random_seed
         self._rng = np.random.RandomState(random_seed)
 
-    def simulate(self,
-                func: Callable,
-                num_samples: int = 10000,
-                track_convergence: bool = False,
-                confidence_level: float = 0.95,
-                **kwargs) -> SimulationResult:
+    def simulate(
+        self,
+        func: Callable,
+        num_samples: int = 10000,
+        track_convergence: bool = False,
+        confidence_level: float = 0.95,
+        **kwargs,
+    ) -> SimulationResult:
         """
         Run Monte Carlo simulation.
 
@@ -110,7 +112,7 @@ class MonteCarloSimulator:
             quantiles=quantiles,
             samples=samples,
             confidence_interval=(ci_lower, ci_upper),
-            convergence_data=convergence_data
+            convergence_data=convergence_data,
         )
 
     def _calculate_convergence(self, samples: np.ndarray) -> np.ndarray:
@@ -118,10 +120,9 @@ class MonteCarloSimulator:
         running_mean = np.cumsum(samples) / np.arange(1, len(samples) + 1)
         return running_mean
 
-    def estimate_probability(self,
-                            event_func: Callable,
-                            num_samples: int = 100000,
-                            confidence_level: float = 0.95) -> Dict:
+    def estimate_probability(
+        self, event_func: Callable, num_samples: int = 100000, confidence_level: float = 0.95
+    ) -> Dict:
         """
         Estimate probability of an event using Monte Carlo.
 
@@ -141,23 +142,24 @@ class MonteCarloSimulator:
         n = num_samples
 
         denominator = 1 + z**2 / n
-        center = (prob_estimate + z**2 / (2*n)) / denominator
-        margin = z * np.sqrt((prob_estimate * (1 - prob_estimate) / n +
-                             z**2 / (4 * n**2))) / denominator
+        center = (prob_estimate + z**2 / (2 * n)) / denominator
+        margin = (
+            z * np.sqrt((prob_estimate * (1 - prob_estimate) / n + z**2 / (4 * n**2))) / denominator
+        )
 
         ci_lower = max(0, center - margin)
         ci_upper = min(1, center + margin)
 
         return {
-            'probability': prob_estimate,
-            'confidence_interval': (ci_lower, ci_upper),
-            'num_samples': num_samples,
-            'num_successes': int(np.sum(outcomes))
+            "probability": prob_estimate,
+            "confidence_interval": (ci_lower, ci_upper),
+            "num_samples": num_samples,
+            "num_successes": int(np.sum(outcomes)),
         }
 
-    def estimate_expectation(self,
-                           random_var_func: Callable,
-                           num_samples: int = 10000) -> Tuple[float, float]:
+    def estimate_expectation(
+        self, random_var_func: Callable, num_samples: int = 10000
+    ) -> Tuple[float, float]:
         """
         Estimate expectation using Monte Carlo.
 
@@ -174,12 +176,14 @@ class MonteCarloSimulator:
 
         return expectation, std_error
 
-    def importance_sampling(self,
-                          target_func: Callable,
-                          proposal_sampler: Callable,
-                          proposal_pdf: Callable,
-                          target_pdf: Callable,
-                          num_samples: int = 10000) -> Tuple[float, float]:
+    def importance_sampling(
+        self,
+        target_func: Callable,
+        proposal_sampler: Callable,
+        proposal_pdf: Callable,
+        target_pdf: Callable,
+        num_samples: int = 10000,
+    ) -> Tuple[float, float]:
         """
         Importance sampling for rare event estimation.
 
@@ -204,18 +208,19 @@ class MonteCarloSimulator:
         estimate = np.average(values, weights=weights)
 
         # Calculate effective sample size
-        ess = np.sum(weights)**2 / np.sum(weights**2)
+        ess = np.sum(weights) ** 2 / np.sum(weights**2)
 
         # Standard error
-        std_error = np.sqrt(np.average((values - estimate)**2,
-                                       weights=weights) / ess)
+        std_error = np.sqrt(np.average((values - estimate) ** 2, weights=weights) / ess)
 
         return estimate, std_error
 
-    def stratified_sampling(self,
-                          func: Callable,
-                          strata_bounds: List[Tuple[float, float]],
-                          num_samples_per_stratum: int = 1000) -> SimulationResult:
+    def stratified_sampling(
+        self,
+        func: Callable,
+        strata_bounds: List[Tuple[float, float]],
+        num_samples_per_stratum: int = 1000,
+    ) -> SimulationResult:
         """
         Stratified sampling for variance reduction.
 
@@ -231,8 +236,7 @@ class MonteCarloSimulator:
 
         for lower, upper in strata_bounds:
             # Uniform sampling within stratum
-            stratum_samples = self._rng.uniform(lower, upper,
-                                               num_samples_per_stratum)
+            stratum_samples = self._rng.uniform(lower, upper, num_samples_per_stratum)
             values = np.array([func(s) for s in stratum_samples])
             all_samples.extend(values)
 
@@ -249,15 +253,16 @@ class MonteCarloSimulator:
                 0.95: np.percentile(samples, 95),
             },
             samples=samples,
-            confidence_interval=(np.percentile(samples, 2.5),
-                               np.percentile(samples, 97.5))
+            confidence_interval=(np.percentile(samples, 2.5), np.percentile(samples, 97.5)),
         )
 
-    def bootstrap(self,
-                 data: np.ndarray,
-                 statistic: Callable,
-                 num_bootstrap: int = 10000,
-                 confidence_level: float = 0.95) -> Dict:
+    def bootstrap(
+        self,
+        data: np.ndarray,
+        statistic: Callable,
+        num_bootstrap: int = 10000,
+        confidence_level: float = 0.95,
+    ) -> Dict:
         """
         Bootstrap resampling for estimating sampling distribution.
 
@@ -284,18 +289,20 @@ class MonteCarloSimulator:
         ci_upper = np.percentile(bootstrap_stats, 100 * (1 - alpha / 2))
 
         return {
-            'estimate': statistic(data),
-            'bootstrap_mean': np.mean(bootstrap_stats),
-            'bootstrap_std': np.std(bootstrap_stats, ddof=1),
-            'confidence_interval': (ci_lower, ci_upper),
-            'bootstrap_distribution': bootstrap_stats
+            "estimate": statistic(data),
+            "bootstrap_mean": np.mean(bootstrap_stats),
+            "bootstrap_std": np.std(bootstrap_stats, ddof=1),
+            "confidence_interval": (ci_lower, ci_upper),
+            "bootstrap_distribution": bootstrap_stats,
         }
 
-    def permutation_test(self,
-                        group1: np.ndarray,
-                        group2: np.ndarray,
-                        test_statistic: Callable,
-                        num_permutations: int = 10000) -> Dict:
+    def permutation_test(
+        self,
+        group1: np.ndarray,
+        group2: np.ndarray,
+        test_statistic: Callable,
+        num_permutations: int = 10000,
+    ) -> Dict:
         """
         Permutation test for hypothesis testing.
 
@@ -330,9 +337,9 @@ class MonteCarloSimulator:
         p_value = np.mean(np.abs(perm_stats) >= np.abs(observed_stat))
 
         return {
-            'observed_statistic': observed_stat,
-            'p_value': p_value,
-            'permutation_distribution': perm_stats
+            "observed_statistic": observed_stat,
+            "p_value": p_value,
+            "permutation_distribution": perm_stats,
         }
 
 
@@ -340,9 +347,9 @@ class VarianceReduction:
     """Variance reduction techniques."""
 
     @staticmethod
-    def antithetic_variates(sampler: Callable,
-                          func: Callable,
-                          num_pairs: int = 5000) -> Tuple[float, float]:
+    def antithetic_variates(
+        sampler: Callable, func: Callable, num_pairs: int = 5000
+    ) -> Tuple[float, float]:
         """
         Antithetic variates for variance reduction.
 
@@ -371,11 +378,13 @@ class VarianceReduction:
         return np.mean(estimates), np.std(estimates, ddof=1) / np.sqrt(num_pairs)
 
     @staticmethod
-    def control_variates(target_sampler: Callable,
-                        target_func: Callable,
-                        control_func: Callable,
-                        control_mean: float,
-                        num_samples: int = 10000) -> Tuple[float, float]:
+    def control_variates(
+        target_sampler: Callable,
+        target_func: Callable,
+        control_func: Callable,
+        control_mean: float,
+        num_samples: int = 10000,
+    ) -> Tuple[float, float]:
         """
         Control variates for variance reduction.
 
@@ -452,10 +461,9 @@ class QuasiMonteCarloSimulator:
         sampler = qmc.Sobol(d=dim, scramble=True)
         return sampler.random(n)
 
-    def integrate_qmc(self,
-                     func: Callable,
-                     bounds: List[Tuple[float, float]],
-                     num_points: int = 10000) -> float:
+    def integrate_qmc(
+        self, func: Callable, bounds: List[Tuple[float, float]], num_points: int = 10000
+    ) -> float:
         """
         Quasi-Monte Carlo integration.
 
