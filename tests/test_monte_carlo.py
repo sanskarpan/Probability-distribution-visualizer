@@ -1,19 +1,20 @@
 """Tests for Monte Carlo simulation."""
 
-import warnings
-import pytest
-import numpy as np
-import sys
 import os
+import sys
+import warnings
+
+import numpy as np
+import pytest
 
 # Add src to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from monte_carlo.simulator import (
     MonteCarloSimulator,
+    QuasiMonteCarloSimulator,
     SimulationResult,
     VarianceReduction,
-    QuasiMonteCarloSimulator,
 )
 
 
@@ -48,10 +49,10 @@ class TestMonteCarloSimulator:
 
         result = sim.estimate_probability(event_func, num_samples=10000)
 
-        assert abs(result['probability'] - 0.5) < 0.05
-        assert 'confidence_interval' in result
-        assert result['num_samples'] == 10000
-        assert result['num_successes'] > 0
+        assert abs(result["probability"] - 0.5) < 0.05
+        assert "confidence_interval" in result
+        assert result["num_samples"] == 10000
+        assert result["num_successes"] > 0
 
     def test_importance_sampling(self):
         """Test importance sampling."""
@@ -62,18 +63,19 @@ class TestMonteCarloSimulator:
 
         def proposal_pdf(x):
             from scipy.stats import norm
+
             return norm.pdf(x, 3, 1)
 
         def target_pdf(x):
             from scipy.stats import norm
+
             return norm.pdf(x, 0, 1)
 
         def target_func(x):
             return 1 if x > 3 else 0
 
         estimate, std_error = sim.importance_sampling(
-            target_func, proposal_sampler, proposal_pdf, target_pdf,
-            num_samples=10000
+            target_func, proposal_sampler, proposal_pdf, target_pdf, num_samples=10000
         )
 
         assert abs(estimate - 0.00135) < 0.01
@@ -84,7 +86,7 @@ class TestMonteCarloSimulator:
         sim = MonteCarloSimulator(random_seed=42)
 
         def func(x):
-            return x ** 2
+            return x**2
 
         strata_bounds = [(i / 10, (i + 1) / 10) for i in range(10)]
         result = sim.stratified_sampling(func, strata_bounds, num_samples_per_stratum=100)
@@ -99,7 +101,7 @@ class TestMonteCarloSimulator:
             return np.random.uniform(0, 1)
 
         def func(x):
-            return x ** 2
+            return x**2
 
         estimate, std_error = VarianceReduction.antithetic_variates(sampler, func, num_pairs=5000)
 
@@ -118,10 +120,10 @@ class TestMonteCarloSimulator:
 
         result = sim.bootstrap(data, statistic, num_bootstrap=1000)
 
-        assert abs(result['estimate'] - 10) < 0.5
-        assert 'bootstrap_std' in result
-        assert 'confidence_interval' in result
-        assert 'bootstrap_distribution' in result
+        assert abs(result["estimate"] - 10) < 0.5
+        assert "bootstrap_std" in result
+        assert "confidence_interval" in result
+        assert "bootstrap_distribution" in result
 
     def test_permutation_test(self):
         """Test permutation test."""
@@ -136,9 +138,9 @@ class TestMonteCarloSimulator:
 
         result = sim.permutation_test(group1, group2, test_statistic, num_permutations=1000)
 
-        assert 'observed_statistic' in result
-        assert 'p_value' in result
-        assert 'permutation_distribution' in result
+        assert "observed_statistic" in result
+        assert "p_value" in result
+        assert "permutation_distribution" in result
 
     def test_permutation_test_different_groups(self):
         """Test permutation test with different groups."""
@@ -153,7 +155,7 @@ class TestMonteCarloSimulator:
 
         result = sim.permutation_test(group1, group2, test_statistic, num_permutations=1000)
 
-        assert result['p_value'] < 0.05
+        assert result["p_value"] < 0.05
 
 
 class TestVarianceReduction:
@@ -223,7 +225,7 @@ class TestQuasiMonteCarloSimulator:
         """Test that QMC converges faster than MC."""
 
         def func(x):
-            return x ** 2
+            return x**2
 
         qmc = QuasiMonteCarloSimulator()
         with warnings.catch_warnings():
@@ -244,6 +246,7 @@ class TestQuasiMonteCarloSimulator:
         uniform_samples = QuasiMonteCarloSimulator.halton_sequence(n=1000, base=2)
 
         from scipy.stats import norm
+
         normal_samples = norm.ppf(uniform_samples)
 
         assert abs(np.mean(normal_samples) - 0) < 0.2
@@ -276,11 +279,11 @@ def test_integration_estimate_pi():
     def event_func():
         x = np.random.uniform(0, 1)
         y = np.random.uniform(0, 1)
-        return x ** 2 + y ** 2 <= 1
+        return x**2 + y**2 <= 1
 
     result = sim.estimate_probability(event_func, num_samples=100000)
 
-    pi_estimate = result['probability'] * 4
+    pi_estimate = result["probability"] * 4
     assert abs(pi_estimate - np.pi) < 0.05
 
 
@@ -293,6 +296,7 @@ def test_confidence_interval_coverage():
     true_mean = 10
 
     for i in range(n_simulations):
+
         def sampler():
             return np.random.normal(true_mean, 2)
 
@@ -317,7 +321,7 @@ def test_simulate_basic():
     assert abs(result.mean - 10) < 0.3
     assert result.std > 0
     assert result.var > 0
-    assert hasattr(result, 'confidence_interval')
+    assert hasattr(result, "confidence_interval")
     assert result.confidence_interval[0] < result.confidence_interval[1]
 
 
@@ -365,8 +369,7 @@ def test_estimate_expectation_kwargs():
         return np.random.normal(mean, sd)
 
     est, se = sim.estimate_expectation(
-        lambda mean=0, sd=1: np.random.normal(mean, sd),
-        num_samples=5000
+        lambda mean=0, sd=1: np.random.normal(mean, sd), num_samples=5000
     )
     assert abs(est) < 0.2
 
@@ -389,8 +392,7 @@ def test_importance_sampling_zero_variance():
         return x
 
     est, se = sim.importance_sampling(
-        target_func, proposal_sampler, proposal_pdf, target_pdf,
-        num_samples=5000
+        target_func, proposal_sampler, proposal_pdf, target_pdf, num_samples=5000
     )
     assert abs(est) < 0.2
 
@@ -416,10 +418,10 @@ def test_bootstrap_median():
         return np.median(sample)
 
     result = sim.bootstrap(data, statistic, num_bootstrap=500, confidence_level=0.90)
-    assert 'estimate' in result
-    assert 'bootstrap_mean' in result
-    assert 'confidence_interval' in result
-    assert result['confidence_interval'][0] < result['confidence_interval'][1]
+    assert "estimate" in result
+    assert "bootstrap_mean" in result
+    assert "confidence_interval" in result
+    assert result["confidence_interval"][0] < result["confidence_interval"][1]
 
 
 def test_permutation_test_tight_threshold():
@@ -432,7 +434,7 @@ def test_permutation_test_tight_threshold():
         return np.mean(g1) - np.mean(g2)
 
     result = sim.permutation_test(group1, group2, test_statistic, num_permutations=2000)
-    assert result['p_value'] < 0.05
+    assert result["p_value"] < 0.05
 
 
 def test_estimate_probability_edge():
@@ -442,7 +444,7 @@ def test_estimate_probability_edge():
         return True
 
     result = sim.estimate_probability(event_func, num_samples=1000)
-    assert np.isclose(result['probability'], 1.0)
+    assert np.isclose(result["probability"], 1.0)
 
 
 def test_estimate_probability_impossible():
@@ -452,7 +454,7 @@ def test_estimate_probability_impossible():
         return False
 
     result = sim.estimate_probability(event_func, num_samples=1000)
-    assert np.isclose(result['probability'], 0.0)
+    assert np.isclose(result["probability"], 0.0)
 
 
 class TestVarianceReductionEdgeCases:
@@ -473,7 +475,7 @@ class TestVarianceReductionEdgeCases:
             return np.random.normal(0, 1)
 
         def target_func(x):
-            return x ** 3
+            return x**3
 
         def control_func(x):
             return x
@@ -505,9 +507,14 @@ class TestSimulationResult:
     def test_with_convergence(self):
         conv_data = np.cumsum(np.random.normal(0, 1, 100)) / np.arange(1, 101)
         result = SimulationResult(
-            mean=0.1, std=1.0, var=1.0, median=0.05,
-            quantiles={0.5: 0.05}, samples=np.random.normal(0, 1, 100),
-            confidence_interval=(-2.0, 2.0), convergence_data=conv_data
+            mean=0.1,
+            std=1.0,
+            var=1.0,
+            median=0.05,
+            quantiles={0.5: 0.05},
+            samples=np.random.normal(0, 1, 100),
+            confidence_interval=(-2.0, 2.0),
+            convergence_data=conv_data,
         )
         assert result.convergence_data is not None
         assert len(result.convergence_data) == 100
