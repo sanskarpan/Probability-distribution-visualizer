@@ -1,14 +1,12 @@
 """Nonparametric statistical tests."""
 
-from typing import Dict, Optional, Union
-
 import numpy as np
 from scipy import stats
 
 
 def mann_whitney_u(
     sample1: np.ndarray, sample2: np.ndarray, alternative: str = "two-sided", alpha: float = 0.05
-) -> Dict[str, Union[float, bool, str]]:
+) -> dict[str, float | bool | str]:
     """
     Mann-Whitney U test (nonparametric alternative to two-sample t-test).
 
@@ -39,10 +37,10 @@ def mann_whitney_u(
 
 def wilcoxon_signed_rank(
     sample1: np.ndarray,
-    sample2: Optional[np.ndarray] = None,
+    sample2: np.ndarray | None = None,
     alternative: str = "two-sided",
     alpha: float = 0.05,
-) -> Dict[str, Union[float, bool, str]]:
+) -> dict[str, float | bool | str]:
     """
     Wilcoxon signed-rank test (nonparametric paired test).
 
@@ -90,7 +88,7 @@ def wilcoxon_signed_rank(
     }
 
 
-def kruskal_wallis(*samples: np.ndarray, alpha: float = 0.05) -> Dict[str, Union[float, bool, int]]:
+def kruskal_wallis(*samples: np.ndarray, alpha: float = 0.05) -> dict[str, float | bool | int]:
     """
     Kruskal-Wallis H test (nonparametric alternative to one-way ANOVA).
 
@@ -119,7 +117,7 @@ def kruskal_wallis(*samples: np.ndarray, alpha: float = 0.05) -> Dict[str, Union
     }
 
 
-def friedman_test(*samples: np.ndarray, alpha: float = 0.05) -> Dict[str, Union[float, bool, int]]:
+def friedman_test(*samples: np.ndarray, alpha: float = 0.05) -> dict[str, float | bool | int]:
     """
     Friedman test (nonparametric alternative to repeated measures ANOVA).
 
