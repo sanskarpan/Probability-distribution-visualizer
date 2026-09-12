@@ -1,14 +1,12 @@
 """Data preprocessing utilities."""
 
-from typing import Optional, Tuple, Union
-
 import numpy as np
 from scipy import stats
 
 
 def standardize(
     data: np.ndarray, return_params: bool = False
-) -> Union[np.ndarray, Tuple[np.ndarray, dict]]:
+) -> np.ndarray | tuple[np.ndarray, dict]:
     """
     Standardize data to zero mean and unit variance (Z-score normalization).
 
@@ -36,9 +34,9 @@ def standardize(
 def normalize(
     data: np.ndarray,
     method: str = "minmax",
-    feature_range: Tuple[float, float] = (0, 1),
+    feature_range: tuple[float, float] = (0, 1),
     return_params: bool = False,
-) -> Union[np.ndarray, Tuple[np.ndarray, dict]]:
+) -> np.ndarray | tuple[np.ndarray, dict]:
     """
     Normalize data to specified range.
 
@@ -88,7 +86,7 @@ def normalize(
 
 def remove_outliers(
     data: np.ndarray, method: str = "iqr", threshold: float = 1.5, return_mask: bool = False
-) -> Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]:
+) -> np.ndarray | tuple[np.ndarray, np.ndarray]:
     """
     Remove outliers from data.
 
@@ -134,7 +132,7 @@ def remove_outliers(
 
 
 def handle_missing(
-    data: np.ndarray, method: str = "mean", fill_value: Optional[float] = None
+    data: np.ndarray, method: str = "mean", fill_value: float | None = None
 ) -> np.ndarray:
     """
     Handle missing values (NaN) in data.
@@ -193,11 +191,11 @@ def handle_missing(
 
 def bin_data(
     data: np.ndarray,
-    n_bins: Optional[int] = None,
-    bins: Optional[np.ndarray] = None,
+    n_bins: int | None = None,
+    bins: np.ndarray | None = None,
     method: str = "equal_width",
     return_bins: bool = False,
-) -> Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]:
+) -> np.ndarray | tuple[np.ndarray, np.ndarray]:
     """
     Bin continuous data into discrete bins.
 
@@ -264,8 +262,8 @@ def log_transform(data: np.ndarray, shift: float = 0.0, base: str = "e") -> np.n
 
 
 def box_cox_transform(
-    data: np.ndarray, lambda_param: Optional[float] = None
-) -> Union[np.ndarray, Tuple[np.ndarray, float]]:
+    data: np.ndarray, lambda_param: float | None = None
+) -> np.ndarray | tuple[np.ndarray, float]:
     """
     Apply Box-Cox power transformation.
 
