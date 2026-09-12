@@ -1,7 +1,5 @@
 """Plotting utilities for probability distributions."""
 
-from typing import List, Optional, Tuple
-
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
@@ -9,10 +7,10 @@ from scipy import stats
 
 def plot_distribution_comparison(
     data: np.ndarray,
-    distributions: List[str],
-    fitted_params: Optional[dict] = None,
+    distributions: list[str],
+    fitted_params: dict | None = None,
     bins: int = 30,
-    figsize: Tuple[float, float] = (12, 6),
+    figsize: tuple[float, float] = (12, 6),
 ) -> plt.Figure:
     """
     Compare empirical data with fitted distributions.
@@ -80,8 +78,8 @@ def plot_distribution_comparison(
 def plot_qq(
     data: np.ndarray,
     dist: str = "norm",
-    params: Optional[tuple] = None,
-    figsize: Tuple[float, float] = (8, 8),
+    params: tuple | None = None,
+    figsize: tuple[float, float] = (8, 8),
 ) -> plt.Figure:
     """
     Create Q-Q plot for distribution fit assessment.
@@ -131,9 +129,9 @@ def plot_qq(
 def plot_histogram_with_fit(
     data: np.ndarray,
     dist: str = "norm",
-    params: Optional[tuple] = None,
+    params: tuple | None = None,
     bins: int = 30,
-    figsize: Tuple[float, float] = (10, 6),
+    figsize: tuple[float, float] = (10, 6),
 ) -> plt.Figure:
     """
     Plot histogram with fitted distribution overlay.
@@ -197,9 +195,9 @@ def plot_histogram_with_fit(
 
 def plot_correlation_heatmap(
     data: np.ndarray,
-    labels: Optional[List[str]] = None,
+    labels: list[str] | None = None,
     method: str = "pearson",
-    figsize: Tuple[float, float] = (10, 8),
+    figsize: tuple[float, float] = (10, 8),
     annot: bool = True,
     cmap: str = "coolwarm",
 ) -> plt.Figure:
@@ -285,9 +283,9 @@ def plot_correlation_heatmap(
 def plot_probability_bands(
     data: np.ndarray,
     dist: str = "norm",
-    params: Optional[tuple] = None,
-    confidence_levels: Optional[List[float]] = None,
-    figsize: Tuple[float, float] = (12, 6),
+    params: tuple | None = None,
+    confidence_levels: list[float] | None = None,
+    figsize: tuple[float, float] = (12, 6),
 ) -> plt.Figure:
     """
     Plot data with probability bands.
