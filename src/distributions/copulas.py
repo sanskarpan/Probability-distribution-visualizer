@@ -1,7 +1,5 @@
 """Copulas for modeling dependencies between random variables."""
 
-from typing import Optional
-
 import numpy as np
 from scipy import stats
 from scipy.optimize import brentq
@@ -45,7 +43,7 @@ class Copula:
         """
         raise NotImplementedError("Subclasses must implement pdf()")
 
-    def rvs(self, size: int = 1, random_state: Optional[int] = None) -> np.ndarray:
+    def rvs(self, size: int = 1, random_state: int | None = None) -> np.ndarray:
         """
         Generate random samples from copula.
 
@@ -131,7 +129,7 @@ class GaussianCopula(Copula):
 
         return pdf_vals
 
-    def rvs(self, size: int = 1, random_state: Optional[int] = None) -> np.ndarray:
+    def rvs(self, size: int = 1, random_state: int | None = None) -> np.ndarray:
         """Generate samples from Gaussian copula."""
         # Sample from multivariate normal
         z = self._mvn.rvs(size=size, random_state=random_state)
@@ -212,7 +210,7 @@ class ClaytonCopula(Copula):
 
         return pdf_vals
 
-    def rvs(self, size: int = 1, random_state: Optional[int] = None) -> np.ndarray:
+    def rvs(self, size: int = 1, random_state: int | None = None) -> np.ndarray:
         """Generate samples from Clayton copula (bivariate only)."""
         if self.dimension != 2:
             raise NotImplementedError(
@@ -297,7 +295,7 @@ class GumbelCopula(Copula):
 
         return pdf_vals
 
-    def rvs(self, size: int = 1, random_state: Optional[int] = None) -> np.ndarray:
+    def rvs(self, size: int = 1, random_state: int | None = None) -> np.ndarray:
         """Generate samples from Gumbel copula (bivariate only)."""
         if self.dimension != 2:
             raise NotImplementedError(
@@ -405,7 +403,7 @@ class StudentTCopula(Copula):
             "StudentTCopula.pdf is not implemented; use sampling-based inference with rvs()"
         )
 
-    def rvs(self, size: int = 1, random_state: Optional[int] = None) -> np.ndarray:
+    def rvs(self, size: int = 1, random_state: int | None = None) -> np.ndarray:
         """Generate samples from Student-t copula."""
         rng = np.random.default_rng(random_state)
 
