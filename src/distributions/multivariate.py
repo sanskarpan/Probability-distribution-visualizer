@@ -1,6 +1,6 @@
 """Multivariate probability distributions."""
 
-from typing import Optional, Tuple, cast
+from typing import cast
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -27,7 +27,7 @@ class MultivariateDistribution:
         """Calculate probability density function."""
         raise NotImplementedError
 
-    def rvs(self, size: int = 1, random_state: Optional[int] = None) -> np.ndarray:
+    def rvs(self, size: int = 1, random_state: int | None = None) -> np.ndarray:
         """Generate random samples."""
         raise NotImplementedError
 
@@ -97,7 +97,7 @@ class MultivariateNormalDistribution(MultivariateDistribution):
             raise ValueError("Distribution not initialized")
         return self._dist.logpdf(x)
 
-    def rvs(self, size: int = 1, random_state: Optional[int] = None) -> np.ndarray:
+    def rvs(self, size: int = 1, random_state: int | None = None) -> np.ndarray:
         """
         Generate random samples.
 
@@ -226,7 +226,7 @@ class DirichletDistribution(MultivariateDistribution):
             raise ValueError("Distribution not initialized")
         return self._dist.logpdf(x.T if x.ndim == 2 else x)
 
-    def rvs(self, size: int = 1, random_state: Optional[int] = None) -> np.ndarray:
+    def rvs(self, size: int = 1, random_state: int | None = None) -> np.ndarray:
         """
         Generate random samples.
 
@@ -331,7 +331,7 @@ class MultivariateStudentT(MultivariateDistribution):
 
         return pdf_vals
 
-    def rvs(self, size: int = 1, random_state: Optional[int] = None) -> np.ndarray:
+    def rvs(self, size: int = 1, random_state: int | None = None) -> np.ndarray:
         """Generate random samples."""
         rng = np.random.default_rng(random_state)
 
@@ -395,7 +395,7 @@ class WishartDistribution:
         """Calculate log probability density function."""
         return self._dist.logpdf(x)
 
-    def rvs(self, size: int = 1, random_state: Optional[int] = None) -> np.ndarray:
+    def rvs(self, size: int = 1, random_state: int | None = None) -> np.ndarray:
         """Generate random positive definite matrices."""
         return self._dist.rvs(size=size, random_state=random_state)
 
@@ -415,7 +415,7 @@ class WishartDistribution:
 
 def plot_bivariate_normal(
     dist: MultivariateNormalDistribution, num_points: int = 100, num_contours: int = 10
-) -> Tuple[plt.Figure, Tuple[plt.Axes, plt.Axes]]:
+) -> tuple[plt.Figure, tuple[plt.Axes, plt.Axes]]:
     """
     Plot bivariate normal distribution.
 
@@ -476,7 +476,7 @@ def plot_bivariate_normal(
 
 def plot_dirichlet_simplex(
     dist: DirichletDistribution, num_samples: int = 1000
-) -> Tuple[plt.Figure, plt.Axes]:
+) -> tuple[plt.Figure, plt.Axes]:
     """
     Plot Dirichlet distribution samples on simplex (for dimension 3).
 
