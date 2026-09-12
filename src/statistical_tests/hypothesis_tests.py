@@ -1,18 +1,16 @@
 """Hypothesis testing functions."""
 
-from typing import Dict, Optional, Union
-
 import numpy as np
 from scipy import stats
 
 
 def t_test(
     sample1: np.ndarray,
-    sample2: Optional[np.ndarray] = None,
+    sample2: np.ndarray | None = None,
     mu: float = 0,
     alternative: str = "two-sided",
     alpha: float = 0.05,
-) -> Dict[str, Union[float, bool, str]]:
+) -> dict[str, float | bool | str]:
     """
     Perform t-test (one-sample or two-sample).
 
@@ -49,8 +47,8 @@ def t_test(
 
 
 def chi_square_test(
-    observed: np.ndarray, expected: Optional[np.ndarray] = None, alpha: float = 0.05
-) -> Dict[str, Union[float, bool, int]]:
+    observed: np.ndarray, expected: np.ndarray | None = None, alpha: float = 0.05
+) -> dict[str, float | bool | int]:
     """
     Perform chi-square goodness-of-fit test.
 
@@ -81,7 +79,7 @@ def chi_square_test(
     }
 
 
-def anova(*samples: np.ndarray, alpha: float = 0.05) -> Dict[str, Union[float, bool]]:
+def anova(*samples: np.ndarray, alpha: float = 0.05) -> dict[str, float | bool]:
     """
     Perform one-way ANOVA.
 
@@ -113,7 +111,7 @@ def anova(*samples: np.ndarray, alpha: float = 0.05) -> Dict[str, Union[float, b
 
 def correlation_test(
     x: np.ndarray, y: np.ndarray, method: str = "pearson", alpha: float = 0.05
-) -> Dict[str, Union[float, bool, str]]:
+) -> dict[str, float | bool | str]:
     """
     Test for correlation between two variables.
 
@@ -163,9 +161,7 @@ def correlation_test(
     }
 
 
-def normality_tests(
-    data: np.ndarray, alpha: float = 0.05
-) -> Dict[str, Dict[str, Union[float, bool]]]:
+def normality_tests(data: np.ndarray, alpha: float = 0.05) -> dict[str, dict[str, float | bool]]:
     """
     Run multiple normality tests.
 
