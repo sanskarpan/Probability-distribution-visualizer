@@ -2,7 +2,8 @@
 
 import logging
 import warnings
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 from scipy import stats
@@ -26,7 +27,7 @@ class DistributionFitter:
         if self.n < 2:
             raise ValueError("Need at least 2 data points")
 
-    def fit_all(self, distributions: Optional[List[str]] = None) -> Dict[str, Dict]:
+    def fit_all(self, distributions: list[str] | None = None) -> dict[str, dict]:
         """
         Fit multiple distributions and rank by goodness of fit.
 
@@ -86,7 +87,7 @@ class DistributionFitter:
 
         return sorted_results
 
-    def fit_distribution(self, dist_name: str) -> Dict:
+    def fit_distribution(self, dist_name: str) -> dict:
         """
         Fit a specific distribution using Maximum Likelihood Estimation.
 
@@ -132,7 +133,7 @@ class DistributionFitter:
             "fitted_dist": dist(*params),
         }
 
-    def fit_normal(self) -> Tuple[float, float]:
+    def fit_normal(self) -> tuple[float, float]:
         """
         Fit normal distribution using MLE.
 
@@ -153,7 +154,7 @@ class DistributionFitter:
         lambda_param = 1.0 / np.mean(self.data)
         return lambda_param
 
-    def fit_gamma_mle(self) -> Tuple[float, float]:
+    def fit_gamma_mle(self) -> tuple[float, float]:
         """
         Fit gamma distribution using Maximum Likelihood Estimation.
 
@@ -164,7 +165,7 @@ class DistributionFitter:
         shape, loc, scale = stats.gamma.fit(self.data, floc=0)
         return shape, scale
 
-    def fit_gamma_mom(self) -> Tuple[float, float]:
+    def fit_gamma_mom(self) -> tuple[float, float]:
         """
         Fit gamma distribution using Method of Moments.
 
@@ -181,7 +182,7 @@ class DistributionFitter:
 
         return shape, scale
 
-    def fit_beta(self) -> Tuple[float, float]:
+    def fit_beta(self) -> tuple[float, float]:
         """
         Fit beta distribution (data must be in [0, 1]).
 
@@ -202,7 +203,7 @@ class DistributionFitter:
 
         return alpha, beta
 
-    def fit_weibull(self) -> Tuple[float, float]:
+    def fit_weibull(self) -> tuple[float, float]:
         """
         Fit Weibull distribution using MLE.
 
@@ -212,7 +213,7 @@ class DistributionFitter:
         shape, loc, scale = stats.weibull_min.fit(self.data, floc=0)
         return shape, scale
 
-    def fit_lognormal(self) -> Tuple[float, float]:
+    def fit_lognormal(self) -> tuple[float, float]:
         """
         Fit lognormal distribution.
 
@@ -228,7 +229,7 @@ class DistributionFitter:
 
         return mu, sigma
 
-    def qq_plot_data(self, dist_name: str, params: Tuple) -> Tuple[np.ndarray, np.ndarray]:
+    def qq_plot_data(self, dist_name: str, params: tuple) -> tuple[np.ndarray, np.ndarray]:
         """
         Generate data for Q-Q plot.
 
@@ -252,7 +253,7 @@ class DistributionFitter:
 
         return theoretical_quantiles, sorted_data
 
-    def calculate_residuals(self, dist_name: str, params: Tuple) -> np.ndarray:
+    def calculate_residuals(self, dist_name: str, params: tuple) -> np.ndarray:
         """
         Calculate standardized residuals.
 
@@ -289,7 +290,7 @@ class BayesianEstimator:
 
     def estimate_normal_mean(
         self, prior_mean: float, prior_var: float, known_variance: float
-    ) -> Tuple[float, float]:
+    ) -> tuple[float, float]:
         """
         Bayesian estimation of normal mean with known variance.
 
@@ -314,7 +315,7 @@ class BayesianEstimator:
 
     def estimate_normal_variance(
         self, prior_shape: float, prior_scale: float, known_mean: float
-    ) -> Tuple[float, float]:
+    ) -> tuple[float, float]:
         """
         Bayesian estimation of normal variance with known mean.
 
@@ -335,7 +336,7 @@ class BayesianEstimator:
 
         return posterior_shape, posterior_scale
 
-    def estimate_poisson_rate(self, prior_shape: float, prior_rate: float) -> Tuple[float, float]:
+    def estimate_poisson_rate(self, prior_shape: float, prior_rate: float) -> tuple[float, float]:
         """
         Bayesian estimation of Poisson rate parameter.
 
@@ -355,7 +356,7 @@ class BayesianEstimator:
 
         return posterior_shape, posterior_rate
 
-    def estimate_bernoulli_p(self, prior_alpha: float, prior_beta: float) -> Tuple[float, float]:
+    def estimate_bernoulli_p(self, prior_alpha: float, prior_beta: float) -> tuple[float, float]:
         """
         Bayesian estimation of Bernoulli success probability.
 
@@ -382,8 +383,8 @@ class GoodnessOfFit:
 
     @staticmethod
     def chi_square_test(
-        observed: np.ndarray, expected: np.ndarray, df: Optional[int] = None
-    ) -> Tuple[float, float]:
+        observed: np.ndarray, expected: np.ndarray, df: int | None = None
+    ) -> tuple[float, float]:
         """
         Chi-square goodness of fit test.
 
@@ -402,7 +403,7 @@ class GoodnessOfFit:
     @staticmethod
     def kolmogorov_smirnov_test(
         data: np.ndarray, cdf_function: Callable[..., Any]
-    ) -> Tuple[float, float]:
+    ) -> tuple[float, float]:
         """
         Kolmogorov-Smirnov test.
 
@@ -418,7 +419,7 @@ class GoodnessOfFit:
         return ks_stat, p_value
 
     @staticmethod
-    def anderson_darling_test(data: np.ndarray, dist: str = "norm") -> Dict:
+    def anderson_darling_test(data: np.ndarray, dist: str = "norm") -> dict:
         """
         Anderson-Darling test.
 
@@ -449,7 +450,7 @@ class GoodnessOfFit:
             }
 
     @staticmethod
-    def shapiro_wilk_test(data: np.ndarray) -> Tuple[float, float]:
+    def shapiro_wilk_test(data: np.ndarray) -> tuple[float, float]:
         """
         Shapiro-Wilk test for normality.
 
@@ -467,7 +468,7 @@ class GoodnessOfFit:
         return w_stat, p_value
 
     @staticmethod
-    def jarque_bera_test(data: np.ndarray) -> Tuple[float, float]:
+    def jarque_bera_test(data: np.ndarray) -> tuple[float, float]:
         """
         Jarque-Bera test for normality.
 
