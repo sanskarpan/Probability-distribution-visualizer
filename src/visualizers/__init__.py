@@ -5,7 +5,7 @@ This package provides the public visualization API. The heavy lifting lives in
 both ``src.visualizers`` and ``src.utils.plotting`` import paths work.
 """
 
-from typing import Any, List, Optional, Tuple, cast
+from typing import Any, cast
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -54,10 +54,10 @@ __all__ = [
 
 def plot_pdf(
     distribution: Any,
-    x: Optional[np.ndarray] = None,
+    x: np.ndarray | None = None,
     num_points: int = 500,
-    ax: Optional[plt.Axes] = None,
-) -> Tuple[plt.Figure, plt.Axes]:
+    ax: plt.Axes | None = None,
+) -> tuple[plt.Figure, plt.Axes]:
     """Plot the PDF/PMF of a distribution.
 
     Args:
@@ -88,10 +88,10 @@ def plot_pdf(
 
 def plot_cdf(
     distribution: Any,
-    x: Optional[np.ndarray] = None,
+    x: np.ndarray | None = None,
     num_points: int = 500,
-    ax: Optional[plt.Axes] = None,
-) -> Tuple[plt.Figure, plt.Axes]:
+    ax: plt.Axes | None = None,
+) -> tuple[plt.Figure, plt.Axes]:
     """Plot the CDF of a distribution (see :func:`plot_pdf` for args)."""
     x = _infer_grid(distribution, x, num_points)
     y = np.asarray(distribution.cdf(x))
@@ -111,8 +111,8 @@ def plot_cdf(
 
 
 def plot_comparison(
-    distributions: List, x: Optional[np.ndarray] = None, num_points: int = 500
-) -> Tuple[plt.Figure, plt.Axes]:
+    distributions: list, x: np.ndarray | None = None, num_points: int = 500
+) -> tuple[plt.Figure, plt.Axes]:
     """Overlay the PDFs/PMFs of several distributions on shared axes."""
     fig, ax = plt.subplots()
     for dist in distributions:
