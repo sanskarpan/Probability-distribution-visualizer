@@ -1,7 +1,5 @@
 """Mixture distributions - combinations of multiple distributions."""
 
-from typing import List, Optional, Tuple, Union
-
 import numpy as np
 from scipy import stats
 from sklearn.mixture import BayesianGaussianMixture, GaussianMixture
@@ -20,7 +18,7 @@ def _as_2d(data: np.ndarray) -> np.ndarray:
 class MixtureDistribution:
     """General mixture distribution."""
 
-    def __init__(self, components: List, weights: Union[List[float], np.ndarray]):
+    def __init__(self, components: list, weights: list[float] | np.ndarray):
         """
         Initialize mixture distribution.
 
@@ -79,7 +77,7 @@ class MixtureDistribution:
 
         return cdf_vals
 
-    def rvs(self, size: int = 1, random_state: Optional[int] = None) -> np.ndarray:
+    def rvs(self, size: int = 1, random_state: int | None = None) -> np.ndarray:
         """
         Generate random samples.
 
@@ -150,8 +148,8 @@ class MixtureDistribution:
         n_components: int,
         max_iter: int = 100,
         tol: float = 1e-4,
-        random_state: Optional[int] = None,
-    ) -> Tuple[np.ndarray, List, List[float]]:
+        random_state: int | None = None,
+    ) -> tuple[np.ndarray, list, list[float]]:
         """
         Fit mixture model using Expectation-Maximization.
 
@@ -454,7 +452,7 @@ class BayesianGMM:
         return np.sum(self.bgmm.weights_ > 0.01)
 
 
-def select_optimal_components(data: np.ndarray, max_components: int = 10) -> Tuple[int, dict]:
+def select_optimal_components(data: np.ndarray, max_components: int = 10) -> tuple[int, dict]:
     """
     Select optimal number of components using BIC.
 
@@ -469,8 +467,8 @@ def select_optimal_components(data: np.ndarray, max_components: int = 10) -> Tup
     if data.ndim == 1:
         data = data.reshape(-1, 1)
 
-    bic_scores: List[float] = []
-    aic_scores: List[float] = []
+    bic_scores: list[float] = []
+    aic_scores: list[float] = []
 
     for n in range(1, max_components + 1):
         gmm = GaussianMixtureModel(n_components=n)
