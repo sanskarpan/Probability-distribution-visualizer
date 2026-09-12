@@ -8,12 +8,13 @@ import threading
 import time
 import traceback
 import uuid
+from collections.abc import Callable
 from contextvars import ContextVar
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict, Optional, TypeVar
+from typing import Any, TypeVar
 
-_correlation_id: ContextVar[Optional[str]] = ContextVar("correlation_id", default=None)
-_loggers_initialized: Dict[str, bool] = {}
+_correlation_id: ContextVar[str | None] = ContextVar("correlation_id", default=None)
+_loggers_initialized: dict[str, bool] = {}
 _setup_lock = threading.Lock()
 
 LEVELS = {
@@ -30,7 +31,7 @@ class _StructuredFormatter(logging.Formatter):
     """JSON structured log formatter."""
 
     def format(self, record: logging.LogRecord) -> str:
-        log_entry: Dict[str, Any] = {
+        log_entry: dict[str, Any] = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "level": record.levelname,
             "logger": record.name,
@@ -97,14 +98,14 @@ class _ConsoleFormatter(logging.Formatter):
         return " ".join(parts)
 
 
-def set_correlation_id(correlation_id: Optional[str] = None) -> str:
+def set_correlation_id(correlation_id: str | None = None) -> str:
     """Set or generate a correlation ID for request tracking."""
     cid = correlation_id or str(uuid.uuid4())
     _correlation_id.set(cid)
     return cid
 
 
-def get_correlation_id() -> Optional[str]:
+def get_correlation_id() -> str | None:
     """Get the current correlation ID."""
     return _correlation_id.get()
 
@@ -168,8 +169,8 @@ def get_logger(name: str) -> logging.Logger:
 def log_error(
     logger: logging.Logger,
     message: str,
-    exc: Optional[Exception] = None,
-    extra: Optional[Dict[str, Any]] = None,
+    exc: Exception | None = None,
+    extra: dict[str, Any] | None = None,
 ) -> None:
     """
     Log an error with full exception context.
@@ -199,7 +200,7 @@ def log_error(
     logger.handle(record)
 
 
-def log_execution_time(logger: Optional[logging.Logger] = None):
+def log_execution_time(logger: logging.Logger | None = None):
     """
     Decorator to log function execution time.
 
