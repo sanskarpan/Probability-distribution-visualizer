@@ -2,7 +2,7 @@
 
 import logging
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Optional, Tuple
+from typing import Any
 
 import numpy as np
 
@@ -39,7 +39,7 @@ class Distribution(ABC):
         pass
 
     @abstractmethod
-    def get_parameters(self) -> Dict[str, Any]:
+    def get_parameters(self) -> dict[str, Any]:
         """
         Get current distribution parameters.
 
@@ -59,7 +59,7 @@ class Distribution(ABC):
         pass
 
     @abstractmethod
-    def get_parameter_bounds(self) -> Dict[str, Tuple[float, float]]:
+    def get_parameter_bounds(self) -> dict[str, tuple[float, float]]:
         """
         Get valid parameter ranges.
 
@@ -116,7 +116,7 @@ class Distribution(ABC):
 
         return self._dist.ppf(q)
 
-    def rvs(self, size: int = 1, random_state: Optional[int] = None) -> np.ndarray:
+    def rvs(self, size: int = 1, random_state: int | None = None) -> np.ndarray:
         """
         Generate random samples from the distribution.
 
@@ -258,7 +258,7 @@ class Distribution(ABC):
 
         return self._dist.entropy()
 
-    def get_support(self) -> Tuple[float, float]:
+    def get_support(self) -> tuple[float, float]:
         """
         Get the support (valid range) of the distribution.
 
@@ -270,7 +270,7 @@ class Distribution(ABC):
 
         return self._dist.support()
 
-    def interval(self, alpha: float = 0.95) -> Tuple[float, float]:
+    def interval(self, alpha: float = 0.95) -> tuple[float, float]:
         """
         Calculate confidence interval.
 
@@ -285,7 +285,7 @@ class Distribution(ABC):
 
         return self._dist.interval(alpha)
 
-    def get_statistics(self) -> Dict[str, Optional[float]]:
+    def get_statistics(self) -> dict[str, float | None]:
         """
         Get comprehensive statistics for the distribution.
 
@@ -293,7 +293,7 @@ class Distribution(ABC):
             Dictionary of statistic names and values
         """
         try:
-            stats_dict: Dict[str, Optional[float]] = {
+            stats_dict: dict[str, float | None] = {
                 "mean": self.mean(),
                 "variance": self.var(),
                 "std_dev": self.std(),
