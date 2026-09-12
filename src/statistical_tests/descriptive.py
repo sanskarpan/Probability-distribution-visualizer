@@ -1,12 +1,10 @@
 """Descriptive statistics utilities."""
 
-from typing import Dict, List, Optional
-
 import numpy as np
 from scipy import stats
 
 
-def describe(data: np.ndarray, percentiles: Optional[List[float]] = None) -> Dict:
+def describe(data: np.ndarray, percentiles: list[float] | None = None) -> dict:
     """
     Comprehensive descriptive statistics.
 
@@ -75,7 +73,7 @@ def describe(data: np.ndarray, percentiles: Optional[List[float]] = None) -> Dic
     }
 
 
-def quantile_summary(data: np.ndarray, n_quantiles: int = 4) -> Dict[str, np.ndarray]:
+def quantile_summary(data: np.ndarray, n_quantiles: int = 4) -> dict[str, np.ndarray]:
     """
     Compute quantile summary.
 
@@ -109,7 +107,7 @@ def quantile_summary(data: np.ndarray, n_quantiles: int = 4) -> Dict[str, np.nda
 
 def outlier_detection(
     data: np.ndarray, method: str = "iqr", threshold: float = 1.5
-) -> Dict[str, np.ndarray]:
+) -> dict[str, np.ndarray]:
     """
     Detect outliers using various methods.
 
@@ -168,7 +166,7 @@ def outlier_detection(
 
 def correlation_matrix(
     data: np.ndarray, method: str = "pearson", return_pvalues: bool = False
-) -> Dict[str, np.ndarray]:
+) -> dict[str, np.ndarray]:
     """
     Compute correlation matrix.
 
@@ -208,7 +206,7 @@ def correlation_matrix(
                 if p_matrix is not None:
                     p_matrix[i, j] = pval
 
-    result: Dict[str, np.ndarray] = {
+    result: dict[str, np.ndarray] = {
         "correlation_matrix": corr_matrix,
         "method": method,  # type: ignore[dict-item]
     }
