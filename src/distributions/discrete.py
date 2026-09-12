@@ -1,6 +1,6 @@
 """Discrete probability distributions."""
 
-from typing import Any, Dict, Tuple
+from typing import Any
 
 from scipy import stats
 
@@ -27,7 +27,7 @@ class BinomialDistribution(Distribution):
         """Create scipy binomial distribution."""
         return stats.binom(n=params["n"], p=params["p"])
 
-    def get_parameters(self) -> Dict[str, Any]:
+    def get_parameters(self) -> dict[str, Any]:
         """Get current parameters."""
         return {"n": self.n, "p": self.p}
 
@@ -43,7 +43,7 @@ class BinomialDistribution(Distribution):
 
         self._dist = self._create_distribution(n=self.n, p=self.p)
 
-    def get_parameter_bounds(self) -> Dict[str, Tuple[float, float]]:
+    def get_parameter_bounds(self) -> dict[str, tuple[float, float]]:
         """Get parameter bounds."""
         return {
             "n": (1, 100),
@@ -69,7 +69,7 @@ class PoissonDistribution(Distribution):
         """Create scipy poisson distribution."""
         return stats.poisson(mu=params["lambda_param"])
 
-    def get_parameters(self) -> Dict[str, Any]:
+    def get_parameters(self) -> dict[str, Any]:
         """Get current parameters."""
         return {"lambda": self.lambda_param}
 
@@ -82,7 +82,7 @@ class PoissonDistribution(Distribution):
 
         self._dist = self._create_distribution(lambda_param=self.lambda_param)
 
-    def get_parameter_bounds(self) -> Dict[str, Tuple[float, float]]:
+    def get_parameter_bounds(self) -> dict[str, tuple[float, float]]:
         """Get parameter bounds."""
         return {"lambda": (0.1, 20.0)}
 
@@ -105,7 +105,7 @@ class GeometricDistribution(Distribution):
         """Create scipy geometric distribution."""
         return stats.geom(p=params["p"])
 
-    def get_parameters(self) -> Dict[str, Any]:
+    def get_parameters(self) -> dict[str, Any]:
         """Get current parameters."""
         return {"p": self.p}
 
@@ -118,7 +118,7 @@ class GeometricDistribution(Distribution):
 
         self._dist = self._create_distribution(p=self.p)
 
-    def get_parameter_bounds(self) -> Dict[str, Tuple[float, float]]:
+    def get_parameter_bounds(self) -> dict[str, tuple[float, float]]:
         """Get parameter bounds."""
         return {"p": (0.01, 1.0)}
 
@@ -143,7 +143,7 @@ class NegativeBinomialDistribution(Distribution):
         """Create scipy negative binomial distribution."""
         return stats.nbinom(n=params["r"], p=params["p"])
 
-    def get_parameters(self) -> Dict[str, Any]:
+    def get_parameters(self) -> dict[str, Any]:
         """Get current parameters."""
         return {"r": self.r, "p": self.p}
 
@@ -159,7 +159,7 @@ class NegativeBinomialDistribution(Distribution):
 
         self._dist = self._create_distribution(r=self.r, p=self.p)
 
-    def get_parameter_bounds(self) -> Dict[str, Tuple[float, float]]:
+    def get_parameter_bounds(self) -> dict[str, tuple[float, float]]:
         """Get parameter bounds."""
         return {
             "r": (1, 50),
@@ -189,7 +189,7 @@ class HypergeometricDistribution(Distribution):
         """Create scipy hypergeometric distribution."""
         return stats.hypergeom(M=params["M"], n=params["n"], N=params["N"])
 
-    def get_parameters(self) -> Dict[str, Any]:
+    def get_parameters(self) -> dict[str, Any]:
         """Get current parameters."""
         return {"M": self.M, "n": self.n, "N": self.N}
 
@@ -208,7 +208,7 @@ class HypergeometricDistribution(Distribution):
 
         self._dist = self._create_distribution(M=self.M, n=self.n, N=self.N)
 
-    def get_parameter_bounds(self) -> Dict[str, Tuple[float, float]]:
+    def get_parameter_bounds(self) -> dict[str, tuple[float, float]]:
         """Get parameter bounds."""
         return {
             "M": (1, 100),
@@ -237,7 +237,7 @@ class DiscreteUniformDistribution(Distribution):
         """Create scipy discrete uniform distribution."""
         return stats.randint(low=params["low"], high=params["high"] + 1)
 
-    def get_parameters(self) -> Dict[str, Any]:
+    def get_parameters(self) -> dict[str, Any]:
         """Get current parameters."""
         return {"low": self.low, "high": self.high}
 
@@ -251,7 +251,7 @@ class DiscreteUniformDistribution(Distribution):
 
         self._dist = self._create_distribution(low=self.low, high=self.high)
 
-    def get_parameter_bounds(self) -> Dict[str, Tuple[float, float]]:
+    def get_parameter_bounds(self) -> dict[str, tuple[float, float]]:
         """Get parameter bounds."""
         return {
             "low": (0, 50),
