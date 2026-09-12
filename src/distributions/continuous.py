@@ -1,6 +1,6 @@
 """Continuous probability distributions."""
 
-from typing import Any, Dict, Tuple
+from typing import Any
 
 import numpy as np
 from scipy import stats
@@ -28,7 +28,7 @@ class NormalDistribution(Distribution):
         """Create scipy normal distribution."""
         return stats.norm(loc=params["mu"], scale=params["sigma"])
 
-    def get_parameters(self) -> Dict[str, Any]:
+    def get_parameters(self) -> dict[str, Any]:
         """Get current parameters."""
         return {"mu": self.mu, "sigma": self.sigma}
 
@@ -42,7 +42,7 @@ class NormalDistribution(Distribution):
 
         self._dist = self._create_distribution(mu=self.mu, sigma=self.sigma)
 
-    def get_parameter_bounds(self) -> Dict[str, Tuple[float, float]]:
+    def get_parameter_bounds(self) -> dict[str, tuple[float, float]]:
         """Get parameter bounds."""
         return {
             "mu": (-100.0, 100.0),
@@ -68,7 +68,7 @@ class ExponentialDistribution(Distribution):
         """Create scipy exponential distribution."""
         return stats.expon(scale=1.0 / params["lambda_param"])
 
-    def get_parameters(self) -> Dict[str, Any]:
+    def get_parameters(self) -> dict[str, Any]:
         """Get current parameters."""
         return {"lambda": self.lambda_param}
 
@@ -81,7 +81,7 @@ class ExponentialDistribution(Distribution):
 
         self._dist = self._create_distribution(lambda_param=self.lambda_param)
 
-    def get_parameter_bounds(self) -> Dict[str, Tuple[float, float]]:
+    def get_parameter_bounds(self) -> dict[str, tuple[float, float]]:
         """Get parameter bounds."""
         return {"lambda": (0.1, 10.0)}
 
@@ -106,7 +106,7 @@ class UniformDistribution(Distribution):
         """Create scipy uniform distribution."""
         return stats.uniform(loc=params["a"], scale=params["b"] - params["a"])
 
-    def get_parameters(self) -> Dict[str, Any]:
+    def get_parameters(self) -> dict[str, Any]:
         """Get current parameters."""
         return {"a": self.a, "b": self.b}
 
@@ -120,7 +120,7 @@ class UniformDistribution(Distribution):
 
         self._dist = self._create_distribution(a=self.a, b=self.b)
 
-    def get_parameter_bounds(self) -> Dict[str, Tuple[float, float]]:
+    def get_parameter_bounds(self) -> dict[str, tuple[float, float]]:
         """Get parameter bounds."""
         return {
             "a": (-10.0, 10.0),
@@ -148,7 +148,7 @@ class BetaDistribution(Distribution):
         """Create scipy beta distribution."""
         return stats.beta(a=params["alpha"], b=params["beta"])
 
-    def get_parameters(self) -> Dict[str, Any]:
+    def get_parameters(self) -> dict[str, Any]:
         """Get current parameters."""
         return {"alpha": self.alpha, "beta": self.beta_param}
 
@@ -162,7 +162,7 @@ class BetaDistribution(Distribution):
 
         self._dist = self._create_distribution(alpha=self.alpha, beta=self.beta_param)
 
-    def get_parameter_bounds(self) -> Dict[str, Tuple[float, float]]:
+    def get_parameter_bounds(self) -> dict[str, tuple[float, float]]:
         """Get parameter bounds."""
         return {
             "alpha": (0.1, 10.0),
@@ -190,7 +190,7 @@ class GammaDistribution(Distribution):
         """Create scipy gamma distribution."""
         return stats.gamma(a=params["shape"], scale=params["scale"])
 
-    def get_parameters(self) -> Dict[str, Any]:
+    def get_parameters(self) -> dict[str, Any]:
         """Get current parameters."""
         return {"shape": self.shape, "scale": self.scale}
 
@@ -204,7 +204,7 @@ class GammaDistribution(Distribution):
 
         self._dist = self._create_distribution(shape=self.shape, scale=self.scale)
 
-    def get_parameter_bounds(self) -> Dict[str, Tuple[float, float]]:
+    def get_parameter_bounds(self) -> dict[str, tuple[float, float]]:
         """Get parameter bounds."""
         return {
             "shape": (0.1, 10.0),
@@ -230,7 +230,7 @@ class ChiSquareDistribution(Distribution):
         """Create scipy chi-square distribution."""
         return stats.chi2(df=params["df"])
 
-    def get_parameters(self) -> Dict[str, Any]:
+    def get_parameters(self) -> dict[str, Any]:
         """Get current parameters."""
         return {"df": self.df}
 
@@ -243,7 +243,7 @@ class ChiSquareDistribution(Distribution):
 
         self._dist = self._create_distribution(df=self.df)
 
-    def get_parameter_bounds(self) -> Dict[str, Tuple[float, float]]:
+    def get_parameter_bounds(self) -> dict[str, tuple[float, float]]:
         """Get parameter bounds."""
         return {"df": (1, 30)}
 
@@ -266,7 +266,7 @@ class StudentTDistribution(Distribution):
         """Create scipy t distribution."""
         return stats.t(df=params["df"])
 
-    def get_parameters(self) -> Dict[str, Any]:
+    def get_parameters(self) -> dict[str, Any]:
         """Get current parameters."""
         return {"df": self.df}
 
@@ -279,7 +279,7 @@ class StudentTDistribution(Distribution):
 
         self._dist = self._create_distribution(df=self.df)
 
-    def get_parameter_bounds(self) -> Dict[str, Tuple[float, float]]:
+    def get_parameter_bounds(self) -> dict[str, tuple[float, float]]:
         """Get parameter bounds."""
         return {"df": (1.0, 30.0)}
 
@@ -304,7 +304,7 @@ class WeibullDistribution(Distribution):
         """Create scipy weibull distribution."""
         return stats.weibull_min(c=params["shape"], scale=params["scale"])
 
-    def get_parameters(self) -> Dict[str, Any]:
+    def get_parameters(self) -> dict[str, Any]:
         """Get current parameters."""
         return {"shape": self.shape, "scale": self.scale}
 
@@ -318,7 +318,7 @@ class WeibullDistribution(Distribution):
 
         self._dist = self._create_distribution(shape=self.shape, scale=self.scale)
 
-    def get_parameter_bounds(self) -> Dict[str, Tuple[float, float]]:
+    def get_parameter_bounds(self) -> dict[str, tuple[float, float]]:
         """Get parameter bounds."""
         return {
             "shape": (0.1, 5.0),
@@ -346,7 +346,7 @@ class LognormalDistribution(Distribution):
         """Create scipy lognormal distribution."""
         return stats.lognorm(s=params["sigma"], scale=np.exp(params["mu"]))
 
-    def get_parameters(self) -> Dict[str, Any]:
+    def get_parameters(self) -> dict[str, Any]:
         """Get current parameters."""
         return {"mu": self.mu, "sigma": self.sigma}
 
@@ -361,7 +361,7 @@ class LognormalDistribution(Distribution):
 
         self._dist = self._create_distribution(mu=self.mu, sigma=self.sigma)
 
-    def get_parameter_bounds(self) -> Dict[str, Tuple[float, float]]:
+    def get_parameter_bounds(self) -> dict[str, tuple[float, float]]:
         """Get parameter bounds."""
         return {
             "mu": (-5.0, 5.0),
@@ -389,7 +389,7 @@ class CauchyDistribution(Distribution):
         """Create scipy cauchy distribution."""
         return stats.cauchy(loc=params["x0"], scale=params["gamma"])
 
-    def get_parameters(self) -> Dict[str, Any]:
+    def get_parameters(self) -> dict[str, Any]:
         """Get current parameters."""
         return {"x0": self.x0, "gamma": self.gamma}
 
@@ -403,7 +403,7 @@ class CauchyDistribution(Distribution):
 
         self._dist = self._create_distribution(x0=self.x0, gamma=self.gamma)
 
-    def get_parameter_bounds(self) -> Dict[str, Tuple[float, float]]:
+    def get_parameter_bounds(self) -> dict[str, tuple[float, float]]:
         """Get parameter bounds."""
         return {
             "x0": (-10.0, 10.0),
