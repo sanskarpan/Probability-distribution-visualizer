@@ -1,13 +1,9 @@
 """Input validation utilities."""
 
-from typing import Optional, Tuple, Union
-
 import numpy as np
 
 
-def validate_probability(
-    p: Union[float, np.ndarray], name: str = "probability"
-) -> Union[float, np.ndarray]:
+def validate_probability(p: float | np.ndarray, name: str = "probability") -> float | np.ndarray:
     """
     Validate that value(s) are valid probabilities in [0, 1].
 
@@ -29,9 +25,7 @@ def validate_probability(
     return p.item() if p.ndim == 0 else p
 
 
-def validate_positive(
-    value: Union[float, np.ndarray], name: str = "value"
-) -> Union[float, np.ndarray]:
+def validate_positive(value: float | np.ndarray, name: str = "value") -> float | np.ndarray:
     """
     Validate that value(s) are strictly positive.
 
@@ -53,9 +47,7 @@ def validate_positive(
     return value.item() if value.ndim == 0 else value
 
 
-def validate_nonnegative(
-    value: Union[float, np.ndarray], name: str = "value"
-) -> Union[float, np.ndarray]:
+def validate_nonnegative(value: float | np.ndarray, name: str = "value") -> float | np.ndarray:
     """
     Validate that value(s) are non-negative (>= 0).
 
@@ -78,12 +70,12 @@ def validate_nonnegative(
 
 
 def validate_in_range(
-    value: Union[float, np.ndarray],
+    value: float | np.ndarray,
     lower: float,
     upper: float,
     name: str = "value",
     inclusive: str = "both",
-) -> Union[float, np.ndarray]:
+) -> float | np.ndarray:
     """
     Validate that value(s) are in specified range.
 
@@ -125,10 +117,10 @@ def validate_in_range(
 
 def validate_array(
     array: np.ndarray,
-    shape: Optional[Tuple] = None,
-    ndim: Optional[int] = None,
-    dtype: Optional[type] = None,
-    min_length: Optional[int] = None,
+    shape: tuple | None = None,
+    ndim: int | None = None,
+    dtype: type | None = None,
+    min_length: int | None = None,
     name: str = "array",
 ) -> np.ndarray:
     """
@@ -168,7 +160,7 @@ def validate_array(
     return array
 
 
-def validate_integer(value: Union[int, float], name: str = "value") -> int:
+def validate_integer(value: int | float, name: str = "value") -> int:
     """
     Validate that value is an integer.
 
