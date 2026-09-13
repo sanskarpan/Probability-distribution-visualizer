@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "probviz"
-version = "1.0.2"
+version = "1.0.3"
 description = "Interactive probability distribution visualizer: 16 univariate + multivariate, copulas, mixtures, fitting, Monte Carlo, and statistical tests"
 readme = "README.md"
 license = { text = "MIT" }
