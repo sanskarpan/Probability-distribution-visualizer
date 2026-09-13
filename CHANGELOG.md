@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] — 2026-09-12
+
+### Fixed
+
+- `src/cli.py`: `probviz app` now forwards flags like `--server.headless` /
+  `--server.port` via `parse_known_args` + `REMAINDER`, and locates
+  `web/app.py` when installed from PyPI (via `import web`). `probviz test`
+  now gracefully handles missing `pytest` (`pip install 'probviz[test]'`) and
+  missing `tests/` (pip builds without tests), and discovers tests from either
+  the source checkout or the installed `tests` package.
+- Packaging: `tests` is now shipped in the sdist/wheel (`pyproject.toml`
+  `include = ["src*", "web*", "tests*"]`) so `probviz test` works from a
+  PyPI install.
+
 ## [1.0.1] — 2026-09-11
 
 ### Changed
