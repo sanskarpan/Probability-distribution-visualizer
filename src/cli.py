@@ -133,10 +133,10 @@ def main(argv: list[str] | None = None) -> int:
     # If unknown remains and we have a subcommand that accepts REMAINDER, merge
     # it into extra so users can do `probviz app --server.port 8501`.
     if args.command in ("app", "test") and unknown:
-        # args.extra is a list (may be empty); extend with unknown.
+        # parse_known_args splits the first unknown flag (e.g. --server.headless)
+        # from the REMAINDER capture; recombine in original order.
         extra = list(getattr(args, "extra", []) or [])
-        extra.extend(unknown)
-        args.extra = extra  # type: ignore[attr-defined]
+        args.extra = unknown + extra  # type: ignore[attr-defined]
     elif unknown:
         parser.print_usage(sys.stderr)
         print(f"probviz: error: unrecognized arguments: {' '.join(unknown)}", file=sys.stderr)
