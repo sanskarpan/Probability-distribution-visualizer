@@ -25,7 +25,7 @@ from pseudo-observations. It validates Kendall's τ ranges and documents the
 `t` degrees-of-freedom simplification (`df=4`).
 
 ```python
-from src.distributions import GaussianCopula
+from probviz.distributions import GaussianCopula
 import numpy as np
 
 cop = GaussianCopula(np.array([[1.0, 0.6], [0.6, 1.0]]))

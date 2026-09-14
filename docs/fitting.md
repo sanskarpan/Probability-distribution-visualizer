@@ -9,7 +9,7 @@
   Shapiro–Wilk, and Jarque–Bera tests returning plain dicts.
 
 ```python
-from src.fitting import DistributionFitter
+from probviz.fitting import DistributionFitter
 import numpy as np
 
 rng = np.random.default_rng(0)

@@ -25,7 +25,7 @@ streamlit run web/app.py
 ## Editable install (Python API + CLI)
 
 ```bash
-pip install -e .
+pip install -e ".[dev]"
 probviz app
 ```
 

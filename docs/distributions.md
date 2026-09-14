@@ -37,7 +37,7 @@ with validated bounds (`get_parameter_bounds()`).
 ## Recipes
 
 ```python
-from src.distributions import NormalDistribution, PoissonDistribution
+from probviz.distributions import NormalDistribution, PoissonDistribution
 
 n = NormalDistribution(mu=0, sigma=1)
 print(n.interval(0.95))      # 95% central interval

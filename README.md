@@ -6,7 +6,7 @@ statistical testing.
 
 <p align="center">
   <a href="https://github.com/sanskarpan/probviz/actions/workflows/ci.yml"><img src="https://github.com/sanskarpan/probviz/actions/workflows/ci.yml/badge.svg" alt="CI Status"></a>
-  <a href="https://github.com/sanskarpan/probviz/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/tests-688%20passed-brightgreen" alt="Tests"></a>
+  <a href="https://github.com/sanskarpan/probviz/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/tests-695%20passed-brightgreen" alt="Tests"></a>
   <a href="https://sanskarpan.github.io/probviz/"><img src="https://img.shields.io/badge/docs-GitHub%20Pages-blue" alt="Docs"></a>
   <a href="https://github.com/sanskarpan/probviz/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License"></a>
   <br>
@@ -21,19 +21,19 @@ statistical testing.
   quantiles, sampling, and full statistics — in the web app and the API.
 - **Advanced modules** (Python API): multivariate distributions, copulas,
   mixtures/GMM, distribution fitting, Monte Carlo, and statistical tests.
-- **Production-ready:** 688-test suite, typed packaging (`pyproject.toml`),
+- **Production-ready:** 695-test suite, typed packaging (`pyproject.toml`),
   `probviz` CLI, Docker/Compose, CI with coverage gate, docs + PyPI + Docker
   release pipelines. See [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Gallery
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/sanskarpan/probviz/v1.0.4/docs/assets/normal_sigma_morph.gif" width="250" alt="Normal PDF morphing with sigma">
-  <img src="https://raw.githubusercontent.com/sanskarpan/probviz/v1.0.4/docs/assets/clt_convergence.gif" width="250" alt="Central Limit Theorem convergence">
-  <img src="https://raw.githubusercontent.com/sanskarpan/probviz/v1.0.4/docs/assets/copula_dependence.gif" width="210" alt="Gaussian copula dependence sweep">
+  <img src="https://raw.githubusercontent.com/sanskarpan/probviz/v1.0.5/docs/assets/normal_sigma_morph.gif" width="250" alt="Normal PDF morphing with sigma">
+  <img src="https://raw.githubusercontent.com/sanskarpan/probviz/v1.0.5/docs/assets/clt_convergence.gif" width="250" alt="Central Limit Theorem convergence">
+  <img src="https://raw.githubusercontent.com/sanskarpan/probviz/v1.0.5/docs/assets/copula_dependence.gif" width="210" alt="Gaussian copula dependence sweep">
   <br>
-  <img src="https://raw.githubusercontent.com/sanskarpan/probviz/v1.0.4/docs/assets/beta_shape_morph.gif" width="250" alt="Beta PDF shape morph">
-  <img src="https://raw.githubusercontent.com/sanskarpan/probviz/v1.0.4/docs/assets/mixture_separation.gif" width="250" alt="Gaussian mixture separation">
+  <img src="https://raw.githubusercontent.com/sanskarpan/probviz/v1.0.5/docs/assets/beta_shape_morph.gif" width="250" alt="Beta PDF shape morph">
+  <img src="https://raw.githubusercontent.com/sanskarpan/probviz/v1.0.5/docs/assets/mixture_separation.gif" width="250" alt="Gaussian mixture separation">
 </p>
 
 *Top: Normal σ sweep · CLT convergence · Gaussian-copula ρ sweep. Bottom: Beta shape sweep · mixture separation. Regenerate with `python examples/generate_media.py`.*
@@ -60,7 +60,7 @@ Open `http://localhost:8501`. Full guide: [`QUICKSTART.md`](QUICKSTART.md) ·
 ### Install as a package
 
 ```bash
-pip install -e .
+pip install -e ".[test]"
 probviz app        # launch the UI
 probviz test       # run tests
 probviz version    # print version
@@ -86,7 +86,7 @@ docker compose up --build
 | Fitting | `DistributionFitter`, `BayesianEstimator`, `GoodnessOfFit` |
 | Monte Carlo | `MonteCarloSimulator`, `VarianceReduction`, `QuasiMonteCarloSimulator` |
 | Tests | hypothesis / nonparametric / descriptive dict-returning helpers |
-| Utils | validation, preprocessing, plotting, structured logging; `src.visualizers` facade |
+| Utils | validation, preprocessing, plotting, structured logging; `probviz.visualizers` facade |
 
 Project layout and conventions: [`docs/architecture.md`](docs/architecture.md).
 API reference: [`docs/api.md`](docs/api.md) (rendered on the docs site).
@@ -95,7 +95,7 @@ API reference: [`docs/api.md`](docs/api.md) (rendered on the docs site).
 
 ```python
 import numpy as np
-from src.distributions import NormalDistribution, BinomialDistribution
+from probviz.distributions import NormalDistribution, BinomialDistribution
 
 normal = NormalDistribution(mu=0, sigma=1)
 x = np.linspace(-4, 4, 200)
@@ -109,8 +109,8 @@ print(binomial.pdf(np.arange(0, 11)))
 ```
 
 ```python
-from src.fitting import DistributionFitter
-from src.monte_carlo import MonteCarloSimulator
+from probviz.fitting import DistributionFitter
+from probviz.monte_carlo import MonteCarloSimulator
 
 fitter = DistributionFitter(samples)
 print(fitter.fit_all())
@@ -135,7 +135,7 @@ print(res["probability"], res["confidence_interval"])
 
 ```bash
 pip install -r requirements-dev.txt
-pytest tests/ -q                                  # 688 tests
+pytest tests/ -q                                  # 695 tests
 pytest tests/ -q --cov=src --cov-report=term      # with coverage (gate: 80%)
 flake8 src/ tests/ --count --select=E9,F63,F7,F82 --statistics
 mypy --config-file=pyproject.toml src/

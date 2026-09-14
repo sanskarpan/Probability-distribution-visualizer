@@ -8,7 +8,7 @@
 - `QuasiMonteCarloSimulator` — Halton/Sobol sequences and QMC integration.
 
 ```python
-from src.monte_carlo import MonteCarloSimulator
+from probviz.monte_carlo import MonteCarloSimulator
 import numpy as np
 
 rng = np.random.default_rng(42)

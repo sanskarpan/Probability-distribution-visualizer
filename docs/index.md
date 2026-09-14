@@ -46,7 +46,7 @@ statistical testing.
 │   ├── visualizers/     # public plotting facade (plot_pdf/plot_cdf/plot_comparison)
 │   └── cli.py           # `probviz` command (app/test/version)
 ├── web/                 # Streamlit app
-├── tests/               # 688-test pytest suite (11 files + conftest.py)
+├── tests/               # 695-test pytest suite (14 test files + conftest.py)
 ├── examples/            # runnable scripts
 ├── docs/                # MkDocs site (published to GitHub Pages)
 └── .github/workflows/   # CI, docs, release

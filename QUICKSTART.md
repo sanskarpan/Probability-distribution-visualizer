@@ -8,14 +8,14 @@ Get from zero to interactive plots in under five minutes.
 git clone https://github.com/sanskarpan/probviz.git
 cd probviz
 python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
+pip install -e ".[test]"
 ```
 
 ## 2. Launch the web app
 
 ```bash
 streamlit run web/app.py
-# or, after `pip install -e .`:
+# or, after `pip install -e ".[test]"`:
 probviz app
 ```
 
@@ -32,7 +32,7 @@ Open `http://localhost:8501`.
 
 ```python
 import numpy as np
-from src.distributions import NormalDistribution
+from probviz.distributions import NormalDistribution
 
 normal = NormalDistribution(mu=0, sigma=1)
 x = np.linspace(-4, 4, 200)
@@ -45,7 +45,7 @@ print(normal.get_statistics())
 
 - `docs/` (GitHub Pages): fitting, Monte Carlo, copulas, mixtures, API reference.
 - `examples/basic_usage.py`: `python examples/basic_usage.py`.
-- `pytest tests/ -q`: run the 688-test suite.
+- `pytest tests/ -q`: run the 695-test suite.
 
 ## Troubleshooting
 
@@ -53,4 +53,4 @@ print(normal.get_statistics())
 |---|---|
 | `streamlit: command not found` | Activate the venv / `pip install -r requirements.txt` |
 | Port 8501 busy | `streamlit run web/app.py --server.port 8502` |
-| Import errors in snippets | Run from the repo root or `pip install -e .`; imports are `from src....` |
+| Import errors in snippets | Install `probviz` or run `pip install -e ".[test]"`; imports are `from probviz....` |

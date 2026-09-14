@@ -1,5 +1,7 @@
 """Hypothesis testing functions."""
 
+import warnings
+
 import numpy as np
 from scipy import stats
 
@@ -196,7 +198,16 @@ def normality_tests(data: np.ndarray, alpha: float = 0.05) -> dict[str, dict[str
     }
 
     # Anderson-Darling test
-    ad_result = stats.anderson(data, dist="norm")
+    # SciPy 1.17 warns that its legacy critical-value result will change. Keep
+    # the established result shape until the package can expose the new p-value
+    # API without breaking callers that consume critical_value.
+    with warnings.catch_warnings():
+        warnings.filterwarnings(
+            "ignore",
+            message=r"As of SciPy 1\.17, users must choose a p-value calculation method.*",
+            category=FutureWarning,
+        )
+        ad_result = stats.anderson(data, dist="norm")
     # Find critical value for given alpha
     critical_idx = {0.15: 0, 0.10: 1, 0.05: 2, 0.025: 3, 0.01: 4}.get(alpha, 2)
     results["anderson_darling"] = {

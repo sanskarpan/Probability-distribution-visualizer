@@ -99,11 +99,17 @@ class DistributionFitter:
         """
         dist = getattr(stats, dist_name)
 
-        # Fit using MLE
-        params = dist.fit(self.data)
+        # SciPy's optimizers can emit transient RuntimeWarnings while trying a
+        # candidate that is a poor match for the data. Treat that candidate as
+        # an ordinary fit attempt without leaking numerical noise to callers.
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=RuntimeWarning, module=r"scipy(?:\..*)?")
 
-        # Calculate likelihood
-        log_likelihood = np.sum(dist.logpdf(self.data, *params))
+            # Fit using MLE
+            params = dist.fit(self.data)
+
+            # Calculate likelihood
+            log_likelihood = np.sum(dist.logpdf(self.data, *params))
 
         # Calculate information criteria
         k = len(params)  # Number of parameters

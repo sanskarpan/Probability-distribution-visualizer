@@ -8,7 +8,7 @@ Thin, dict-returning wrappers over SciPy so results are JSON-friendly:
   `correlation_matrix`.
 
 ```python
-from src.statistical_tests import t_test, describe
+from probviz.statistical_tests import t_test, describe
 print(t_test([1, 2, 3], [1, 2, 4]))
 print(describe([1, 2, 3, 100]))
 ```

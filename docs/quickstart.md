@@ -14,7 +14,7 @@ sliders, and inspect the PDF/PMF, CDF, samples, statistics, and quantiles.
 
 ```python
 import numpy as np
-from src.distributions import NormalDistribution, BinomialDistribution
+from probviz.distributions import NormalDistribution, BinomialDistribution
 
 normal = NormalDistribution(mu=0, sigma=1)
 x = np.linspace(-4, 4, 200)
@@ -29,7 +29,7 @@ print(binomial.pdf(np.arange(0, 11)))
 ## CLI
 
 ```bash
-pip install -e .
+pip install -e ".[test]"
 probviz app        # launch the Streamlit UI
 probviz test       # run the test suite
 probviz version    # print the version

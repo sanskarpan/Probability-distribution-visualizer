@@ -23,7 +23,7 @@ Covers Normal/Exponential/Binomial PDF+CDF plots plus a Normal comparison chart.
 ## CLT demonstration
 
 ```python
-from src.distributions import UniformDistribution, NormalDistribution
+from probviz.distributions import UniformDistribution, NormalDistribution
 import numpy as np
 
 uniform = UniformDistribution(a=0, b=1)
@@ -35,7 +35,7 @@ means = [np.mean(uniform.rvs(size=n, random_state=i)) for i in range(2000) for n
 ## Binomial vs Poisson approximation
 
 ```python
-from src.distributions import BinomialDistribution, PoissonDistribution
+from probviz.distributions import BinomialDistribution, PoissonDistribution
 import numpy as np
 
 n, p = 100, 0.03

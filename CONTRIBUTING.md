@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for considering a contribution. This guide keeps the 688-test suite green
+Thanks for considering a contribution. This guide keeps the 695-test suite green
 and reviews fast.
 
 ## Ground rules
@@ -18,7 +18,7 @@ git clone https://github.com/sanskarpan/probviz.git
 cd probviz
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt
-pip install -e .
+pip install -e ".[dev]"
 pre-commit install
 ```
 
@@ -60,7 +60,7 @@ Conventional Commits: `feat:`, `fix:`, `docs:`, `test:`, `refactor:`, `chore:`,
 
 ## Review checklist (for authors)
 
-- [ ] Tests added/updated; `pytest tests/ -q` passes (688+).
+- [ ] Tests added/updated; `pytest tests/ -q` passes (695+).
 - [ ] Coverage gate passes (`--cov-fail-under=80`).
 - [ ] Lint + type checks pass.
 - [ ] Docs updated (`README.md` / `docs/` / `CHANGELOG.md` under Unreleased if needed).

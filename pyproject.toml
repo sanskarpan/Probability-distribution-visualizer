@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "probviz"
-version = "1.0.4"
+version = "1.0.5"
 description = "Interactive probability distribution visualizer: 16 univariate + multivariate, copulas, mixtures, fitting, Monte Carlo, and statistical tests"
 readme = "README.md"
 license = { text = "MIT" }
@@ -50,6 +50,7 @@ dev = [
     "isort>=5.13.0",
     "ruff>=0.1.0",
     "pre-commit>=3.0.0",
+    "pip-audit>=2.7.0",
 ]
 docs = [
     "mkdocs>=1.6.0",
@@ -73,7 +74,7 @@ Changelog = "https://github.com/sanskarpan/probviz/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["src*", "web*", "tests*"]
+include = ["probviz*", "src*", "web*", "tests*"]
 
 [tool.pytest.ini_options]
 minversion = "7.4"

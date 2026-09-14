@@ -1,6 +1,7 @@
 # Architecture
 
 ```
+probviz/                    # public import namespace
 src/
 ├── __init__.py            # __version__
 ├── cli.py                 # probviz app|test|version
@@ -17,7 +18,7 @@ src/
 ├── utils/                 # validation / preprocessing / plotting / structured logging
 └── visualizers/           # public facade: plot_pdf / plot_cdf / plot_comparison
 web/app.py                 # Streamlit UI (16 univariate only, by design)
-tests/                     # 688 tests, 11 files + conftest.py
+tests/                     # 695 tests, 14 test files + conftest.py
 ```
 
 ## Conventions
