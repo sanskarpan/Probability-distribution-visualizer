@@ -28,12 +28,12 @@ statistical testing.
 ## Gallery
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/sanskarpan/probviz/v1.0.5/docs/assets/normal_sigma_morph.gif" width="250" alt="Normal PDF morphing with sigma">
-  <img src="https://raw.githubusercontent.com/sanskarpan/probviz/v1.0.5/docs/assets/clt_convergence.gif" width="250" alt="Central Limit Theorem convergence">
-  <img src="https://raw.githubusercontent.com/sanskarpan/probviz/v1.0.5/docs/assets/copula_dependence.gif" width="210" alt="Gaussian copula dependence sweep">
+  <img src="https://raw.githubusercontent.com/sanskarpan/probviz/v1.0.6/docs/assets/normal_sigma_morph.gif" width="250" alt="Normal PDF morphing with sigma">
+  <img src="https://raw.githubusercontent.com/sanskarpan/probviz/v1.0.6/docs/assets/clt_convergence.gif" width="250" alt="Central Limit Theorem convergence">
+  <img src="https://raw.githubusercontent.com/sanskarpan/probviz/v1.0.6/docs/assets/copula_dependence.gif" width="210" alt="Gaussian copula dependence sweep">
   <br>
-  <img src="https://raw.githubusercontent.com/sanskarpan/probviz/v1.0.5/docs/assets/beta_shape_morph.gif" width="250" alt="Beta PDF shape morph">
-  <img src="https://raw.githubusercontent.com/sanskarpan/probviz/v1.0.5/docs/assets/mixture_separation.gif" width="250" alt="Gaussian mixture separation">
+  <img src="https://raw.githubusercontent.com/sanskarpan/probviz/v1.0.6/docs/assets/beta_shape_morph.gif" width="250" alt="Beta PDF shape morph">
+  <img src="https://raw.githubusercontent.com/sanskarpan/probviz/v1.0.6/docs/assets/mixture_separation.gif" width="250" alt="Gaussian mixture separation">
 </p>
 
 *Top: Normal σ sweep · CLT convergence · Gaussian-copula ρ sweep. Bottom: Beta shape sweep · mixture separation. Regenerate with `python examples/generate_media.py`.*
