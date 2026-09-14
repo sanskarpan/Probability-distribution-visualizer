@@ -1,10 +1,9 @@
 from importlib.metadata import version
 
+from probviz import __version__
 from probviz.distributions import NormalDistribution
 from probviz.fitting import DistributionFitter
 from probviz.monte_carlo import MonteCarloSimulator
-
-from probviz import __version__
 
 
 def test_public_namespace_exposes_package_api() -> None:

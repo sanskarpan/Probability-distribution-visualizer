@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "probviz"
-version = "1.0.6"
+version = "1.0.7"
 description = "Interactive probability distribution visualizer: 16 univariate + multivariate, copulas, mixtures, fitting, Monte Carlo, and statistical tests"
 readme = "README.md"
 license = { text = "MIT" }
@@ -169,4 +169,4 @@ select = ["E", "F", "I", "W", "B", "UP"]
 ignore = ["E501"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["src", "web", "tests"]
+known-first-party = ["probviz", "src", "web", "tests"]
