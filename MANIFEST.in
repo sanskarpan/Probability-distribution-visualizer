@@ -3,4 +3,5 @@ include requirements*.txt
 recursive-include examples *.py
 recursive-include tests *.py
 recursive-include docs *.md *.yml
+recursive-include docs/assets *.gif
 global-exclude __pycache__ *.py[cod]
